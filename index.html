@@ -22,8 +22,11 @@
     <script src="Scene.js"></script>
     <script src="AssetsManager.js"></script>
     <script src="GameManager.js"></script>
-    <script src="Map.js"></script>
+    <script src="Grid.js"></script>
     <script src="Animation.js"></script>
+    <script src="DungeonGenerator.js"></script>
+    <script src="model/Graph.js"></script>
+    <script src="model/Room.js"></script>
 </head>
 
 <body style="background-color: black">
@@ -66,8 +69,8 @@
         assetsMng.loadAudio("castelo", "assets/tema1.mp3")
 
         var canvas = document.querySelector("canvas");
-        canvas.width = 384;
-        canvas.height = 440;
+        canvas.width = 1080;
+        canvas.height = 600
         var ctx = canvas.getContext("2d");
         var teclas = {
             esquerda: 0,
@@ -77,53 +80,33 @@
             fireball: 0,
             espada: 0,
         }
-
-        /*var mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
-        [
-        [1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,1,0,0,0,0,0,0,0,1],
-        [1,0,1,1,0,1,1,1,0,0,0,1],
-        [1,0,1,1,0,0,0,1,1,1,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,1,1,0,0,1,1,0,1,1,1],
-        [1,0,0,0,0,1,1,0,0,0,1,1],
-        [1,0,0,0,1,1,1,0,0,1,1,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1],
-        ]
-        });
-        mapa.cells[6][9].tipo = 1;
-        mapa.cells[2][9].tipo = 1;
-        mapa.cells[4][9].tipo = 1;
-        mapa.cells[4][2].tipo = 1;*/
         
-        var pc = new Sprite({ x: 192, y: 220, w: 12, h: 12, imgX:0, imgY:0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }});
+        var pc = new Sprite({ x: canvas.width/2, y: canvas.height/2, w: 12, h: 12, imgX:0, imgY:0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }});
 
         var gerenciador = new GameManager(pc);
 
-        var texto = "O pai da pequena Lyra foi raptado por uma bruxa muito má e ela deve salvá-lo!_"+
-        "Controles: Direcionais WASD, K para ataque de espada e J para atirar magia."
-        var cena1 = new Scene({ ctx: ctx, w: canvas.width, dialogo: texto, h: canvas.height-120, assets: assetsMng, gamer: gerenciador,});
+
+        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador,});
         cena1.adicionar(pc);
         
         function porTeclasDirecionais(teclas) {
             return function () {
                 if(this.charStop <= 0){
             	if (teclas.esquerda) { 
-                	this.vx = -70; 
+                	this.vx = -this.standardSpd; 
                 	this.direcao = 1;
                 }
                 if (teclas.direita) { 
-                	this.vx = +70;
+                	this.vx = +this.standardSpd;
                 	this.direcao = 2;
                 	}
                 if (teclas.esquerda === teclas.direita) { this.vx = 0; }
                 if (teclas.cima) { 
-                	this.vy = -70;
+                	this.vy = -this.standardSpd;
                 	this.direcao = 3;
                  }
                 if (teclas.baixo) { 
-                	this.vy = +70;
+                	this.vy = +this.standardSpd;
                 	this.direcao = 0;
                 	 }
                 if (teclas.cima === teclas.baixo) { this.vy = 0; }
@@ -136,7 +119,7 @@
                     });
                     this.charStop = 0.2;
                     this.scene.adicionar(tiro);
-                    this.swCD = 0.6;
+                    this.swCD = 0.5;
                     this.globalCD = 0.2;
                     assetsMng.play("sword");
                 }
@@ -226,8 +209,8 @@
             192*this.imgY + this.direcao*48 + 1,
             48,
             48,
-            -this.w-4,
-            -this.h/2-15,
+            -this.w-4 - cena1.cameraX,
+            -this.h/2-15 - cena1.cameraY,
             30,
             30,
             );
@@ -265,8 +248,8 @@
             192*this.imgY + this.direcao*48 - 1,
             48,
             48,
-            -this.w,
-            -this.h/2,
+            -this.w - cena1.cameraX,
+            -this.h/2 - cena1.cameraY,
             25,
             25,
             );
@@ -599,24 +582,59 @@
                     break;
             }
         });
+        var keyPressed = {};
+        addEventListener('keydown', function(e) {
+         
+        keyPressed[e.key + e.location] = true;
+
+        if(keyPressed.Shift1 == true && keyPressed.Control1 == true){
+            pc.atravessa = 1; // reset key map
+        }
+
+        }, false);
 
         function passo(t) {
             dt = (t - anterior) / 1000;
             if(assetsMng.progresso()===100){
                 cena1.passo(dt);
-                
             }
             anterior = t;
             ctx.fillStyle = "black";
             ctx.font = "10px Arial";
-            //ctx.fillText(1 / dt, 10, 20);
             requestAnimationFrame(passo);
         }
-
+        
         var dt, anterior = 0;
         requestAnimationFrame(passo);
 
+        function desenharCelulas(cells, fillStyle) {
+            ctx.fillStyle = fillStyle;
+            cells.forEach(element => {
+                ctx.fillRect(element.x*32 - cena1.cameraX, element.y*32 - cena1.cameraY, 32, 32);
+            });
+        }
 
+        function addNodeToExtras(idx){
+            console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells) 
+        }
+
+        function addCorridorToExtras(idx){
+            edge = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx})[0]
+            console.log(edge.cells)
+            cena1.extras.push(...edge.cells) 
+        }
+
+        function removeSceneExtras(idx){
+            let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
+            cena1.extras.forEach(extra => {
+                cells.forEach(pos => {
+                    if(extra.x == pos.x && extra.y == pos.y) {
+                        cena1.extras.splice(extra);
+                    }
+                })
+            });
+        }
     </script>
 </body>
 

@@ -4,11 +4,11 @@ variaveis globais:
 */
 function GameManager(pc) {
     this.pc = pc;
+    this.dungeonGenerator = new DungeonGenerator();
     this.estagios = [];
     this.criarEstagios();
     this.tema = new Audio();
     this.globalVar = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-
 }
 
 //modelos de teletransporte
@@ -18,7 +18,7 @@ function GameManager(pc) {
 // esquerda para direita: spriteLista.push(this.criarTeleporte(0.2,y.2,11,y.5,m));
 
 /*modelo de mapa
-mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,0,0,0,0,0,0,0,0,0,0,6],
@@ -37,31 +37,44 @@ mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
 GameManager.prototype.criarEstagios = function(){
     var spriteLista = [];
     var eventoLista = [];
-
     //estagio 1
-
-    var mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
-        [
-        [6,6,6,0,6,6,6,6,6,6,6,6],
-        [6,11,6,0,6,11,11,11,11,11,11,6],
-        [6,0,11,0,11,0,0,0,0,0,0,6],
-        [6,0,0,0,0,0,0,0,0,0,0,6],
-        [6,0,0,0,0,0,0,0,0,0,0,6],
-        [6,0,0,0,0,0,0,0,0,0,0,6],
-        [6,0,0,0,0,0,0,0,0,0,0,6],
-        [6,0,0,0,0,0,0,0,0,0,0,6],
-        [6,0,0,0,0,0,0,0,0,0,0,6],
-        [7,7,7,7,7,7,7,7,7,7,7,7],
+    var dungeonCriada = this.dungeonGenerator.createMap();
+    var mapa = new Grid({COLUMNS:50, LINES:50, assets: assetsMng, m: dungeonCriada});
+      /*  [
+        [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],
+        [6,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6],
+        [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],
         ]
-        });
-    spriteLista.push(this.criarTeleporte(3.2,0.2,1.5,8.9,1));    
+        }); */
+    //spriteLista.push(this.criarTeleporte(3.2,0.2,1.5,8.9,1));    
 
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
    
 
     //estagio 2
     
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,0,0,6,0,0,0,0,0,0,0,0],
@@ -96,7 +109,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 3
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,10,10,6,6,6,6,6],
         [0,0,0,0,0,0,0,0,0,0,0,0],
@@ -138,7 +151,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 4
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [0,0,0,0,0,0,0,0,0,0,0,6],
@@ -176,7 +189,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 5
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,8,7,7,7,7,7,7,7,0,0,0],
@@ -213,7 +226,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 6
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [0,0,0,0,0,0,0,0,0,0,0,6],
@@ -241,7 +254,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 7
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,0,6,6,6,6,6,6,6,6,6,6],
         [6,0,6,6,6,0,6,6,6,6,0,0],
@@ -269,7 +282,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 8
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,1,3,6,6,6,6,6],
         [6,9,9,9,9,1,3,9,9,9,9,6],
@@ -297,7 +310,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 9
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,0,6],
         [6,0,0,0,6,0,0,6,6,6,0,6],
@@ -326,7 +339,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 10
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,12,12,12,12,12,12,12,12,12,12,6],
         [6,11,11,11,11,11,11,11,11,11,11,6],
@@ -381,7 +394,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 11
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,0,0,0,0,0,0,0,0,0,0,6],
@@ -507,7 +520,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 12
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,10,10,6,6,6,6,6],
         [6,0,0,0,0,0,0,0,0,0,0,6],
@@ -559,7 +572,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 13
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,8,7,7,7,7,7,7,7,7,0,0],
@@ -608,7 +621,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 14
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [0,0,0,0,0,0,0,8,0,0,0,6],
@@ -646,7 +659,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 15
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,0,7,7,0,0,0,0,7,7,0,6],
@@ -688,7 +701,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 16
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,9,9,9,9,9,9,9,9,9,0,9],
         [0,0,9,0,9,9,0,9,9,9,0,9],
@@ -727,7 +740,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 17
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [9,9,9,9,9,1,3,9,9,9,9,9],
         [9,0,0,0,9,0,0,0,9,9,9,9],
@@ -784,7 +797,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 18
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,1,3,6,6,6,6,6],
         [12,12,12,12,12,1,3,12,12,12,12,12],
@@ -810,7 +823,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 19
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,0,0,6],
         [6,6,6,6,6,6,6,6,6,0,0,6],
@@ -853,7 +866,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 20
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [6,6,6,6,6,6,6,6,6,6,6,6],
         [6,6,6,0,0,0,0,0,0,6,6,6],
@@ -903,7 +916,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 21 - cutscene de fim de jogo
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [9,9,9,9,9,9,9,9,9,9,9,9],
         [9,9,9,9,9,9,9,9,9,9,9,9],
@@ -945,7 +958,7 @@ GameManager.prototype.criarEstagios = function(){
 
     //estagio 22 - tela de game over
 
-    mapa = new Map({COLUMNS:12, LINES:10, assets: assetsMng, m:
+    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
         [9,9,9,9,9,9,9,9,9,9,9,9],
         [9,9,9,9,9,9,9,9,9,9,9,9],
@@ -1025,7 +1038,7 @@ GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
         //necromante
         case 7:
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:1, vx:0, vy:0, globalCD: 1.5,
-                vidas: 3, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
+                vidas: 2, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
             break;
         // touro para baixo
         case 8:

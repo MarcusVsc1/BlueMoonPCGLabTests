@@ -1,4 +1,4 @@
-function Map(modelo) {
+function Grid(modelo) {
     exemplo = {
         cells: [],
         LINES: 32,
@@ -10,7 +10,11 @@ function Map(modelo) {
     for (var c = 0; c < this.COLUMNS; c++) {
         this.cells[c] = [];
         for (var l = 0; l < this.LINES; l++) {
-            exemplo.cells[c][l] = { tipo: 0 };
+            if (c === 0 || l === 0 || c === 49 || l === 49) {
+                exemplo.cells[c][l] = { tipo: 6 };
+            } else {
+                exemplo.cells[c][l] = { tipo: 0 };
+            }
         }
     }
     if (modelo.m) {
@@ -22,7 +26,7 @@ function Map(modelo) {
     }
 }
 
-Map.prototype.desenhar = function (ctx) {
+Grid.prototype.desenhar = function (ctx, scene) {
     //x e y na imagem
     var y = 0;
     var x = 0;
@@ -173,8 +177,8 @@ Map.prototype.desenhar = function (ctx) {
             y*36*4 + 24*positionY,
             48,
             48,
-            c * this.SIZE,
-            l * this.SIZE,
+            c * this.SIZE - scene.cameraX,
+            l * this.SIZE - scene.cameraY,
             this.SIZE,
             this.SIZE
              );

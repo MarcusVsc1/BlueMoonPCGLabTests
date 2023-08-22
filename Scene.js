@@ -13,8 +13,8 @@ function Scene(params) {
         spritesEV: [],
         toRemove: [],
         ctx: null,
-        w: 300,
-        h: 300,
+        w: 1600,
+        h: 1600,
         assets: null,
         map: null,
         stageIndex: 0,
@@ -23,7 +23,11 @@ function Scene(params) {
         spriteCounter: 0,
         dialogo: "",
         bruxa: null,
-        theEnd:0
+        theEnd:0,
+        cameraX: 0,
+        cameraY: 0,
+        extras: [],
+        paintCorridor: [],
     }
     Object.assign(this, exemplo, params);
 }
@@ -85,7 +89,7 @@ Scene.prototype.desenhar = function(){
     for(var i = 0; i<this.spritesEV.length; i++){
         if(this.spritesEV[i].y <= this.pc.y)this.spritesEV[i].desenhar(this.ctx);
     } 
-     
+    this.updateCameraPosition(); 
     if(this.pc.direcao == 0) {
         if(this.pc.desenhar){this.pc.desenhar(this.ctx);}  
     }
@@ -125,8 +129,12 @@ Scene.prototype.desenhar = function(){
 
     for(var i = 0; i<this.spritesE.length; i++){
         if(this.spritesE[i].y > this.pc.y)this.spritesE[i].desenhar(this.ctx);
-    }  
+    }
+    desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
+    desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
 };
+
+
 
 //move os sprites
 Scene.prototype.mover = function(dt){
@@ -420,8 +428,10 @@ Scene.prototype.removeSprites = function () {
     this.toRemove = [];
 };
 
+
+
 Scene.prototype.desenharMapa = function () {
-    this.map.desenhar(this.ctx);
+    this.map.desenhar(this.ctx, this);
 }
 
 Scene.prototype.incluirInimigos = function() {
@@ -556,6 +566,8 @@ Scene.prototype.desenharCaixaDialogo = function (imgX,imgY) {
 
 }
 
+
+
 Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
     var pY = 0;
     var pX = 0;
@@ -672,6 +684,33 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
             );
 }
 
+Scene.prototype.updateCameraPosition = function() {
+    // Ajuste a posição da câmera conforme a movimentação do elemento central
+    const cameraCenterX = pc.x;
+    const cameraCenterY = pc.y;
+    
+    // Defina a metade da largura e altura da tela
+    const halfScreenWidth = this.w / 2;
+    const halfScreenHeight = this.h / 2;
+
+    // Calcule os limites do cenário (em termos de tamanho real do mapa)
+    const maxCameraX = (this.mapXY()) - this.w;
+    const maxCameraY = (this.mapXY()) - this.h;
+    
+    // Ajuste a posição da câmera para manter o elemento centralizado na tela
+    this.cameraX = Math.max(0, Math.min(cameraCenterX - halfScreenWidth, maxCameraX));
+    this.cameraY = Math.max(0, Math.min(cameraCenterY - halfScreenHeight, maxCameraY));
+};
+
+Scene.prototype.mapXY = function() {
+    return this.map.COLUMNS * this.map.SIZE
+}
+
+Scene.prototype.atualizarCamera = function(x, y) {
+    this.cameraX = x; // Atualize a posição X da câmera com a coordenada X do personagem
+    this.cameraY = y; // Atualize a posição Y da câmera com a coordenada Y do personagem
+}
+
 Scene.prototype.passo = function(dt){
     if(this.theEnd <= 0) {
         this.gameDefiner();
@@ -682,7 +721,7 @@ Scene.prototype.passo = function(dt){
         this.desenhar();
         this.checaColisao();
         this.removeSprites();
-        this.desenharHUD();
+        //this.desenharHUD();
     }
     if(this.theEnd >= 10 && this.theEnd < 60){
       this.theEnd-= 8*dt;
@@ -701,3 +740,11 @@ Scene.prototype.passo = function(dt){
             );
     }
 }
+
+
+
+
+
+
+
+

@@ -32,7 +32,10 @@ function Sprite(params = {}) {
         charStop: 0,
         atingido: 0,
         atravessa: 0,
-        ortogonal: 0
+        ortogonal: 0,
+        cameraX: 0,
+        cameraY: 0,
+        standardSpd: 300
     }
     Object.assign(this, exemplo, params);
 }
@@ -40,10 +43,10 @@ Sprite.prototype = new Sprite();
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.desenhar = function (ctx) {
-
+    this.cameraX = this.x - this.scene.cameraX
+    this.cameraY = this.y - this.scene.cameraY
     ctx.save();
-
-    ctx.translate(this.x, this.y);
+    ctx.translate(this.cameraX, this.cameraY);
     if(this.imune > 0 && this.atingido <= 0){
       ctx.globalAlpha = 0.5*Math.cos(60*this.imune);
     }
@@ -101,14 +104,7 @@ Sprite.prototype.mover = function (dt) {
         this.mc = Math.floor(this.x / this.scene.map.SIZE);
         this.ml = Math.floor(this.y / this.scene.map.SIZE);
     }
-    if(this.y >= 320){
-        console.log("entrou")
-    }
-    
-        
-    
-    
-    
+ 
 }
 
 Sprite.prototype.moverCircular = function (dt) {
@@ -130,8 +126,8 @@ Sprite.prototype.moverOrtogonal = function (dt) {
     this.frame += 8*dt;
 
 
-    this.mc = Math.floor(this.x / this.scene.map.SIZE);
-    this.ml = Math.floor(this.y / this.scene.map.SIZE);
+    this.mc = Math.floor((this.x) / this.scene.map.SIZE);
+    this.ml = Math.floor((this.y) / this.scene.map.SIZE);
 
     this.aplicaRestricoes(dt);
     this.spCD = this.spCD - dt;
@@ -151,7 +147,7 @@ Sprite.prototype.aplicaRestricoes = function (dt) {
         dx = Math.min(dnx, dx);
     }
     if (dx < 0 && this.scene.map.cells[this.mc - 1][this.ml].tipo >=6 && this.atravessa != 1) {
-        dnx = this.scene.map.SIZE * (this.mc - 1 + 1) - (this.x - this.w / 2);
+        dnx = this.scene.map.SIZE * (this.mc) - (this.x - this.w / 2);
         dx = Math.max(dnx, dx);
     }
     if (dy > 0 && this.scene.map.cells[this.mc][this.ml + 1].tipo >=6 && this.atravessa != 1) {
@@ -159,7 +155,7 @@ Sprite.prototype.aplicaRestricoes = function (dt) {
         dy = Math.min(dny, dy);
     }
     if (dy < 0 && this.scene.map.cells[this.mc][this.ml - 1].tipo >=6 && this.atravessa != 1) {
-        dny = this.scene.map.SIZE * (this.ml - 1 + 1) - (this.y - this.h / 2);
+        dny = this.scene.map.SIZE * (this.ml) - (this.y - this.h / 2);
         dy = Math.max(dny, dy);
     }
     this.vy = dy / dt;
