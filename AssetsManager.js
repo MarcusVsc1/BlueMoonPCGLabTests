@@ -14,7 +14,7 @@ function AssetsManager() {
 }
 
 AssetsManager.prototype.loadImage = function (key, url) {
-    console.log(`Carregando imagem ${url}...`);
+    //console.log(`Carregando imagem ${url}...`);
 
     this.aCarregar++;
     var imagem = new Image();
@@ -23,7 +23,7 @@ AssetsManager.prototype.loadImage = function (key, url) {
     var that = this;
     imagem.addEventListener("load", function () {
         that.carregadas++;
-        console.log(`Imagem ${that.carregadas}/${that.aCarregar} ${key}: ${url} carregada.`);
+        //console.log(`Imagem ${that.carregadas}/${that.aCarregar} ${key}: ${url} carregada.`);
     });
 }
 
@@ -40,7 +40,7 @@ AssetsManager.prototype.progresso = function () {
 
 
 AssetsManager.prototype.loadAudio = function (key, url) {
-    console.log(`Carregando audio ${key}: ${url}...`);
+    //console.log(`Carregando audio ${key}: ${url}...`);
     //this.aCarregar++;
     var audio = new Audio();
     audio.src = url;

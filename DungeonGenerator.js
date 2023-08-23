@@ -100,41 +100,49 @@ class DungeonGenerator {
         let minDistanceInfo = { distance: Infinity, cells: [] };
         let closestRoom = null;
         let corridor = []
-
-
+        let closestRooms = []
+        
         for (let j = 0; j < generatedRooms.length; j++) {
             const otherRoom = generatedRooms[j];
-
             if (room !== otherRoom && this.graph.countEdges(otherRoom) < this.graph.MAX_EDGES_PER_ROOM && !this.graph.hasEdge(room, otherRoom)) {
-                const distanceInfo = this.graph.getWeight(room, otherRoom);
-
-                if (distanceInfo.distance < minDistanceInfo.distance) {
-
-                    const cellA = {
-                        x: distanceInfo.cells.cellA.x,
-                        y: distanceInfo.cells.cellA.y
-                    };
-
-                    const cellB = {
-                        x: distanceInfo.cells.cellB.x,
-                        y: distanceInfo.cells.cellB.y
-                    };
-                    var previousCorridor = corridor
-                    corridor = this.createCorridorBetweenCells(cellA, cellB, map)
-                    var cellprint = "Células do corredor: "
-                    corridor.forEach(cell => { cellprint = cellprint + "[" + cell.x + "]" + "[" + cell.y + "]/" })
-                    //console.log(cellprint)
-                    if (!this.corridorHasObstacles(corridor, map)) {
-                        minDistanceInfo = distanceInfo;
-                        closestRoom = otherRoom;
-                        console.log("Não tem obstáculos: " + room.roomId + " - " + closestRoom.roomId)
-                        console.log("Adicionando aresta: " + room.roomId + " - " + closestRoom.roomId)
-                    } else {
-                        console.log("Tem obstáculos: " + room.roomId + " - " + otherRoom.roomId)
-                        corridor = previousCorridor
-                    }
-                }
+                const distanceInfos = this.graph.getClosestCellsAndDistances(room, otherRoom);
+                closestRooms.push({ distanceInfos: distanceInfos, roomId: otherRoom.roomId })
             }
+        }
+        closestRooms = closestRooms.filter(room => room.distanceInfos.length > 0)
+        closestRooms.sort(room => room.distanceInfos[0].distance)
+        
+        for (const closestR of closestRooms) {
+            
+            closestRoom = null
+
+            for (const distanceInfo of closestR.distanceInfos) {
+
+                const cellA = {
+                    x: distanceInfo.cells.cellA.x,
+                    y: distanceInfo.cells.cellA.y
+                };
+
+                const cellB = {
+                    x: distanceInfo.cells.cellB.x,
+                    y: distanceInfo.cells.cellB.y
+                };
+                var previousCorridor = corridor
+                corridor = this.createCorridorBetweenCells(cellA, cellB, map)
+                var cellprint = "Células do corredor: "
+                corridor.forEach(cell => { cellprint = cellprint + "[" + cell.x + "]" + "[" + cell.y + "]/" })
+                if (!this.corridorHasObstacles(corridor, map)) {
+                    minDistanceInfo = distanceInfo;
+                    closestRoom = this.graph.getNodeById(closestR.roomId);
+                    //console.log("Não tem obstáculos: " + room.roomId + " - " + closestRoom.roomId)
+                    //console.log("Adicionando aresta: " + room.roomId + " - " + closestRoom.roomId)
+                    break;
+                } else {
+                    corridor = previousCorridor
+                }
+
+            }
+            if(closestRoom){break;}
         }
         if (closestRoom) {
             this.corridorPassesByRoom([...corridor], map, room, closestRoom);
@@ -145,11 +153,9 @@ class DungeonGenerator {
             this.fillCorridor(corridor, map)
             this.graph.addEdge(room, closestRoom, corridor)
             this.toDebug.push(...corridor)
-            console.log("Aresta adicionada: " + room.roomId + " - " + closestRoom.roomId)
-            //this.closeCorridorGaps(corridor, map);
-
+           // console.log("Aresta adicionada: " + room.roomId + " - " + closestRoom.roomId)
         } else {
-            console.log("Não foi possível criar um corredor a partir da sala " + room.roomId)
+            //console.log("Não foi possível criar um corredor a partir da sala " + room.roomId)
         }
     }
 
@@ -219,7 +225,6 @@ class DungeonGenerator {
                 return true; // Corridor has obstacles
             }
         }
-        console.log("Valores no corredor:" + val)
         return false; // Corridor is obstacle-free
     }
 
@@ -265,7 +270,7 @@ class DungeonGenerator {
             }
         }
     }
-    
+
     corridorPassesByRoom(corridor, map, roomA, roomB) {
         for (const cell of corridor) {
             for (const room of this.graph.nodes) {
@@ -379,6 +384,4 @@ class DungeonGenerator {
         return false;
     }
 
-
 }
-
