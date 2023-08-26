@@ -40,12 +40,23 @@ GameManager.prototype.criarEstagios = function(){
     //estagio 1
     var contador = 0;
     console.time('createMap');
+    console.profile()
     var dungeonCriada = this.dungeonGenerator.createMap();
+    while(!this.dungeonGenerator.sucesso){
+        var dungeonCriada = this.dungeonGenerator.createMap();
+        contador++
+        this.dungeonGenerator.graph = new Graph();
+        console.log("Quantidade de vezes que a dungeon foi refeita: "+contador)
+    }
+    console.profileEnd();
 
     console.timeEnd('createMap');
-    var contador = 1;
-    var mapa = new Grid({COLUMNS:50, LINES:50, assets: assetsMng, m: dungeonCriada});
+    var contador = 0
 
+
+    mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
+        assets: assetsMng, m: dungeonCriada});
+    console.log(this.dungeonGenerator.sucesso ? "Kruskal com sucesso" : "Erro no Kruskal")
     //spriteLista.push(this.criarTeleporte(3.2,0.2,1.5,8.9,1));    
 
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
