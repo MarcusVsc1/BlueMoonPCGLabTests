@@ -1,6 +1,6 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 80;
+        this.MAP_SIZE = 75;
         this.NUM_ROOMS = 20;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
@@ -79,7 +79,7 @@ class DungeonGenerator {
             //this.addWallToNonTerminalCellsWithCorridorNeighbor(room, map);
         });
         this.addWalls(height, width, map);
-        this.removeIsolatedWalls(map);
+        //this.removeIsolatedWalls(map);
     }
 
     addWalls(height, width, map) {
@@ -266,7 +266,7 @@ class DungeonGenerator {
         for (const cell of cells) {
             const { x, y } = cell;
 
-            if (x > 0 && x < width - 1 && y > 0 && y < height - 1) {
+            if (x > 0 && x < width - 1 && y > 0 && y < height - 1 && map[y][x] == 4) {
                 map[y][x] = 0; // Empty tile
             }
         }
@@ -354,14 +354,22 @@ class DungeonGenerator {
     }
 
     addWallToNonTerminalCellsWithCorridorNeighbor(room, map) {
-        for (const cell of room.cells) {
-            if (!room.terminalCells.includes(cell) && this.hasCorridorNeighbor(cell, map)) {
-                map[cell.y][cell.x] = 6; // Set cell to wall
+        for(var terminalCell of room.terminalCells){
+            map[terminalCell.x][terminalCell.y] == 6
+            for (var neighbor of this.graph.getNeighbors(terminalCell)){
+                if(this.hasNoCorridorNeighbor(neighbor, map) && map[neighbor.x][neighbor.y] == 4){
+                    map[terminalCell.x][terminalCell.y] == 6
+                }
             }
         }
+       /* for (const cell of room.cells) {
+            if (!room.terminalCells.find(cell => cell.x === cell.x && cell.y === cell.y) && this.hasNoCorridorNeighbor(cell, map)) {
+                map[cell.y][cell.x] = 6; // Set cell to wall
+            }
+        }*/
     }
 
-    hasCorridorNeighbor(cell, map) {
+    hasNoCorridorNeighbor(cell, map) {
         const neighborOffsets = [
             { dx: -1, dy: 0 },   // Left
             { dx: 1, dy: 0 },    // Right
@@ -376,7 +384,7 @@ class DungeonGenerator {
             if (
                 neighborX >= 0 && neighborX < map[0].length &&
                 neighborY >= 0 && neighborY < map.length &&
-                map[neighborY][neighborX] === 4 // Check if neighbor is a corridor
+                map[neighborY][neighborX] !== 4 // Check if neighbor is a corridor
             ) {
                 return true;
             }
@@ -420,14 +428,15 @@ class DungeonGenerator {
                         y: distanceInfo.cells.cellB.y
                     };
                     var corridor = this.createCorridorBetweenCells(cellA, cellB, map)
-                    if (!this.corridorHasObstacles(corridor, map) && !roomA.unavailableCells.includes(cellA) && !roomB.unavailableCells.includes(cellB)) {
-                        this.corridorPassesByRoom([...corridor], map, roomA, roomB);
-                        roomA.unavailableCells.push(... this.findNeighborCells(cellA, 3))
+                    if (!this.corridorHasObstacles(corridor, map) && !roomA.unavailableCells.find(cell => cell.x === cellA.x && cell.y === cellA.y) && 
+                    !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y)) {
+                        roomA.unavailableCells.push(... this.findNeighborCells(cellA, 2))
                         roomA.addTerminalCell(cellA)
-                        roomB.unavailableCells.push(... this.findNeighborCells(cellB, 3))
+                        roomB.unavailableCells.push(... this.findNeighborCells(cellB, 2))
                         roomB.addTerminalCell(cellB)
                         this.fillCorridor(corridor, map)
                         this.graph.addEdge(roomA, roomB, corridor)
+                        this.corridorPassesByRoom([...corridor], map, roomA, roomB);
                         break;
                     }
                 }
