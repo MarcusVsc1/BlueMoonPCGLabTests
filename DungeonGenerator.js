@@ -1,7 +1,7 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 75;
-        this.NUM_ROOMS = 20;
+        this.MAP_SIZE = 100;
+        this.NUM_ROOMS = 40;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
         this.BUFFER = 2;
@@ -59,16 +59,13 @@ class DungeonGenerator {
                 }
             }
 
-            const room = new Room(roomCells);
+            const room = new Room(roomCells, roomHeight, roomWidth);
             this.graph.addNode(room);
             generatedRooms.push({ x, y, width: roomWidth, height: roomHeight, id: room.roomId });
         }
-        /*
-        for (let i = 0; i < this.graph.nodes.length; i++) {
-            this.createCorridorForRoom(this.graph.nodes[i], map);
-        }*/
+
         this.sucesso = this.kruskal(map)
-        
+
         this.postProcessing(map, width, height);
         return map;
     }
@@ -76,16 +73,13 @@ class DungeonGenerator {
     postProcessing(map, width, height) {
         this.graph.nodes.forEach(room => {
             this.fillRoomInteriorWithEmpty(room.cells, map, width, height);
-            //this.addWallToNonTerminalCellsWithCorridorNeighbor(room, map);
         });
         this.addWalls(height, width, map);
-        //this.removeIsolatedWalls(map);
     }
 
     addWalls(height, width, map) {
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
-
                 if (map[y][x] === 0 || map[y][x] === 4) {
                     if (x > 0 && map[y][x - 1] === 9) map[y][x - 1] = 6; // Left wall
                     if (x < width - 1 && map[y][x + 1] === 9) map[y][x + 1] = 6; // Right wall
@@ -93,70 +87,6 @@ class DungeonGenerator {
                     if (y < height - 1 && map[y + 1][x] === 9) map[y + 1][x] = 6;
                 }
             }
-        }
-    }
-
-    createCorridorForRoom(room, map) {
-        let generatedRooms = this.graph.nodes;
-        let minDistanceInfo = { distance: Infinity, cells: [] };
-        let closestRoom = null;
-        let corridor = []
-        let closestRooms = []
-
-        for (let j = 0; j < generatedRooms.length; j++) {
-            const otherRoom = generatedRooms[j];
-            if (room !== otherRoom && this.graph.countEdges(otherRoom) < this.graph.MAX_EDGES_PER_ROOM && !this.graph.hasEdge(room, otherRoom)) {
-                const distanceInfos = this.graph.getClosestCellsAndDistances(room, otherRoom);
-                closestRooms.push({ distanceInfos: distanceInfos, roomId: otherRoom.roomId })
-            }
-        }
-        closestRooms = closestRooms.filter(room => room.distanceInfos.length > 0)
-        closestRooms.sort(room => room.distanceInfos[0].distance)
-
-        for (const closestR of closestRooms) {
-
-            closestRoom = null
-
-            for (const distanceInfo of closestR.distanceInfos) {
-
-                const cellA = {
-                    x: distanceInfo.cells.cellA.x,
-                    y: distanceInfo.cells.cellA.y
-                };
-
-                const cellB = {
-                    x: distanceInfo.cells.cellB.x,
-                    y: distanceInfo.cells.cellB.y
-                };
-                var previousCorridor = corridor
-                corridor = this.createCorridorBetweenCells(cellA, cellB, map)
-                var cellprint = "Células do corredor: "
-                corridor.forEach(cell => { cellprint = cellprint + "[" + cell.x + "]" + "[" + cell.y + "]/" })
-                if (!this.corridorHasObstacles(corridor, map)) {
-                    minDistanceInfo = distanceInfo;
-                    closestRoom = this.graph.getNodeById(closestR.roomId);
-                    //console.log("Não tem obstáculos: " + room.roomId + " - " + closestRoom.roomId)
-                    //console.log("Adicionando aresta: " + room.roomId + " - " + closestRoom.roomId)
-                    break;
-                } else {
-                    corridor = previousCorridor
-                }
-
-            }
-            if (closestRoom) { break; }
-        }
-        if (closestRoom) {
-            this.corridorPassesByRoom([...corridor], map, room, closestRoom);
-            room.unavailableCells.push(... this.findNeighborCells(minDistanceInfo.cells.cellA, 2))
-            room.addTerminalCell(minDistanceInfo.cells.cellA)
-            closestRoom.unavailableCells.push(... this.findNeighborCells(minDistanceInfo.cells.cellB, 2))
-            closestRoom.addTerminalCell(minDistanceInfo.cells.cellB)
-            this.fillCorridor(corridor, map)
-            this.graph.addEdge(room, closestRoom, corridor)
-            this.toDebug.push(...corridor)
-            // console.log("Aresta adicionada: " + room.roomId + " - " + closestRoom.roomId)
-        } else {
-            //console.log("Não foi possível criar um corredor a partir da sala " + room.roomId)
         }
     }
 
@@ -214,7 +144,6 @@ class DungeonGenerator {
 
         return corridorCells;
     }
-
 
     corridorHasObstacles(corridorCells, map) {
         const corridorWithoutEndpoints = corridorCells.slice(1, -1); // Remove initial and final cells
@@ -315,84 +244,6 @@ class DungeonGenerator {
         }
     }
 
-    removeIsolatedWalls(map) {
-        const height = map.length;
-        const width = map[0].length;
-
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                if (map[y][x] === 6) { // Check if current cell is a wall
-                    const neighborOffsets = [
-                        { dx: -1, dy: 0 }, // Left
-                        { dx: 1, dy: 0 },  // Right
-                        { dx: 0, dy: -1 }, // Up
-                        { dx: 0, dy: 1 }   // Down
-                    ];
-
-                    let hasCorridorOrEmptyNeighbor = false;
-
-                    for (const offset of neighborOffsets) {
-                        const neighborX = x + offset.dx;
-                        const neighborY = y + offset.dy;
-
-                        if (
-                            neighborX >= 0 && neighborX < width &&
-                            neighborY >= 0 && neighborY < height &&
-                            (map[neighborY][neighborX] === 4 || map[neighborY][neighborX] === 0) // Check if neighbor is a corridor or empty
-                        ) {
-                            hasCorridorOrEmptyNeighbor = true;
-                            break;
-                        }
-                    }
-
-                    if (!hasCorridorOrEmptyNeighbor) {
-                        map[y][x] = 9; // Set to empty
-                    }
-                }
-            }
-        }
-    }
-
-    addWallToNonTerminalCellsWithCorridorNeighbor(room, map) {
-        for(var terminalCell of room.terminalCells){
-            map[terminalCell.x][terminalCell.y] == 6
-            for (var neighbor of this.graph.getNeighbors(terminalCell)){
-                if(this.hasNoCorridorNeighbor(neighbor, map) && map[neighbor.x][neighbor.y] == 4){
-                    map[terminalCell.x][terminalCell.y] == 6
-                }
-            }
-        }
-       /* for (const cell of room.cells) {
-            if (!room.terminalCells.find(cell => cell.x === cell.x && cell.y === cell.y) && this.hasNoCorridorNeighbor(cell, map)) {
-                map[cell.y][cell.x] = 6; // Set cell to wall
-            }
-        }*/
-    }
-
-    hasNoCorridorNeighbor(cell, map) {
-        const neighborOffsets = [
-            { dx: -1, dy: 0 },   // Left
-            { dx: 1, dy: 0 },    // Right
-            { dx: 0, dy: -1 },   // Up
-            { dx: 0, dy: 1 }     // Down
-        ];
-
-        for (const offset of neighborOffsets) {
-            const neighborX = cell.x + offset.dx;
-            const neighborY = cell.y + offset.dy;
-
-            if (
-                neighborX >= 0 && neighborX < map[0].length &&
-                neighborY >= 0 && neighborY < map.length &&
-                map[neighborY][neighborX] !== 4 // Check if neighbor is a corridor
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     kruskal(map) {
         let possibleEdges = []
         for (let i = 0; i < this.graph.nodes.length; i++) {
@@ -428,11 +279,11 @@ class DungeonGenerator {
                         y: distanceInfo.cells.cellB.y
                     };
                     var corridor = this.createCorridorBetweenCells(cellA, cellB, map)
-                    if (!this.corridorHasObstacles(corridor, map) && !roomA.unavailableCells.find(cell => cell.x === cellA.x && cell.y === cellA.y) && 
-                    !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y)) {
-                        roomA.unavailableCells.push(... this.findNeighborCells(cellA, 2))
+                    if (!this.corridorHasObstacles(corridor, map) && !roomA.unavailableCells.find(cell => cell.x === cellA.x && cell.y === cellA.y) &&
+                        !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y)) {
+                        roomA.unavailableCells.push(... this.findNeighborCells(cellA, 3))
                         roomA.addTerminalCell(cellA)
-                        roomB.unavailableCells.push(... this.findNeighborCells(cellB, 2))
+                        roomB.unavailableCells.push(... this.findNeighborCells(cellB, 3))
                         roomB.addTerminalCell(cellB)
                         this.fillCorridor(corridor, map)
                         this.graph.addEdge(roomA, roomB, corridor)
@@ -441,19 +292,17 @@ class DungeonGenerator {
                     }
                 }
             }
-        }  
-        var contadorConectados = 0
-        for(var node of this.graph.nodes){
-            for(var otherNode of this.graph.nodes){
-                if(node != otherNode && this.graph.areNodesConnected(node, otherNode)){
-                    contadorConectados++;
-                    break;
+        }
+        for (var node of this.graph.nodes) {
+            for (var otherNode of this.graph.nodes) {
+                if (node != otherNode && !this.graph.areNodesConnected(node, otherNode)) {
+                    return false;
                 }
             }
         }
-    
-        return contadorConectados == this.graph.nodes.length;
+
+        return true;
 
     }
-
+   
 }
