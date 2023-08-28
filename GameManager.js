@@ -43,9 +43,10 @@ GameManager.prototype.criarEstagios = function(){
     console.profile()
     var dungeonCriada = this.dungeonGenerator.createMap();
     while(!this.dungeonGenerator.sucesso){
-        var dungeonCriada = this.dungeonGenerator.createMap();
+        console.log("Erro no Kruskal")
         contador++
         this.dungeonGenerator.graph = new Graph();
+        var dungeonCriada = this.dungeonGenerator.createMap();
         console.log("Quantidade de vezes que a dungeon foi refeita: "+contador)
     }
     console.profileEnd();
@@ -56,7 +57,10 @@ GameManager.prototype.criarEstagios = function(){
 
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
         assets: assetsMng, m: dungeonCriada});
-    console.log(this.dungeonGenerator.sucesso ? "Kruskal com sucesso" : "Erro no Kruskal")
+    console.log("Kruskal com sucesso")
+    
+    spriteLista.push(this.criarChave(18, 18, 0));
+    spriteLista.push(this.criarChave(18, 19, 1));
     //spriteLista.push(this.criarTeleporte(3.2,0.2,1.5,8.9,1));    
 
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
@@ -1019,12 +1023,6 @@ GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
             inimigo = new Sprite({ x: posX*32+26, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:0, vx:0, vy:0,
                 direcao: 2, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }});
             break;
-        //chefe 1
-        case 6:
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 24, h: 24, vm: 50, imgY:2, vidas: 20, vx: 1, rockCount: 0,
-                imagem: "bigboss", globalCD: 2, baseCD: 2, desenhar: desenharChefe, comportar: atirarRochas2, mover: moverChefe, 
-                props: { tipo: "npc", boss: 1 }});
-            break;
         //necromante
         case 7:
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:1, vx:0, vy:0, globalCD: 1.5,
@@ -1034,16 +1032,6 @@ GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
         case 8:
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:0, vx:0, vy:0,
                 direcao: 0, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }});
-            break;
-        // bruxa fase 1
-        case 9:
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 60, imgX:1, imgY:1, vx: 1, vy:0, globalCD: 2, baseCD: 2,
-                direcao: 0, imagem: "bruxa", vidas: 28, mover: moverBruxa, comportar: bruxaria, props: { tipo: "bruxa" }});
-            break;
-        //bruxa fase 2
-        case 10:
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:1, imgY:1, vx:0, vy:0, vidas: 27,
-                direcao: 0, imagem: "bruxa", globalCD: 2, fireCount: 0, mod: 0, comportar: bruxaria2, baseCD: 2, props: { tipo: "npc", boss: 1 }});
             break;
     }
     return inimigo;
@@ -1076,7 +1064,7 @@ GameManager.prototype.criarObjeto = function (numero, posX, posY, direct) {
         //gargula
         case 0:
             objeto = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, direcao: direct, imgX:0, imgY:0, 
-                imagem: "gargoyle", mover: moverObjeto, comportar: atirarFireball, props: { tipo: "objeto" }});
+                imagem: "gargoyle", mover: moverObjeto, props: { tipo: "objeto" }});
             break;
         //pai da lyra
         case 1:
@@ -1123,4 +1111,10 @@ GameManager.prototype.criarDisparador = function (posX, posY, direct) {
 GameManager.prototype.criarEventador = function (posX, posY, event) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, imgX:3, imgY:0, evented: 0,
                 imagem: "crystal", desenhar: desenhaTiro, evento: event, props: { tipo: "eventador" }});
+}
+
+//cria uma chave.
+GameManager.prototype.criarChave = function (posX, posY, keyId) {
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
+                imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto" }});
 }

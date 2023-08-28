@@ -111,7 +111,7 @@ class Graph {
 
         for (const cellA of availableCellsA) {
             for (const cellB of availableCellsB) {
-                const distance = Math.sqrt(Math.pow(cellB.x - cellA.x, 2) + Math.pow(cellB.y - cellA.y, 2));
+                const distance = Math.hypot((cellB.x - cellA.x),(cellB.y - cellA.y));
                 closestCellsAndDistances.push({ cells: { cellA, cellB }, distance });
             }
         }
@@ -157,6 +157,40 @@ class Graph {
     
         return false; // Nodes are not connected
     }
+
+    findFarthestRooms() {
+        const farthestRooms = [];
+        let maxDistance = -1;
     
+        for (const startRoom of this.nodes) {
+            const distances = new Map(); // Map para armazenar distâncias das salas
+            const visited = new Set(); // Conjunto para controlar salas visitadas
+            const queue = [{ room: startRoom, distance: 0 }];
+    
+            while (queue.length > 0) {
+                const { room, distance } = queue.shift();
+    
+                if (!visited.has(room)) {
+                    visited.add(room);
+                    distances.set(room, distance);
+    
+                    for (const neighbor of this.getNeighbors(room)) {
+                        queue.push({ room: neighbor, distance: distance + 1 });
+                    }
+                }
+            }
+    
+            // Encontrar a maior distância no grafo
+            if (distances.size > maxDistance) {
+                maxDistance = distances.size;
+                farthestRooms.length = 0; // Limpar o array anterior se houver uma distância maior
+                farthestRooms.push(startRoom);
+            } else if (distances.size === maxDistance) {
+                farthestRooms.push(startRoom);
+            }
+        }
+    
+        return farthestRooms;
+    } 
 
 }

@@ -28,6 +28,7 @@ function Scene(params) {
         cameraY: 0,
         extras: [],
         paintCorridor: [],
+        inventoryItem: null
     }
     Object.assign(this, exemplo, params);
 }
@@ -103,7 +104,6 @@ Scene.prototype.desenhar = function(){
         this.spritesPoder[i].desenhar(this.ctx);
     } 
 
-    if(this. bruxa != null && this.bruxa.desenhar){this.bruxa.desenhar(this.ctx);}  
 
     for(var i = 0; i<this.spritesTE.length; i++){
         this.spritesTE[i].desenhar(this.ctx);
@@ -288,25 +288,7 @@ Scene.prototype.checaColisao = function(){
                 this.toRemove.push(this.spritesTE[i]);
                 this.spritesEV[j].evented = 1;
                 this.spritesEV[j].evento();
-                }
-                
-            
-        }
-        //colisao tiro inimigo com pc
-        if(this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE"){
-            if(this.spritesTE[i].props.modelo == "fireball") {
-                    this.adicionar(new Animation({x: this.pc.x, y:this.pc.y, imagem: "explosion"}));
-                    this.assets.play("explosion");
-                }
-            if(this.spritesTE[i].props.modelo == "rocha") {
-                    this.assets.play("earth2");
-                }
-            this.toRemove.push(this.spritesTE[i]);
-            if(this.pc.imune<=0){    
-                this.pc.atingido = 0.3;
-                this.pc.vidas--;
-                this.pc.imune=2;
-            }
+                }       
         }
     }
     //colisao pc com poder
@@ -326,13 +308,6 @@ Scene.prototype.checaColisao = function(){
     }
     //colisao com teleporte
     for (var i = 0; i < this.spritesTP.length; i++) {
-        if(this.bruxa!=null && this.bruxa.colidiuCom(this.spritesTP[i])){
-            this.bruxa = null;
-            this.gamer.estagios[this.stageIndex].mapa.cells[3][4].tipo = 2;
-            this.gamer.estagios[this.stageIndex].mapa.cells[3][3].tipo = 2;
-            this.assets.play("door");
-            this.dialogo = "Agora é a hora da verdade!_A batalha final contra a bruxa finalmente começará!"
-        }
         if(this.pc.colidiuCom(this.spritesTP[i])) {
             this.stageIndex = this.spritesTP[i].props.idx;
             this.pc.x = this.spritesTP[i].tX;
@@ -351,13 +326,20 @@ Scene.prototype.checaColisao = function(){
         }
     }
 
-    //colisao com disparador
-    for (var k = 0; k < this.spritesD.length; k++) {
+    //colisao com item de inventario
+    for (var k = 0; k < this.spritesO.length; k++) {
         for (var j = 0; j < this.spritesT.length; j++){
-            if(this.spritesT[j].colidiuCom(this.spritesD[k]) && this.spritesT[j].props.modelo == "espada" &&
-             this.spritesD[k].swCD < 0){
-                this.adicionar(criarFireball(1, "tiroQ", this.spritesD[k].direcao, this.spritesD[k].x, this.spritesD[k].y));
-                this.spritesD[k].swCD = 1.2;
+            if(this.spritesT[j].colidiuCom(this.spritesO[k]) && this.spritesT[j].props.modelo == "espada" &&
+             this.spritesO[k].swCD < 0){
+                if(this.inventoryItem) {
+                    this.inventoryItem.x = this.spritesO[k].x
+                    this.inventoryItem.y = this.spritesO[k].y
+                    this.spritesO.push(this.inventoryItem)
+                }
+                this.spritesO[k].swCD = 0.6;
+                this.toRemove.push(this.spritesO[k])
+                this.inventoryItem = this.spritesO[k]
+                this.assets.play("quest");
             }
         }
     }
@@ -424,6 +406,12 @@ Scene.prototype.removeSprites = function () {
                 this.spritesTE.splice(idx,1);
             }
         }
+        if(this.toRemove[i] != null && this.toRemove[i].props.tipo == "objeto"){
+            var idx = this.spritesO.indexOf(this.toRemove[i]);
+            if(idx>=0){
+                this.spritesO.splice(idx,1);
+            }
+        }
     }
     this.toRemove = [];
 };
@@ -455,24 +443,17 @@ Scene.prototype.gameDefiner = function () {
 
 
 Scene.prototype.desenharHUD = function() {
-    //desenha a caixa preta
-    ctx.restore();
-    ctx.fillStyle = "black";
-    ctx.fillRect(0,320,this.w, 120);
+    
     //desenha o titulo e a imagem de lua
     ctx.font = "30px Medieval";
     ctx.fillStyle = "white";
-    ctx.fillText("Blue Moon",133,this.h+100);
+    ctx.fillText("Lyra",24,this.h-120);/*
     ctx.save();
-    ctx.drawImage(this.assets.img("moon"),
-            140,this.h+100,
-            16,13
-            );
     //desenha as vidas
     var posCoracao = 12;
     for(var i = 0; i < this.pc.vidas; i++){
         ctx.drawImage(this.assets.img("heart"),
-            posCoracao,this.h+86,
+            posCoracao,this.h-100,
             16,13
             );
         posCoracao = posCoracao + 16;
@@ -485,24 +466,15 @@ Scene.prototype.desenharHUD = function() {
             16,13
             );
         posCoracao = posCoracao + 16;
-    }
-
+    }*/
+    
     //desenha a caixa de dialogo
     var imgX = 2;
     var imgY = 7;
-    this.desenharCaixaDialogo(imgX,imgY);
+    //this.desenharCaixaDialogo(imgX,imgY);
     var imgX = 1;
     this.desenharCaixaDialogo2(imgX,imgY);
-    ctx.font = "10px Arial";
-    ctx.fillStyle = "black";
-    if(this.dialogo.includes("_")){
-        var dialogos = this.dialogo.split("_");
-        for(var i = 0; i < dialogos.length; i++){
-            ctx.fillText(dialogos[i],16,this.h+20 + i*12);
-        }
-    } else{
-        ctx.fillText(this.dialogo,16,this.h+20);
-    }
+    this.desenharInventory(this.inventoryItem)
 }
 
 Scene.prototype.desenharCaixaDialogo = function (imgX,imgY) {
@@ -517,7 +489,7 @@ Scene.prototype.desenharCaixaDialogo = function (imgX,imgY) {
             32,
             32,
             i*16,
-            this.h + j*16,
+            this.h -100 + j*16,
             16,
             16,
             );
@@ -529,7 +501,7 @@ Scene.prototype.desenharCaixaDialogo = function (imgX,imgY) {
         32,
         32,
         i*16,
-        this.h + 48,
+        this.h -100 + 48,
         16,
         16,
         );
@@ -545,7 +517,7 @@ Scene.prototype.desenharCaixaDialogo = function (imgX,imgY) {
             32,
             32,
             this.w-16,
-            this.h + i*16,
+            this.h -100 + i*16,
             16,
             16,
             );
@@ -559,7 +531,7 @@ Scene.prototype.desenharCaixaDialogo = function (imgX,imgY) {
             32,
             32,
             this.w -16,
-            this.h+48,
+            this.h-100 +48,
             16,
             16,
             );
@@ -578,8 +550,8 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
         96*imgY + 32*pY,
         32,
         32,
-        0,
-        this.h,
+        0+24,
+        this.h-100,
         16,
         16,
     );
@@ -592,8 +564,8 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
         96*imgY + 32*pY,
         32,
         32,
-        0,
-        this.h+48,
+        24,
+        this.h-100+48,
         16,
         16,
     );
@@ -607,15 +579,15 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
         96*imgY + 32*pY,
         32,
         32,
-        this.w-16,
-        this.h,
+        72,
+        this.h-100,
         16,
         16,
     );
 
 
     pX = 1
-    for (var i = 1; i < 23; i ++) {
+    for (var i = 1; i < 3; i ++) {
         
         ctx.drawImage(
         this.assets.img("hud"),
@@ -623,8 +595,8 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
         96*imgY + 32*pY,
         32,
         32,
-        i*16,
-        this.h,
+        i*16 + 24,
+        this.h-100,
         16,
         16,
         );
@@ -635,8 +607,8 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
         96*imgY + 32*(pY+2),
         32,
         32,
-        i*16,
-        this.h + 48,
+        i*16 +24,
+        this.h -100+ 48,
         16,
         16,
         );
@@ -651,8 +623,8 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
             96*imgY + 32*(pY),
             32,
             32,
-            this.w-16,
-            this.h + i*16,
+            72,
+            this.h-100 + i*16,
             16,
             16,
             );
@@ -661,10 +633,10 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
             this.assets.img("hud"),
             96*imgX + 32*(pX),
             96*imgY + 32*(pY),
+            56,
             32,
-            32,
-            0,
-            this.h + i*16,
+            24,
+            this.h-100 + i*16,
             16,
             16,
             );
@@ -677,11 +649,27 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
             96*imgY + 32*(pY),
             32,
             32,
-            this.w -16,
-            this.h+48,
+            72,
+            this.h-100+48,
             16,
             16,
             );
+}
+
+Scene.prototype.desenharInventory = function(item) {
+    if(this.inventoryItem) {
+        ctx.drawImage(
+            this.assets.img(item.imagem),
+            0,
+            0,
+            32,
+            32,
+            32,
+            this.h-90,
+            48,
+            48,
+        );
+    }
 }
 
 Scene.prototype.updateCameraPosition = function() {
@@ -721,7 +709,7 @@ Scene.prototype.passo = function(dt){
         this.desenhar();
         this.checaColisao();
         this.removeSprites();
-        //this.desenharHUD();
+        this.desenharHUD();
     }
     if(this.theEnd >= 10 && this.theEnd < 60){
       this.theEnd-= 8*dt;
