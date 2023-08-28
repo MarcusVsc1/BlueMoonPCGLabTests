@@ -6,17 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Moon</title>
     <style>
-      @font-face {
-        font-family: Medieval;
-        src: url("font/OldeEnglish.ttf");
+        @font-face {
+            font-family: Medieval;
+            src: url("font/OldeEnglish.ttf");
         }
-      canvas {
-          padding-left: 0;
-          padding-right: 0;
-          margin-left: auto;
-          margin-right: auto;
-          display: block;
-      }
+
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
     </style>
     <script src="Sprite.js"></script>
     <script src="Scene.js"></script>
@@ -27,6 +28,7 @@
     <script src="DungeonGenerator.js"></script>
     <script src="model/Graph.js"></script>
     <script src="model/Room.js"></script>
+    <script src="utils/DrawingUtils.js"></script>
 </head>
 
 <body style="background-color: black">
@@ -36,7 +38,6 @@
         assetsMng.loadImage("hero", "assets/hero.png");
         assetsMng.loadImage("hud", "assets/hud.png");
         assetsMng.loadImage("bluemoon", "assets/bluemoon.png");
-        assetsMng.loadImage("moon", "assets/moon.png");
         assetsMng.loadImage("mana", "assets/mana.png");
         assetsMng.loadImage("bruxa", "assets/bruxa.png");
         assetsMng.loadImage("heart", "assets/heart.png");
@@ -46,13 +47,13 @@
         assetsMng.loadImage("object", "assets/object.png");
         assetsMng.loadImage("cenario", "assets/cenario.png");
         assetsMng.loadImage("monster", "assets/monster.png");
-        assetsMng.loadImage("bigboss", "assets/bigboss.png");
-        assetsMng.loadImage("bigboss2", "assets/bigboss2.png");
         assetsMng.loadImage("expressoes", "assets/expressoes.png");
         assetsMng.loadImage("explosion", "assets/explosion.png");
         assetsMng.loadAudio("explosion", "assets/explosion.mp3");
         assetsMng.loadImage("sword", "assets/sword.png");
         assetsMng.loadImage("crystal", "assets/crystal.png");
+        assetsMng.loadImage("key_0", "assets/key_0.png");
+        assetsMng.loadImage("key_1", "assets/key_1.png");
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
         assetsMng.loadAudio("sword", "assets/sword.ogg");
         assetsMng.loadAudio("sword2", "assets/sword2.ogg");
@@ -69,80 +70,66 @@
         assetsMng.loadAudio("castelo", "assets/tema1.mp3")
 
         var canvas = document.querySelector("canvas");
-        canvas.width = 1600;
-        canvas.height = 1600
+        canvas.width = 1080;
+        canvas.height = 600
         var ctx = canvas.getContext("2d");
         var teclas = {
             esquerda: 0,
             cima: 0,
             direita: 0,
             baixo: 0,
-            fireball: 0,
             espada: 0,
         }
-        
-        var pc = new Sprite({ x: canvas.width/2, y: canvas.height/2, w: 12, h: 12, imgX:0, imgY:0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" }});
+
+        var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 
         var gerenciador = new GameManager(pc);
 
+        const farthestRooms = gerenciador.dungeonGenerator.graph.findFarthestRooms()
+        var posicao = this.calcularPosicaoMedia(farthestRooms[0].cells) 
 
-        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador,});
+        pc.x = posicao.x * 32
+        pc.y = posicao.y * 32
+
+        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador, });
         cena1.adicionar(pc);
-        
+
         function porTeclasDirecionais(teclas) {
             return function () {
-                if(this.charStop <= 0){
-            	if (teclas.esquerda) { 
-                	this.vx = -this.standardSpd; 
-                	this.direcao = 1;
-                }
-                if (teclas.direita) { 
-                	this.vx = +this.standardSpd;
-                	this.direcao = 2;
-                	}
-                if (teclas.esquerda === teclas.direita) { this.vx = 0; }
-                if (teclas.cima) { 
-                	this.vy = -this.standardSpd;
-                	this.direcao = 3;
-                 }
-                if (teclas.baixo) { 
-                	this.vy = +this.standardSpd;
-                	this.direcao = 0;
-                	 }
-                if (teclas.cima === teclas.baixo) { this.vy = 0; }
-                if (teclas.espada && this.swCD <= 0 && this.globalCD <= 0) {
-                    var tiro = new Sprite({
-                        x: this.x, y: this.y,
-                        imagem: "object", direcao: this.direcao,
-                        vm: 0, w: 12, h: 12, imgX: 3, imgY: 1, imune: 0,
-                        props: { tipo: "tiro", modelo: "espada" }, desenhar: desenhaEspada, mover: moverEspada, pc: this
-                    });
-                    this.charStop = 0.2;
-                    this.scene.adicionar(tiro);
-                    this.swCD = 0.5;
-                    this.globalCD = 0.2;
-                    assetsMng.play("sword");
-                }
-
-                if (teclas.fireball && this.spCD <= 0 && this.globalCD <= 0) {
-                    if(this.mana > 0){
-                    var tiro = new Sprite({
-                        x: this.x, y: this.y,
-                        imagem: "flame", direcao: this.direcao,
-                        vm: 140, w: 12, h: 12, imgX: 0, imgY: 1, imune: 0,
-                        props: { tipo: "tiro", modelo: "fireball" }, desenhar: desenhaTiro, mover: moverTiro,
-                    });
-                    this.scene.adicionar(tiro);
-                    assetsMng.play("shot");
-                    this.mana--;
-                    this.spCD = 2;
+                if (this.charStop <= 0) {
+                    if (teclas.esquerda) {
+                        this.vx = -this.standardSpd;
+                        this.direcao = 1;
+                    }
+                    if (teclas.direita) {
+                        this.vx = +this.standardSpd;
+                        this.direcao = 2;
+                    }
+                    if (teclas.esquerda === teclas.direita) { this.vx = 0; }
+                    if (teclas.cima) {
+                        this.vy = -this.standardSpd;
+                        this.direcao = 3;
+                    }
+                    if (teclas.baixo) {
+                        this.vy = +this.standardSpd;
+                        this.direcao = 0;
+                    }
+                    if (teclas.cima === teclas.baixo) { this.vy = 0; }
+                    if (teclas.espada && this.swCD <= 0 && this.globalCD <= 0) {
+                        var tiro = new Sprite({
+                            x: this.x, y: this.y,
+                            imagem: "object", direcao: this.direcao,
+                            vm: 0, w: 12, h: 12, imgX: 3, imgY: 1, imune: 0,
+                            props: { tipo: "tiro", modelo: "espada" }, desenhar: desenhaEspada, mover: moverEspada, pc: this
+                        });
+                        this.charStop = 0.2;
+                        this.scene.adicionar(tiro);
+                        this.swCD = 0.5;
+                        this.globalCD = 0.2;
+                        assetsMng.play("sword");
                     }
 
-                    this.globalCD = 0.2;
-                    this.charStop = 0.3;
                 }
-            
-            }
             }
         }
 
@@ -150,115 +137,39 @@
             return function () {
                 this.vx = this.vm * Math.sign(alvo.x - this.x);
                 this.vy = this.vm * Math.sign(alvo.y - this.y);
-                
-                if(this.y < alvo.y + alvo.h/2) {this.direcao = 0}
-                else{if(this.y > alvo.y - alvo.h/2){this.direcao = 3}
-                }     
+
+                if (this.y < alvo.y + alvo.h / 2) { this.direcao = 0 }
+                else {
+                    if (this.y > alvo.y - alvo.h / 2) { this.direcao = 3 }
+                }
             }
         }
 
         //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
         function moverTiro() {
-            
-        	this.frame += 8*dt;
-        	this.vx, this.vy = 0
-        	switch(this.direcao){
-        		case 0:
-        			this.vy = this.vm;
-        			break;
-        		case 1:
-        			this.vx = -1*this.vm;
-        			break;
-        		case 2:
-        			this.vx = this.vm;
-        			break;
-        		case 3:
-        			this.vy = -1*this.vm;
-        			break;
-        	}
-     		this.x = this.x + this.vx*dt;
- 		    this.y = this.y + this.vy*dt;
-        }
 
-        function desenhaDisp(){
-        	ctx.save();
-	    	ctx.translate(this.x, this.y);  
-		    var F = Math.floor(this.frame);
-		    ctx.drawImage(
-	        this.scene.assets.img(this.imagem),
-	        144*this.imgX + (F%3)*48,
-	        192*this.imgY + this.direcao*48 + 1,
-	        48,
-	        48,
-	        -this.w+5,
-	        -this.h,
-	        30,
-	        30,
-		    );
-
-		    ctx.restore();
-        }
-
-        function desenhaTiro(){
-            ctx.save();
-            ctx.translate(this.x, this.y);  
-            var F = Math.floor(this.frame);
-            ctx.drawImage(
-            this.scene.assets.img(this.imagem),
-            144*this.imgX + (F%3)*48,
-            192*this.imgY + this.direcao*48 + 1,
-            48,
-            48,
-            -this.w-4 - cena1.cameraX,
-            -this.h/2-15 - cena1.cameraY,
-            30,
-            30,
-            );
-
-            ctx.restore();
-        }
-
-        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
-        function desenhaEspada(){
-            ctx.save();
-            /*ctx.fillStyle = "midnightblue";
-            ctx.fillRect(this.x,this.y,this.w,this.h);
-            ctx.strokeStyle = "black";
-            ctx.strokeRect(this.x,this.y,this.w,this.h);*/
-            var posX = this.x;
-            var posY = this.y;
+            this.frame += 8 * dt;
+            this.vx, this.vy = 0
             switch (this.direcao) {
                 case 0:
-                    posX = posX + 8;
-                    posY = posY - 9;
+                    this.vy = this.vm;
                     break;
                 case 1:
-                    posX = posX + 7.7;
+                    this.vx = -1 * this.vm;
+                    break;
+                case 2:
+                    this.vx = this.vm;
                     break;
                 case 3:
-                    posY = posY + 5;
-                    posX = posX + 2;
+                    this.vy = -1 * this.vm;
                     break;
             }
-            ctx.translate(posX, posY);  
-            var F = Math.floor(this.frame);
-            ctx.drawImage(
-            this.scene.assets.img(this.imagem),
-            144*this.imgX,
-            192*this.imgY + this.direcao*48 - 1,
-            48,
-            48,
-            -this.w - cena1.cameraX,
-            -this.h/2 - cena1.cameraY,
-            25,
-            25,
-            );
-
-            ctx.restore();
+            this.x = this.x + this.vx * dt;
+            this.y = this.y + this.vy * dt;
         }
-
+      
         //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
-        function moverEspada(){
+        function moverEspada() {
             switch (this.direcao) {
                 case 0:
                     this.y = this.pc.y + 10;
@@ -273,34 +184,16 @@
                     this.y = this.pc.y - this.h;
                     break;
                 case 3:
-                    this.y = this.pc.y - this.h*2.5;
+                    this.y = this.pc.y - this.h * 2.5;
                     this.x = this.pc.x - 5;
                     break;
             }
-            this.frame = this. frame + 20*dt;
-            if(Math.floor(this.frame) > 4.2){
+            this.frame = this.frame + 20 * dt;
+            if (Math.floor(this.frame) > 4.2) {
                 this.scene.toRemove.push(this);
             }
         }
 
-        function atirarFireball() {
-            //console.log("foi")
-            if(this.globalCD <= 0){
-                this.scene.adicionar(criarFireball(0,"tiroE", this.direcao, this.x, this.y))
-                this.globalCD = 1.5;
-            }
-        }
-
-        function criarFireball (numero, atira, direct, pX, pY) {
-            var tiro = new Sprite({
-                        x: pX, y: pY,
-                        imagem: "flame", direcao: direct,
-                        vm: 140, w: 12, h: 12, imgX: 1, imgY: 1, imune: 0,
-                        props: { tipo: atira, modelo: "fireball", objeto: numero }, desenhar: desenhaTiro, mover: moverTiro,
-                    });
-            assetsMng.play("shot");
-            return tiro;
-        }
 
         function moverObjeto() {
             this.spCD = this.spCD - dt;
@@ -309,240 +202,115 @@
         }
 
         function moverRocha() {
-            this.frame += 8*dt;
+            this.frame += 8 * dt;
             this.vx, this.vy = 0;
             this.vm = this.vm + 0.8;
-            switch(this.direcao){
+            switch (this.direcao) {
                 case 0:
                     this.vy = this.vm;
                     break;
                 case 1:
-                    this.vx = -1*this.vm;
+                    this.vx = -1 * this.vm;
                     break;
                 case 2:
                     this.vx = this.vm;
                     break;
                 case 3:
-                    this.vy = -1*this.vm;
+                    this.vy = -1 * this.vm;
                     break;
             }
-            this.x = this.x + this.vx*dt;
-            this.y = this.y + this.vy*dt;
+            this.x = this.x + this.vx * dt;
+            this.y = this.y + this.vy * dt;
         }
 
-        function atirarRochas () {
-            if(this.globalCD <= 0){
+        function atirarRochas() {
+            if (this.globalCD <= 0) {
                 this.charStop = 0.2;
                 var tiro = new Sprite({
-                        x: this.x, y: this.y,
-                        imagem: "object", direcao: this.direcao,
-                        vm: 15, w: 12, h: 12, imgX: 0, imgY: 0, imune: 0,
-                        props: { tipo: "tiroE", modelo: "rocha" }, desenhar: desenhaTiro, mover: moverRocha,
-                    });
+                    x: this.x, y: this.y,
+                    imagem: "object", direcao: this.direcao,
+                    vm: 15, w: 12, h: 12, imgX: 0, imgY: 0, imune: 0,
+                    props: { tipo: "tiroE", modelo: "rocha" }, desenhar: desenhaTiro, mover: moverRocha,
+                });
                 this.scene.adicionar(tiro);
                 assetsMng.play("earth");
                 this.globalCD = 4;
             }
         }
 
-        //desenha o chefe 1. necessário pelo tamanho e pelo esquema da imagem do chefe, que são diferentes dos outros sprites
-        function desenharChefe (ctx) {
-
-            ctx.save();
-            ctx.fillStyle = "midnightblue";
-
-
-            ctx.translate(this.x, this.y);
-            if(this.imune > 0 && this.atingido <= 0){
-              ctx.globalAlpha = 0.5*Math.cos(60*this.imune);
-            }
-
-
-            
-            var F = Math.floor(this.frame);
-            if(this.charStop > 0) {F = 0;}
-            if(this.vx == 0 && this.vy == 0) {F = 0;}
-            ctx.drawImage(
-                this.scene.assets.img(this.imagem),
-                (F%3)*96,
-                96*this.imgY,
-                96,
-                96,
-                -this.w-2,
-                -this.h-12,
-                48,
-                48,
-            );
-
-            ctx.restore();
-            ctx.globalAlpha = 1.0;
-            
-        };
-
-        //comportamento do chefe 1
-        function atirarRochas2 () {
-            
-            if(this.spCD <= 0 && this.globalCD <= 0){
-                var tiro = new Sprite({
-                        x: this.x, y: this.y,
-                        imagem: "object", direcao: 0,
-                        vm: 15, w: 12, h: 12, imgX: 0, imgY: 0, imune: 0,
-                        props: { tipo: "tiroE", modelo: "rocha" }, desenhar: desenhaTiro, mover: moverRocha,
-                    });
-                this.scene.adicionar(tiro);
-                assetsMng.play("earth");
-                this.spCD = 0.3;
-                this.rockCount++;
-                if(this.rockCount == 7){
-                    this.globalCD = this.baseCD;
-                    this.rockCount = 0;
-                }
-            }
-        }
-
-        //movimento do chefe 1
-        function moverChefe(dt) {
-            if(this.imune > 0) {
-                this.imune = this.imune - 1*dt;
-            }
-            
-            this.mc = (this.x / this.scene.map.SIZE);
-            if(this.mc >= 10.4 || this.mc <= 1.6){
-                this.vx = this.vx * -1
-            }
-            this.x = this.x + this.vx*this.vm*dt;
-            this.spCD = this.spCD - dt;
-            this.globalCD = this.globalCD - dt;
-            this.frame += 8*dt;
-
-            if(this.vidas == 10) {
-                this.imagem = "bigboss2";
-                this.vm = 75;
-                this.baseCD = 1.6;
-                this.scene.dialogo = "\"UAAAAAAHHHHHHH!!!!!_ Vou te derrotar!!!\""
-            }
-        }
-
         //cria uma caveira, comportamento do necromante
-        function necromancia () {
+        function necromancia() {
             if (this.globalCD <= 0) {
                 this.globalCD = 3.5;
                 this.scene.assets.play("darkness");
-                cena1.adicionar(new Sprite({ x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random()*11, imgX:1, imgY:1, 
-                imagem: "monster", comportar: persegue(pc), props: { tipo: "npc" }}))
+                cena1.adicionar(new Sprite({
+                    x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 1, imgY: 1,
+                    imagem: "monster", comportar: persegue(pc), props: { tipo: "npc" }
+                }))
             }
         }
 
-        function moverBruxa(){
-            if(this.imune > 0) {
-                this.imune = this.imune - 1*dt;
+        function moverBruxa() {
+            if (this.imune > 0) {
+                this.imune = this.imune - 1 * dt;
             }
-            
+
             this.mc = (this.x / this.scene.map.SIZE);
-            if(this.mc >= 10.4 || this.mc <= 1.6){
+            if (this.mc >= 10.4 || this.mc <= 1.6) {
                 this.vx = this.vx * -1
             }
-            this.x = this.x + this.vx*this.vm*dt;
+            this.x = this.x + this.vx * this.vm * dt;
             this.spCD = this.spCD - dt;
             this.globalCD = this.globalCD - dt;
-            this.frame += 8*dt;
+            this.frame += 8 * dt;
 
-            if(this.vidas == 20)  {
+            if (this.vidas == 20) {
                 this.scene.dialogo = "\nQual o problema dessa garota?!\""
             }
-            if(this.vidas == 5){
-                this.scene.dialogo = "\nEla conseguiu quebrar minha barreira!..._"+
-                "Preciso me recompor!\""
+            if (this.vidas == 5) {
+                this.scene.dialogo = "\nEla conseguiu quebrar minha barreira!..._" +
+                    "Preciso me recompor!\""
                 this.mover = pc.mover;
                 this.comportar = persegue(cena1.spritesTP[0]);
-            }
-        }
-        //comportamento da fase 1 da bruxa, que cria fantasmas
-        function bruxaria() {
-            if (this.globalCD <= 0) {
-                this.scene.assets.play("darkness");
-                cena1.adicionar(new Sprite({ x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random()*11, imgX:2, imgY:1, 
-                imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc" }}))
-                this.globalCD = 1.5 + Math.random() * 2;
-            }
-        }
-
-        //comportamento da fase 2 da bruxa
-        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
-        function bruxaria2() {
-            if(this.x < pc.x && this.y > pc.y) {this.direcao = 2;}
-            if(this.x > pc.x && this.y > pc.y) {this.direcao = 3;}
-            if(this.x > pc.x && this.y < pc.y) {this.direcao = 1;}
-            if(this.x < pc.x && this.y < pc.y) {this.direcao = 0;}
-
-            if(this.spCD <= 0 && this.globalCD <= 0){
-                if(this.mod%2 == 0){
-                    var aX =  pc.x - this.x;
-                    var aY =  pc.y - this.y;
-                    var angulo = Math.atan2(aY, aX)
-
-                    var tiro = new Sprite({
-                            x: this.x, y: this.y,
-                            imagem: "flame", direcao: 0,
-                            vm: 35, w: 12, h: 12, imgX: 1, imgY: 1, vx: 1, vy: 1, imune: 0, mover: moverCircular, a: angulo,
-                            props: { tipo: "tiroE", modelo: "fireball" }, desenhar: desenhaTiro, atravessa: 1
-                        });
-                    this.scene.adicionar(tiro);
-                    assetsMng.play("shot");
-                } else {
-                    this.scene.assets.play("darkness");
-                    cena1.adicionar(new Sprite({ x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random()*11, imgX:2, imgY:1, 
-                    imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc" }}))
-                    this.globalCD = 0.5 + Math.random() * 1.2;
-                }
-                this.spCD = 0.3;
-                this.fireCount++;
-                if(this.fireCount == 6){
-                        this.globalCD = this.baseCD;
-                        this.fireCount = 0;
-                        this.mod++;
-                    }
             }
         }
 
         function moverCircular() {
             this.a = this.a + this.va * dt;
-            this.frame += 8*dt;
+            this.frame += 8 * dt;
             this.vx = this.vm * Math.cos(this.a);
             this.vy = this.vm * Math.sin(this.a);
-            this.vm = this.vm+1.2;
+            this.vm = this.vm + 1.2;
             this.x = this.x + this.vx * dt;
             this.y = this.y + this.vy * dt;
 
             this.spCD = this.spCD - dt;
             this.swCD = this.swCD - dt;
             this.globalCD = this.globalCD - dt;
-            
+
         }
 
         function persegue2(alvo) {
             return function () {
-                this.vx = this.vm * Math.sign(alvo.x - this.x) - Math.sqrt(this.vm)*2; 
-                this.vy = this.vm * Math.sign(alvo.y - this.y) - Math.sqrt(this.vm)*2;
+                this.vx = this.vm * Math.sign(alvo.x - this.x) - Math.sqrt(this.vm) * 2;
+                this.vy = this.vm * Math.sign(alvo.y - this.y) - Math.sqrt(this.vm) * 2;
                 this.vm = this.vm + 0.5;
 
-                if(Math.floor(this.frame) > 20){
-                    this.scene.adicionar(new Animation({x: this.x, y:this.y, imagem: "explosion"}));
+                if (Math.floor(this.frame) > 20) {
+                    this.scene.adicionar(new Animation({ x: this.x, y: this.y, imagem: "explosion" }));
                     this.scene.assets.play("explosion");
                     this.scene.toRemove.push(this);
                 }
-                
-                if(this.y < alvo.y + alvo.h/2) {this.direcao = 0}
-                else{if(this.y > alvo.y - alvo.h/2){this.direcao = 3}
-                }     
+
+                if (this.y < alvo.y + alvo.h / 2) { this.direcao = 0 }
+                else {
+                    if (this.y > alvo.y - alvo.h / 2) { this.direcao = 3 }
+                }
             }
         }
 
         addEventListener("keydown", function (e) {
             switch (e.keyCode) {
-                case 74:
-                    teclas.fireball = 1;
-                    break;
                 case 75:
                     teclas.espada = 1;
                     break;
@@ -562,9 +330,6 @@
         });
         addEventListener("keyup", function (e) {
             switch (e.keyCode) {
-                case 74:
-                    teclas.fireball = 0;
-                    break;
                 case 75:
                     teclas.espada = 0;
                     break;
@@ -583,19 +348,19 @@
             }
         });
         var keyPressed = {};
-        addEventListener('keydown', function(e) {
-         
-        keyPressed[e.key + e.location] = true;
+        addEventListener('keydown', function (e) {
 
-        if(keyPressed.Shift1 == true && keyPressed.Control1 == true){
-            pc.atravessa = 1; 
-        }
+            keyPressed[e.key + e.location] = true;
+
+            if (keyPressed.Shift1 == true && keyPressed.Control1 == true) {
+                pc.atravessa = 1;
+            }
 
         }, false);
 
         function passo(t) {
             dt = (t - anterior) / 1000;
-            if(assetsMng.progresso()===100){
+            if (assetsMng.progresso() === 100) {
                 cena1.passo(dt);
             }
             anterior = t;
@@ -603,37 +368,52 @@
             ctx.font = "10px Arial";
             requestAnimationFrame(passo);
         }
-        
+
         var dt, anterior = 0;
         requestAnimationFrame(passo);
 
         function desenharCelulas(cells, fillStyle) {
             ctx.fillStyle = fillStyle;
             cells.forEach(element => {
-                ctx.fillRect(element.x*32 - cena1.cameraX, element.y*32 - cena1.cameraY, 32, 32);
+                ctx.fillRect(element.x * 32 - cena1.cameraX, element.y * 32 - cena1.cameraY, 32, 32);
             });
         }
 
-        function addNodeToExtras(idx){
+        function addNodeToExtras(idx) {
             console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
-            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells) 
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
         }
 
-        function addCorridorToExtras(idx){
-            edge = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx})[0]
+        function addCorridorToExtras(idx) {
+            edge = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })[0]
             console.log(edge.cells)
-            cena1.extras.push(...edge.cells) 
+            cena1.extras.push(...edge.cells)
         }
 
-        function removeSceneExtras(idx){
+        function removeSceneExtras(idx) {
             let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
             cena1.extras.forEach(extra => {
                 cells.forEach(pos => {
-                    if(extra.x == pos.x && extra.y == pos.y) {
+                    if (extra.x == pos.x && extra.y == pos.y) {
                         cena1.extras.splice(extra);
                     }
                 })
             });
+        }
+
+        function calcularPosicaoMedia(cells) {
+            let somaX = 0;
+            let somaY = 0;
+
+            for (const cell of cells) {
+                somaX += cell.x;
+                somaY += cell.y;
+            }
+
+            const mediaX = somaX / cells.length;
+            const mediaY = somaY / cells.length;
+
+            return { x: mediaX, y: mediaY };
         }
     </script>
 </body>

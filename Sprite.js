@@ -91,8 +91,6 @@ Sprite.prototype.mover = function (dt) {
     if (this.charStop <= 0 && this.atingido <= 0){
         if(this.ortogonal == 0){this.moverOrtogonal(dt);}
         else this.moverCircular(dt);
-        
-        
     } else {
         if(this.imune <= 0){this.frame += 8*dt;}
         if(this.charStop > 0){ this.charStop = this.charStop - 1*dt;}
