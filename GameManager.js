@@ -59,8 +59,6 @@ GameManager.prototype.criarEstagios = function(){
     var y = this.dungeonGenerator.mapGraph.adjacencyList[indiceAleatorio].cells[2].x
     dungeonCriada[x][y] = 10
 
-
-
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
         assets: assetsMng, m: dungeonCriada});
     console.log("Kruskal com sucesso")

@@ -144,18 +144,24 @@ function desenharPorta() {
 }
 
 function desenharColecionavel() {
+    const floatAmplitude = 3.8; // Amplitude do movimento de flutuação
+    const floatSpeed = 0.005; // Velocidade de flutuação
+
+    // Calcula a posição y com base na flutuação
+    const offsetY = floatAmplitude * Math.sin(floatSpeed * Date.now());
+
     ctx.save();
-    ctx.translate(this.x, this.y);
+    ctx.translate(this.x, this.y + offsetY); // Adiciona offsetY ao y
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
         this.spriteSize * this.imgX,
         0,
         this.spriteSize,
         this.spriteSize,
-        - this.w / 2 - cena1.cameraX,
-        - this.h / 2 - cena1.cameraY,
+        -this.w / 2 - cena1.cameraX,
+        -this.h / 2 - cena1.cameraY,
         24,
-        24,
+        24
     );
 
     ctx.restore();
