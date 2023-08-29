@@ -1128,7 +1128,7 @@ GameManager.prototype.criarChave = function (posX, posY, keyId) {
                 imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel" }});
 }
 
-//cria uma chave.
+//cria uma porta.
 GameManager.prototype.criarPorta = function (posX, posY, doorId) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:2, imgY:1, doorId: doorId,
                 imagem: "door_"+doorId, desenhar: desenharPorta, props: { tipo: "objeto", subtipo: "porta" }});

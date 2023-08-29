@@ -348,6 +348,7 @@ Scene.prototype.checaColisao = function(){
                         this.toRemove.push(this.spritesO[k])
                         this.toRemove.push(this.inventoryItem);
                         this.inventoryItem = null;
+                        this.assets.play("key");
                     }
                 }
             }
