@@ -331,16 +331,27 @@ Scene.prototype.checaColisao = function(){
         for (var j = 0; j < this.spritesT.length; j++){
             if(this.spritesT[j].colidiuCom(this.spritesO[k]) && this.spritesT[j].props.modelo == "espada" &&
              this.spritesO[k].swCD < 0){
-                if(this.inventoryItem) {
-                    this.inventoryItem.x = this.spritesO[k].x
-                    this.inventoryItem.y = this.spritesO[k].y
-                    this.spritesO.push(this.inventoryItem)
+                if(this.spritesO[k].props.subtipo == "colecionavel") {
+                    if(this.inventoryItem) {
+                        this.inventoryItem.x = this.spritesO[k].x
+                        this.inventoryItem.y = this.spritesO[k].y
+                        this.spritesO.push(this.inventoryItem)
+                    }
+                    this.toRemove.push(this.spritesO[k])
+                    this.inventoryItem = this.spritesO[k]
+                    this.assets.play("quest");
+                    this.spritesO[k].swCD = 0.6;
                 }
-                this.spritesO[k].swCD = 0.6;
-                this.toRemove.push(this.spritesO[k])
-                this.inventoryItem = this.spritesO[k]
-                this.assets.play("quest");
+                if(this.spritesO[k].props.subtipo == "porta") {
+                    if(this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId){
+                        this.map.cells[this.spritesO[k].posX][this.spritesO[k].posY].tipo = 4;
+                        this.toRemove.push(this.spritesO[k])
+                        this.toRemove.push(this.inventoryItem);
+                        this.inventoryItem = null;
+                    }
+                }
             }
+            
         }
     }
     if(this.pc.vidas == 0 && this.pc.atingido >0 ){

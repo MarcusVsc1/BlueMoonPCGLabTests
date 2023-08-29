@@ -149,10 +149,8 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     break;
                 case 10:
                 //barreira
-                    y = 2;
-                    x = 3;
-                    positionX = 0;
-                    positionY = 0;
+                    y = 0;
+                    x = 1;
                     break;
                 case 11:
                 // pe da parede de blocos

@@ -52,7 +52,13 @@ GameManager.prototype.criarEstagios = function(){
     console.profileEnd();
 
     console.timeEnd('createMap');
-    var contador = 0
+
+
+    const indiceAleatorio = Math.floor(Math.random() * this.dungeonGenerator.mapGraph.adjacencyList.length);
+    var x = this.dungeonGenerator.mapGraph.adjacencyList[indiceAleatorio].cells[2].y
+    var y = this.dungeonGenerator.mapGraph.adjacencyList[indiceAleatorio].cells[2].x
+    dungeonCriada[x][y] = 10
+
 
 
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
@@ -61,6 +67,9 @@ GameManager.prototype.criarEstagios = function(){
     
     spriteLista.push(this.criarChave(18, 18, 0));
     spriteLista.push(this.criarChave(18, 19, 1));
+    spriteLista.push(this.criarChave(19, 19, 2));
+    spriteLista.push(this.criarChave(19, 18, 3));
+    spriteLista.push(this.criarPorta(y, x, 3));
     //spriteLista.push(this.criarTeleporte(3.2,0.2,1.5,8.9,1));    
 
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
@@ -1116,5 +1125,11 @@ GameManager.prototype.criarEventador = function (posX, posY, event) {
 //cria uma chave.
 GameManager.prototype.criarChave = function (posX, posY, keyId) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
-                imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto" }});
+                imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel" }});
+}
+
+//cria uma chave.
+GameManager.prototype.criarPorta = function (posX, posY, doorId) {
+    return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:2, imgY:1, doorId: doorId,
+                imagem: "door_"+doorId, desenhar: desenharPorta, props: { tipo: "objeto", subtipo: "porta" }});
 }

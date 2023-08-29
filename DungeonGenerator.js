@@ -1,11 +1,11 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 100;
-        this.NUM_ROOMS = 40;
+        this.MAP_SIZE = 40;
+        this.NUM_ROOMS = 4;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
         this.BUFFER = 2;
-        this.graph = new Graph();
+        this.mapGraph = new Graph();
         this.toDebug = [];
     }
 
@@ -60,7 +60,7 @@ class DungeonGenerator {
             }
 
             const room = new Room(roomCells, roomHeight, roomWidth);
-            this.graph.addNode(room);
+            this.mapGraph.addNode(room);
             generatedRooms.push({ x, y, width: roomWidth, height: roomHeight, id: room.roomId });
         }
 
@@ -71,7 +71,7 @@ class DungeonGenerator {
     }
 
     postProcessing(map, width, height) {
-        this.graph.nodes.forEach(room => {
+        this.mapGraph.nodes.forEach(room => {
             this.fillRoomInteriorWithEmpty(room.cells, map, width, height);
         });
         this.addWalls(height, width, map);
@@ -203,7 +203,7 @@ class DungeonGenerator {
 
     corridorPassesByRoom(corridor, map, roomA, roomB) {
         for (const cell of corridor) {
-            for (const room of this.graph.nodes) {
+            for (const room of this.mapGraph.nodes) {
                 if (room.roomId != roomA.roomId && room.roomId != roomB.roomId) {
                     this.fillAdjacentCells(cell, room, map)
                 }
@@ -246,13 +246,13 @@ class DungeonGenerator {
 
     kruskal(map) {
         let possibleEdges = []
-        for (let i = 0; i < this.graph.nodes.length; i++) {
-            var generatedRoom = this.graph.nodes[i]
+        for (let i = 0; i < this.mapGraph.nodes.length; i++) {
+            var generatedRoom = this.mapGraph.nodes[i]
             let roomEdges = []
-            for (let j = 0; j < this.graph.nodes.length; j++) {
-                const otherRoom = this.graph.nodes[j];
-                if (generatedRoom !== otherRoom && this.graph.countEdges(otherRoom) < this.graph.MAX_EDGES_PER_ROOM) {
-                    const distanceInfos = this.graph.getClosestCellsAndDistances(generatedRoom, otherRoom);
+            for (let j = 0; j < this.mapGraph.nodes.length; j++) {
+                const otherRoom = this.mapGraph.nodes[j];
+                if (generatedRoom !== otherRoom && this.mapGraph.countEdges(otherRoom) < this.mapGraph.MAX_EDGES_PER_ROOM) {
+                    const distanceInfos = this.mapGraph.getClosestCellsAndDistances(generatedRoom, otherRoom);
                     roomEdges.push({ distanceInfos: distanceInfos, fromRoom: generatedRoom.roomId, toRoom: otherRoom.roomId })
                 }
             }
@@ -264,9 +264,9 @@ class DungeonGenerator {
 
         for (var i = 0; i < possibleEdges.length; i++) {
             var edge = possibleEdges[i]
-            const roomA = this.graph.getNodeById(edge.fromRoom);
-            const roomB = this.graph.getNodeById(edge.toRoom);
-            if (!this.graph.areNodesConnected(roomA, roomB) && !(this.graph.hasEdge(roomA, roomB))) {
+            const roomA = this.mapGraph.getNodeById(edge.fromRoom);
+            const roomB = this.mapGraph.getNodeById(edge.toRoom);
+            if (!this.mapGraph.areNodesConnected(roomA, roomB) && !(this.mapGraph.hasEdge(roomA, roomB))) {
                 for (var j = 0; j < edge.distanceInfos.length; j++) {
                     var distanceInfo = edge.distanceInfos[j]
                     const cellA = {
@@ -286,16 +286,16 @@ class DungeonGenerator {
                         roomB.unavailableCells.push(... this.findNeighborCells(cellB, 3))
                         roomB.addTerminalCell(cellB)
                         this.fillCorridor(corridor, map)
-                        this.graph.addEdge(roomA, roomB, corridor)
+                        this.mapGraph.addEdge(roomA, roomB, corridor)
                         this.corridorPassesByRoom([...corridor], map, roomA, roomB);
                         break;
                     }
                 }
             }
         }
-        for (var node of this.graph.nodes) {
-            for (var otherNode of this.graph.nodes) {
-                if (node != otherNode && !this.graph.areNodesConnected(node, otherNode)) {
+        for (var node of this.mapGraph.nodes) {
+            for (var otherNode of this.mapGraph.nodes) {
+                if (node != otherNode && !this.mapGraph.areNodesConnected(node, otherNode)) {
                     return false;
                 }
             }

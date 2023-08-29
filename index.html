@@ -54,6 +54,12 @@
         assetsMng.loadImage("crystal", "assets/crystal.png");
         assetsMng.loadImage("key_0", "assets/key_0.png");
         assetsMng.loadImage("key_1", "assets/key_1.png");
+        assetsMng.loadImage("key_2", "assets/key_2.png");
+        assetsMng.loadImage("key_3", "assets/key_3.png");
+        assetsMng.loadImage("door_0", "assets/door_0.png");
+        assetsMng.loadImage("door_1", "assets/door_1.png");
+        assetsMng.loadImage("door_2", "assets/door_2.png");
+        assetsMng.loadImage("door_3", "assets/door_3.png");
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
         assetsMng.loadAudio("sword", "assets/sword.ogg");
         assetsMng.loadAudio("sword2", "assets/sword2.ogg");
@@ -85,7 +91,7 @@
 
         var gerenciador = new GameManager(pc);
 
-        const farthestRooms = gerenciador.dungeonGenerator.graph.findFarthestRooms()
+        const farthestRooms = gerenciador.dungeonGenerator.mapGraph.findFarthestRooms()
         var posicao = this.calcularPosicaoMedia(farthestRooms[0].cells) 
 
         pc.x = posicao.x * 32
@@ -385,13 +391,13 @@
         }
 
         function addCorridorToExtras(idx) {
-            edge = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })[0]
+            edge = cena1.gamer.dungeonGenerator.mapGraph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })[0]
             console.log(edge.cells)
             cena1.extras.push(...edge.cells)
         }
 
         function removeSceneExtras(idx) {
-            let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
+            let cells = cena1.gamer.dungeonGenerator.mapGraph.nodes[idx].cells;
             cena1.extras.forEach(extra => {
                 cells.forEach(pos => {
                     if (extra.x == pos.x && extra.y == pos.y) {

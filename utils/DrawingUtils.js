@@ -124,3 +124,21 @@ function desenharChave() {
 
     ctx.restore();
 }
+
+function desenharPorta() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.drawImage(
+        this.scene.assets.img(this.imagem),
+        96*this.imgX,
+        0,
+        32,
+        32,
+        - this.w/2 - cena1.cameraX,
+        - this.h/2 - cena1.cameraY,
+        32,
+        32,
+    );
+
+    ctx.restore();
+}
