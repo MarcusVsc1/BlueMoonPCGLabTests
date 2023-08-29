@@ -35,7 +35,8 @@ function Sprite(params = {}) {
         ortogonal: 0,
         cameraX: 0,
         cameraY: 0,
-        standardSpd: 300
+        standardSpd: 300,
+        lavaImmunity: false
     }
     Object.assign(this, exemplo, params);
 }
@@ -50,6 +51,7 @@ Sprite.prototype.desenhar = function (ctx) {
     if(this.imune > 0 && this.atingido <= 0){
       ctx.globalAlpha = 0.5*Math.cos(60*this.imune);
     }
+    if(this.lavaImmunity) {ctx.globalAlpha = 0.5}
     var d = this.direcao;
     var img = this.imagem;
     var picX = this.imgX;

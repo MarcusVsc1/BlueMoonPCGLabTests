@@ -360,7 +360,7 @@ Scene.prototype.checaColisao = function(){
     var playerPositionY = Math.floor(this.pc.y / 32);
     if(this.map.cells[playerPositionX][playerPositionY].tipo == 5){
         if(this.inventoryItem != null && this.inventoryItem.props.event == "lava") {
-            ctx.globalAlpha = 0.5
+            this.pc.lavaImmunity = true;
         } else {
             if(this.pc.imune <= 0){
                 this.pc.vidas--;
@@ -369,7 +369,7 @@ Scene.prototype.checaColisao = function(){
                 this.assets.play("damage");
             }
         }
-    }
+    } else {this.pc.lavaImmunity = false}
 
 
     if(this.pc.vidas == 0 && this.pc.atingido >0 ){
