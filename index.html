@@ -46,6 +46,7 @@
         assetsMng.loadImage("flame", "assets/flame.png");
         assetsMng.loadImage("object", "assets/object.png");
         assetsMng.loadImage("cenario", "assets/cenario.png");
+        assetsMng.loadImage("lava", "assets/lava.png");
         assetsMng.loadImage("monster", "assets/monster.png");
         assetsMng.loadImage("expressoes", "assets/expressoes.png");
         assetsMng.loadImage("explosion", "assets/explosion.png");
@@ -60,6 +61,7 @@
         assetsMng.loadImage("door_1", "assets/door_1.png");
         assetsMng.loadImage("door_2", "assets/door_2.png");
         assetsMng.loadImage("door_3", "assets/door_3.png");
+        assetsMng.loadImage("gear", "assets/gear.png");
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
         assetsMng.loadAudio("sword", "assets/sword.ogg");
         assetsMng.loadAudio("sword2", "assets/sword2.ogg");
@@ -387,8 +389,8 @@
         }
 
         function addNodeToExtras(idx) {
-            console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
-            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
+            console.log(cena1.gamer.dungeonGenerator.mapGraph.nodes[idx].cells)
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.mapGraph.nodes[idx].cells)
         }
 
         function addCorridorToExtras(idx) {

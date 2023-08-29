@@ -70,6 +70,7 @@ GameManager.prototype.criarEstagios = function(){
     spriteLista.push(this.criarChave(19, 19, 2));
     spriteLista.push(this.criarChave(19, 18, 3));
     spriteLista.push(this.criarPorta(y, x, 3));
+    spriteLista.push(this.criarBotaAntiLava(19, 20));
     //spriteLista.push(this.criarTeleporte(3.2,0.2,1.5,8.9,1));    
 
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
@@ -1124,7 +1125,7 @@ GameManager.prototype.criarEventador = function (posX, posY, event) {
 
 //cria uma chave.
 GameManager.prototype.criarChave = function (posX, posY, keyId) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
                 imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel" }});
 }
 
@@ -1132,4 +1133,9 @@ GameManager.prototype.criarChave = function (posX, posY, keyId) {
 GameManager.prototype.criarPorta = function (posX, posY, doorId) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:2, imgY:1, doorId: doorId,
                 imagem: "door_"+doorId, desenhar: desenharPorta, props: { tipo: "objeto", subtipo: "porta" }});
+}
+
+GameManager.prototype.criarBotaAntiLava = function (posX, posY) {
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 16, vm:0, imgX:17, imgY:0,
+                imagem: "gear", desenhar: desenharColecionavel, props: { tipo: "objeto", subtipo: "colecionavel", event: "lava" }});
 }

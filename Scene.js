@@ -355,6 +355,23 @@ Scene.prototype.checaColisao = function(){
             
         }
     }
+    //não exatamente colisão, mas verifica se a posição do jogador é em lava
+    var playerPositionX = Math.floor(this.pc.x / 32); 
+    var playerPositionY = Math.floor(this.pc.y / 32);
+    if(this.map.cells[playerPositionX][playerPositionY].tipo == 5){
+        if(this.inventoryItem != null && this.inventoryItem.props.event == "lava") {
+            ctx.globalAlpha = 0.5
+        } else {
+            if(this.pc.imune <= 0){
+                this.pc.vidas--;
+                this.pc.imune= 2;
+                this.pc.atingido = 0.3;
+                this.assets.play("damage");
+            }
+        }
+    }
+
+
     if(this.pc.vidas == 0 && this.pc.atingido >0 ){
         this.gamer.tema.pause();
     }
@@ -670,12 +687,13 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX,imgY) {
 
 Scene.prototype.desenharInventory = function(item) {
     if(this.inventoryItem) {
+        console.log(item.imagem)
         ctx.drawImage(
             this.assets.img(item.imagem),
+            item.spriteSize * item.imgX,
             0,
-            0,
-            32,
-            32,
+            item.spriteSize,
+            item.spriteSize,
             32,
             this.h-90,
             48,

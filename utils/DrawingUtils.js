@@ -109,15 +109,15 @@ function desenharChefe(ctx) {
 function desenharChave() {
     ctx.save();
     ctx.translate(this.x, this.y);
-    var F = Math.floor(this.frame)*2;
+    var F = Math.floor(this.frame) * 2;
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
-        (F % 24) * 32,
+        (F % 24) * this.spriteSize,
         0,
-        32,
-        32,
-        - this.w/2 - cena1.cameraX,
-        - this.h/2 - cena1.cameraY,
+        this.spriteSize,
+        this.spriteSize,
+        - this.w / 2 - cena1.cameraX,
+        - this.h / 2 - cena1.cameraY,
         32,
         32,
     );
@@ -130,14 +130,32 @@ function desenharPorta() {
     ctx.translate(this.x, this.y);
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
-        96*this.imgX,
+        96 * this.imgX,
         0,
         32,
         32,
-        - this.w/2 - cena1.cameraX,
-        - this.h/2 - cena1.cameraY,
+        - this.w / 2 - cena1.cameraX,
+        - this.h / 2 - cena1.cameraY,
         32,
         32,
+    );
+
+    ctx.restore();
+}
+
+function desenharColecionavel() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.drawImage(
+        this.scene.assets.img(this.imagem),
+        this.spriteSize * this.imgX,
+        0,
+        this.spriteSize,
+        this.spriteSize,
+        - this.w / 2 - cena1.cameraX,
+        - this.h / 2 - cena1.cameraY,
+        24,
+        24,
     );
 
     ctx.restore();

@@ -35,6 +35,7 @@ Grid.prototype.desenhar = function (ctx, scene) {
     var positionY = 0;
     for (var c = 0; c < this.COLUMNS; c++) {
         for (var l = 0; l < this.LINES; l++) {
+            var standardTileset = this.assets.img("cenario");
             //posicao de parede
             var positionX = 0;
             var positionY = 0;
@@ -70,6 +71,12 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     x = 1;
                     break;
                 //tapete
+                case 5:
+                    //lava
+                    y = 0;
+                    x = 0;
+                    standardTileset = this.assets.img("lava");
+                    break;
                 case 5.1:
                     x = 2;
                     y = 3;
@@ -127,11 +134,10 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     x = 5;
                     break;
                 case 7:
-                //buraco
-                    y = 3;
-                    x = 4;
-                    positionX = 1;
-                    positionY = 2;
+                //lava
+                    y = 0;
+                    x = 0;
+                    standardTileset = this.assets.img("lava");
                     break;
                 case 8:
                 //buraco sombreado
@@ -170,7 +176,7 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     cor = "black";
             }
             ctx.drawImage(
-            this.assets.img("cenario"),
+            standardTileset,
             x*24*4 + 24*positionX,
             y*36*4 + 24*positionY,
             48,

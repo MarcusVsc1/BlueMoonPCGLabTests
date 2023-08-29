@@ -75,6 +75,7 @@ class DungeonGenerator {
             this.fillRoomInteriorWithEmpty(room.cells, map, width, height);
         });
         this.addWalls(height, width, map);
+        this.fillRoomInteriorWithLava(this.mapGraph.nodes[0].cells, map, width, height);
     }
 
     addWalls(height, width, map) {
@@ -84,7 +85,7 @@ class DungeonGenerator {
                     if (x > 0 && map[y][x - 1] === 9) map[y][x - 1] = 6; // Left wall
                     if (x < width - 1 && map[y][x + 1] === 9) map[y][x + 1] = 6; // Right wall
                     if (y > 0 && map[y - 1][x] === 9) map[y - 1][x] = 6; // Top wall
-                    if (y < height - 1 && map[y + 1][x] === 9) map[y + 1][x] = 6;
+                    if (y < height - 1 && map[y + 1][x] === 9) map[y + 1][x] = 6; // Bottom Wall
                 }
             }
         }
@@ -197,6 +198,16 @@ class DungeonGenerator {
 
             if (x > 0 && x < width - 1 && y > 0 && y < height - 1 && map[y][x] == 4) {
                 map[y][x] = 0; // Empty tile
+            }
+        }
+    }
+
+    fillRoomInteriorWithLava(cells, map, width, height) {
+        for (const cell of cells) {
+            const { x, y } = cell;
+            console.log()
+            if (x > 0 && x < width - 1 && y > 0 && y < height - 1 && map[y][x] != 6) {
+                map[y][x] = 5; // Lava tile
             }
         }
     }
