@@ -230,8 +230,7 @@ Scene.prototype.checaColisao = function(){
             if(this.spritesT[j].y > this.h - this.spritesT[j].h - 8 || this.spritesT[j].y < 0
             || this.spritesT[j].x > this.w || this.spritesT[j].x < 0){
             this.toRemove.push(this.spritesT[j]);
-            }
-                        
+            }       
 
             //colisao tiro aliado com inimigo
             if(this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0){
@@ -331,26 +330,35 @@ Scene.prototype.checaColisao = function(){
         for (var j = 0; j < this.spritesT.length; j++){
             if(this.spritesT[j].colidiuCom(this.spritesO[k]) && this.spritesT[j].props.modelo == "espada" &&
              this.spritesO[k].swCD < 0){
-                if(this.spritesO[k].props.subtipo == "colecionavel") {
-                    if(this.inventoryItem) {
-                        this.inventoryItem.x = this.spritesO[k].x
-                        this.inventoryItem.y = this.spritesO[k].y
-                        this.spritesO.push(this.inventoryItem)
-                    }
-                    this.toRemove.push(this.spritesO[k])
-                    this.inventoryItem = this.spritesO[k]
-                    this.assets.play("quest");
-                    this.spritesO[k].swCD = 0.6;
-                }
-                if(this.spritesO[k].props.subtipo == "porta") {
-                    if(this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId){
-                        this.map.cells[this.spritesO[k].posX][this.spritesO[k].posY].tipo = 4;
+                switch(this.spritesO[k].props.subtipo){
+                    case 'colecionavel':
+                        if(this.inventoryItem) {
+                            this.inventoryItem.x = this.spritesO[k].x
+                            this.inventoryItem.y = this.spritesO[k].y
+                            this.spritesO.push(this.inventoryItem)
+                        }
                         this.toRemove.push(this.spritesO[k])
-                        this.toRemove.push(this.inventoryItem);
-                        this.inventoryItem = null;
-                        this.assets.play("key");
-                    }
+                        this.inventoryItem = this.spritesO[k]
+                        this.assets.play("quest");
+                        this.spritesO[k].swCD = 0.6;
+                        break;
+                    case 'porta':
+                        if(this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId){
+                            this.map.cells[this.spritesO[k].posX][this.spritesO[k].posY].tipo = 4;
+                            this.toRemove.push(this.spritesO[k])
+                            this.toRemove.push(this.inventoryItem);
+                            this.inventoryItem = null;
+                            this.assets.play("key");
+                        }
+                        break;
+                    case 'alavanca':
+                        this.spritesO[k].swCD = 0.6;
+                        this.assets.play("switchOn");
+                        this.spritesO[k].toggled = !this.spritesO[k].toggled;
+                        this.spritesO[k].event();
+                        break;
                 }
+
             }
             
         }
@@ -387,7 +395,7 @@ Scene.prototype.checaColisao = function(){
         this.spritesXP = [];
         this.spritesPoder = [];
         this.spriteCounter = 0;
-        this.stageIndex = 21;
+        this.stageIndex = 1;
     }
 };
 

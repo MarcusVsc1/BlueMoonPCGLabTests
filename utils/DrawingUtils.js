@@ -166,3 +166,21 @@ function desenharColecionavel() {
 
     ctx.restore();
 }
+
+function desenharAlavanca() {
+    ctx.save();
+    ctx.translate(this.x, this.y); // Adiciona offsetY ao y
+    ctx.drawImage(
+        this.scene.assets.img(this.imagem),
+        this.spriteSize * this.imgX,
+        this.spriteSize * 2 * this.toggled,
+        this.spriteSize,
+        this.spriteSize,
+        -this.w / 2 - cena1.cameraX,
+        -this.h / 2 - cena1.cameraY,
+        24,
+        24
+    );
+
+    ctx.restore();
+}
