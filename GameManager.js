@@ -54,9 +54,9 @@ GameManager.prototype.criarEstagios = function(){
     console.timeEnd('createMap');
 
 
-    const indiceAleatorio = Math.floor(Math.random() * this.dungeonGenerator.mapGraph.adjacencyList.length);
-    var x = this.dungeonGenerator.mapGraph.adjacencyList[indiceAleatorio].cells[2].y
-    var y = this.dungeonGenerator.mapGraph.adjacencyList[indiceAleatorio].cells[2].x
+    const indiceAleatorio = Math.floor(Math.random() * this.dungeonGenerator.graph.adjacencyList.length);
+    var x = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio].cells[2].y
+    var y = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio].cells[2].x
     dungeonCriada[x][y] = 10
 
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,

@@ -94,7 +94,7 @@
 
         var gerenciador = new GameManager(pc);
 
-        const farthestRooms = gerenciador.dungeonGenerator.mapGraph.findFarthestRooms()
+        const farthestRooms = gerenciador.dungeonGenerator.graph.findFarthestRooms()
         var posicao = this.calcularPosicaoMedia(farthestRooms[0].cells) 
 
         pc.x = posicao.x * 32
@@ -389,18 +389,18 @@
         }
 
         function addNodeToExtras(idx) {
-            console.log(cena1.gamer.dungeonGenerator.mapGraph.nodes[idx].cells)
-            cena1.extras.push(...cena1.gamer.dungeonGenerator.mapGraph.nodes[idx].cells)
+            console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
         }
 
         function addCorridorToExtras(idx) {
-            edge = cena1.gamer.dungeonGenerator.mapGraph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })[0]
+            edge = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })[0]
             console.log(edge.cells)
             cena1.extras.push(...edge.cells)
         }
 
         function removeSceneExtras(idx) {
-            let cells = cena1.gamer.dungeonGenerator.mapGraph.nodes[idx].cells;
+            let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
             cena1.extras.forEach(extra => {
                 cells.forEach(pos => {
                     if (extra.x == pos.x && extra.y == pos.y) {
