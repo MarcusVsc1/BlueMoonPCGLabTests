@@ -81,18 +81,25 @@ Scene.prototype.desenhar = function () {
     for (var i = 0; i < this.spritesPoder.length; i++) {
         this.spritesPoder[i].desenhar(this.ctx);
     }
-
     for (var i = 0; i < this.spritesO.length; i++) {
+        if(this.spritesO[i].y < this.pc.y && this.spritesO[i].props.subtipo != 'interruptor') 
         this.spritesO[i].desenhar(this.ctx);
     }
 
-    if (this.pc.direcao != 0) {
-        if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
+    /*if (this.pc.direcao != 0) {
+        if (this.pc.desenhar) { }
+    }*/
+    this.pc.desenhar(this.ctx)
+    
+    for (var i = 0; i < this.spritesO.length; i++) {
+        if(this.spritesO[i].y > this.pc.y || this.spritesO[i].props.subtipo == 'interruptor') this.spritesO[i].desenhar(this.ctx);
     }
 
-    for (var i = 0; i < this.spritesE.length; i++) {
+    this.pc.desenhar(this.ctx)
+
+   /* for (var i = 0; i < this.spritesE.length; i++) {
         if (this.spritesE[i].y > this.pc.y) this.spritesE[i].desenhar(this.ctx);
-    }
+    }*/
     desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
     desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
 };
