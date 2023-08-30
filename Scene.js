@@ -585,7 +585,6 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX, imgY) {
 
 Scene.prototype.desenharInventory = function (item) {
     if (this.inventoryItem) {
-        console.log(item.imagem)
         ctx.drawImage(
             this.assets.img(item.imagem),
             item.spriteSize * item.imgX,
