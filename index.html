@@ -29,56 +29,15 @@
     <script src="model/Graph.js"></script>
     <script src="model/Room.js"></script>
     <script src="utils/DrawingUtils.js"></script>
+    <script src="utils/AssetsInitializer.js"></script>
+    <script src="puzzleagents/PuzzleAgentsManager.js"></script>
+    <script src="puzzleagents/SwitchAgent.js"></script>
 </head>
 
 <body style="background-color: black">
     <canvas></canvas>
     <script>
-        var assetsMng = new AssetsManager();
-        assetsMng.loadImage("hero", "assets/hero.png");
-        assetsMng.loadImage("hud", "assets/hud.png");
-        assetsMng.loadImage("bluemoon", "assets/bluemoon.png");
-        assetsMng.loadImage("mana", "assets/mana.png");
-        assetsMng.loadImage("bruxa", "assets/bruxa.png");
-        assetsMng.loadImage("heart", "assets/heart.png");
-        assetsMng.loadImage("dad", "assets/dad.png");
-        assetsMng.loadImage("people", "assets/people.png");
-        assetsMng.loadImage("flame", "assets/flame.png");
-        assetsMng.loadImage("object", "assets/object.png");
-        assetsMng.loadImage("cenario", "assets/cenario.png");
-        assetsMng.loadImage("lava", "assets/lava.png");
-        assetsMng.loadImage("monster", "assets/monster.png");
-        assetsMng.loadImage("expressoes", "assets/expressoes.png");
-        assetsMng.loadImage("explosion", "assets/explosion.png");
-        assetsMng.loadAudio("explosion", "assets/explosion.mp3");
-        assetsMng.loadImage("sword", "assets/sword.png");
-        assetsMng.loadImage("crystal", "assets/crystal.png");
-        assetsMng.loadImage("key_0", "assets/key_0.png");
-        assetsMng.loadImage("key_1", "assets/key_1.png");
-        assetsMng.loadImage("key_2", "assets/key_2.png");
-        assetsMng.loadImage("key_3", "assets/key_3.png");
-        assetsMng.loadImage("door_0", "assets/door_0.png");
-        assetsMng.loadImage("door_1", "assets/door_1.png");
-        assetsMng.loadImage("door_2", "assets/door_2.png");
-        assetsMng.loadImage("door_3", "assets/door_3.png");
-        assetsMng.loadImage("gear", "assets/gear.png");
-        assetsMng.loadImage("switch", "assets/switch.png");
-        assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
-        assetsMng.loadAudio("sword", "assets/sword.ogg");
-        assetsMng.loadAudio("sword2", "assets/sword2.ogg");
-        assetsMng.loadAudio("explosion", "assets/explosion.mp3");
-        assetsMng.loadAudio("shot", "assets/fire.ogg");
-        assetsMng.loadAudio("damage", "assets/damage.ogg");
-        assetsMng.loadAudio("gameover", "assets/gameover.ogg");
-        assetsMng.loadAudio("quest", "assets/quest.ogg");
-        assetsMng.loadAudio("heal", "assets/heal.ogg");
-        assetsMng.loadAudio("darkness", "assets/darkness.ogg");
-        assetsMng.loadAudio("earth", "assets/earth.ogg");
-        assetsMng.loadAudio("door", "assets/door.ogg");
-        assetsMng.loadAudio("earth2", "assets/earth2.ogg");
-        assetsMng.loadAudio("castelo", "assets/tema1.mp3")
-        assetsMng.loadAudio("key", "assets/key.ogg")
-        assetsMng.loadAudio("switchOn", "assets/switch.ogg")
+        
 
         var canvas = document.querySelector("canvas");
         canvas.width = 1080;
@@ -104,6 +63,10 @@
 
         var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador, });
         cena1.adicionar(pc);
+
+        var puzzleAgents = new PuzzleAgentsManager(
+            gerenciador.dungeonGenerator.graph
+        )
 
         function porTeclasDirecionais(teclas) {
             return function () {
