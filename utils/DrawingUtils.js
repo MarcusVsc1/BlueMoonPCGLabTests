@@ -173,7 +173,7 @@ function desenharAlavanca() {
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
         this.spriteSize * this.imgX,
-        this.spriteSize * 2 * this.toggled,
+        this.spriteSize * 2 * this.toggled + this.spriteSize * 4 * this.imgY,
         this.spriteSize,
         this.spriteSize,
         -this.w / 2 - cena1.cameraX,

@@ -240,8 +240,6 @@ Scene.prototype.checaColisao = function () {
                         break;
                     case 'alavanca':
                         this.spritesO[k].swCD = 0.6;
-                        this.assets.play("switchOn");
-                        this.spritesO[k].toggled = !this.spritesO[k].toggled;
                         this.spritesO[k].event();
                         break;
                 }
@@ -603,7 +601,7 @@ Scene.prototype.desenharDialogo = function () {
         ctx.fillStyle = `rgba(255, 255, 255, ${this.mensagemOpacity})`;
         ctx.fillText(this.dialogo, 90, this.h - 75);
         if (this.frameCounter >= 180) {
-            this.mensagemOpacity -= 0.02; // Diminui a opacidade gradualmente
+            this.mensagemOpacity -= 0.02;
         }
         if (this.mensagemOpacity <= 0) {
             this.dialogo = null;

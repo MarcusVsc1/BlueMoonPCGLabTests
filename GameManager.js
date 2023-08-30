@@ -75,14 +75,17 @@ GameManager.prototype.criarEstagios = function(){
     console.log(coordenadas)
 
     var evento = function() {
+        this.toggled = !this.toggled;
         cena1.map.cells[this.coordenadas[!this.toggled ? 1 :0].y][this.coordenadas[!this.toggled ? 1 : 0].x].tipo = 4
         cena1.map.cells[this.coordenadas[this.toggled ? 1 : 0].y][this.coordenadas[this.toggled ? 1 :0].x].tipo = 8
+        cena1.assets.play("switchOn");
     }
 
     spriteLista.push(this.criarAlavanca(19, 19, evento, coordenadas));
-
+    
+    
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
-
+    
     // tela de game over
 
     mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
@@ -236,6 +239,11 @@ GameManager.prototype.criarBotaAntiLava = function (posX, posY) {
 }
 
 GameManager.prototype.criarAlavanca = function (posX, posY, evento, coordenadas) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:1, imgY:0, event: evento,
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:2, imgY:0, event: evento,
                 imagem: "switch", desenhar: desenharAlavanca, coordenadas: coordenadas, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
+}
+
+GameManager.prototype.criarInterruptor = function (posX, posY, evento, switchId) {
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:10, imgY:1, event: evento,
+                imagem: "switch", desenhar: desenharAlavanca,  toggled: false, props: { tipo: "objeto", subtipo: "interruptor" }});
 }
