@@ -184,3 +184,10 @@ function desenharAlavanca() {
 
     ctx.restore();
 }
+
+function desenharCelulas(cells, fillStyle) {
+    ctx.fillStyle = fillStyle;
+    cells.forEach(element => {
+        ctx.fillRect(element.x * 32 - cena1.cameraX, element.y * 32 - cena1.cameraY, 32, 32);
+    });
+}

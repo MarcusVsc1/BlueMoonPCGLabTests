@@ -4,7 +4,7 @@ class SwitchAgent {
         var room = mapGraph.nodes[0]
         var posicoes = this.posicoesDiagonaisElementoCentral(room)
         for(posicao of posicoes){
-            cena1.adicionar(gerenciador.criarInterruptor(posicao.x, posicao.y, null, null)) 
+            cena1.adicionar(gerenciador.criarInterruptor(posicao.x, posicao.y, null, 0)) 
         }
         
     }

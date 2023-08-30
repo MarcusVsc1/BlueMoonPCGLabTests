@@ -32,6 +32,7 @@
     <script src="utils/AssetsInitializer.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
     <script src="puzzleagents/SwitchAgent.js"></script>
+    <script src="puzzleagents/LavaRoomAgent.js"></script>
 </head>
 
 <body style="background-color: black">
@@ -346,12 +347,7 @@
         var dt, anterior = 0;
         requestAnimationFrame(passo);
 
-        function desenharCelulas(cells, fillStyle) {
-            ctx.fillStyle = fillStyle;
-            cells.forEach(element => {
-                ctx.fillRect(element.x * 32 - cena1.cameraX, element.y * 32 - cena1.cameraY, 32, 32);
-            });
-        }
+        
 
         function addNodeToExtras(idx) {
             console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)

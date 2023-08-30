@@ -4,14 +4,18 @@ class PuzzleAgentsManager {
         this.puzzleGraph = new Graph(),
         this.raffle = [
             new SwitchAgent(), 
-            null, null, null, null, null],
+            new LavaRoomAgent(), 
+            null, null, null, null],
         this.createPuzzleGraph()
     }
 
     createPuzzleGraph() {
-          //para teste de switch (interruptor)
+        //para teste de switch (interruptor)
         var sw = new SwitchAgent()
         sw.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        // para testes de sala de lava
+        var lv = new LavaRoomAgent()
+        lv.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         
     }
 }

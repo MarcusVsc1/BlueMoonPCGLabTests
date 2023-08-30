@@ -75,7 +75,6 @@ class DungeonGenerator {
             this.fillRoomInteriorWithEmpty(room.cells, map, width, height);
         });
         this.addWalls(height, width, map);
-        this.fillRoomInteriorWithLava(this.graph.nodes[0].cells, map, width, height);
     }
 
     addWalls(height, width, map) {
@@ -202,15 +201,6 @@ class DungeonGenerator {
         }
     }
 
-    fillRoomInteriorWithLava(cells, map, width, height) {
-        for (const cell of cells) {
-            const { x, y } = cell;
-            console.log()
-            if (x > 0 && x < width - 1 && y > 0 && y < height - 1 && map[y][x] != 6) {
-                map[y][x] = 5; // Lava tile
-            }
-        }
-    }
 
     corridorPassesByRoom(corridor, map, roomA, roomB) {
         for (const cell of corridor) {
