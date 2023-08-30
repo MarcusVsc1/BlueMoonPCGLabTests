@@ -11,12 +11,6 @@ function GameManager(pc) {
     this.globalVar = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 }
 
-//modelos de teletransporte
-// cima para baixo: spriteLista.push(this.criarTeleporte(x.2,0.2,nX.5,8.9,m));
-// baixo para cima: spriteLista.push(this.criarTeleporte(x,9.8,nX.5,1,m));
-// direita para esquerda: spriteLista.push(this.criarTeleporte(11.8,y.2,1.5,nY.5,m));
-// esquerda para direita: spriteLista.push(this.criarTeleporte(0.2,y.2,11,y.5,m));
-
 /*modelo de mapa
 mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         [
@@ -222,18 +216,6 @@ GameManager.prototype.criarPoder = function (numero, posX, posY) {
             break;
     }
     return poder;
-}
-
-//cria disparador de bolas de fogo quando entram em contato com a espada
-GameManager.prototype.criarDisparador = function (posX, posY, direct) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 20, h: 20, vm:0, direcao: direct, imgX:2, imgY:1, 
-                swCD: 0.6, imagem: "object", desenhar: desenhaDisp, props: { tipo: "disparador" }});
-}
-
-//cria um eventador. dispara um evento quando uma bola de fogo do disparador entra em contato
-GameManager.prototype.criarEventador = function (posX, posY, event) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, imgX:3, imgY:0, evented: 0,
-                imagem: "crystal", desenhar: desenhaTiro, evento: event, props: { tipo: "eventador" }});
 }
 
 //cria uma chave.

@@ -5,12 +5,8 @@ function Scene(params) {
         spritesE: [],
         spritesT: [],
         spritesPoder: [],
-        spritesTE: [],
         spritesXP: [],
-        spritesTP: [],
         spritesO: [],
-        spritesD: [],
-        spritesEV: [],
         toRemove: [],
         ctx: null,
         w: 1600,
@@ -22,7 +18,6 @@ function Scene(params) {
         gamer: null,
         spriteCounter: 0,
         dialogo: "",
-        bruxa: null,
         theEnd:0,
         cameraX: 0,
         cameraY: 0,
@@ -41,15 +36,11 @@ Scene.prototype.adicionar = function(sprite){
     if(sprite.props.tipo == "pc"){
         this.pc = sprite;
     }
-    if(sprite.props.tipo == "bruxa"){
-        this.bruxa = sprite;
-    }
+
     if(sprite.props.tipo == "tiro"){
         this.spritesT.push(sprite);
     }
-    if(sprite.props.tipo == "eventador"){
-        this.spritesEV.push(sprite);
-    }
+
     if(sprite.props.tipo == "npc"){
         if(sprite.props.boss == 1) {
             this.boss = sprite;
@@ -62,18 +53,9 @@ Scene.prototype.adicionar = function(sprite){
     if(sprite.props.tipo == "poder"){
         this.spritesPoder.push(sprite);
     }
-    if(sprite.props.tipo == "tiroE" || sprite.props.tipo == "tiroQ"){
-        this.spritesTE.push(sprite);
-    }
-    if(sprite.props.tipo == "disparador"){
-        this.spritesD.push(sprite);
-    }
+
     if(sprite.props.tipo == "boom"){
         this.spritesXP.push(sprite);
-    }
-    if(sprite.props.tipo == "teleporte"){
-        console.log("Adicionando teleporte");
-        this.spritesTP.push(sprite);
     }
     
     sprite.scene = this;
@@ -84,12 +66,6 @@ Scene.prototype.desenhar = function(){
     for(var i = 0; i<this.spritesE.length; i++){
         if(this.spritesE[i].y <= this.pc.y)this.spritesE[i].desenhar(this.ctx);
     }  
-    for(var i = 0; i<this.spritesD.length; i++){
-        if(this.spritesD[i].y <= this.pc.y)this.spritesD[i].desenhar(this.ctx);
-    } 
-    for(var i = 0; i<this.spritesEV.length; i++){
-        if(this.spritesEV[i].y <= this.pc.y)this.spritesEV[i].desenhar(this.ctx);
-    } 
     this.updateCameraPosition(); 
     if(this.pc.direcao == 0) {
         if(this.pc.desenhar){this.pc.desenhar(this.ctx);}  
@@ -104,28 +80,13 @@ Scene.prototype.desenhar = function(){
         this.spritesPoder[i].desenhar(this.ctx);
     } 
 
-
-    for(var i = 0; i<this.spritesTE.length; i++){
-        this.spritesTE[i].desenhar(this.ctx);
-    } 
-
     for(var i = 0; i<this.spritesO.length; i++){
         this.spritesO[i].desenhar(this.ctx);
     } 
     
-    for(var i = 0; i<this.spritesTP.length; i++){
-    this.spritesTP[i].desenhar(this.ctx);
-    } 
     if(this.pc.direcao!=0){
         if(this.pc.desenhar){this.pc.desenhar(this.ctx);}  
     }
-
-    for(var i = 0; i<this.spritesD.length; i++){
-        if(this.spritesD[i].y > this.pc.y)this.spritesD[i].desenhar(this.ctx);
-    } 
-    for(var i = 0; i<this.spritesEV.length; i++){
-        if(this.spritesEV[i].y > this.pc.y)this.spritesEV[i].desenhar(this.ctx);
-    } 
 
     for(var i = 0; i<this.spritesE.length; i++){
         if(this.spritesE[i].y > this.pc.y)this.spritesE[i].desenhar(this.ctx);
@@ -147,20 +108,8 @@ Scene.prototype.mover = function(dt){
     for(var i = 0; i<this.spritesPoder.length; i++){
         this.spritesPoder[i].mover(dt);
     } 
-    for(var i = 0; i<this.spritesTE.length; i++){
-        this.spritesTE[i].mover(dt);
-    } 
     for(var i = 0; i<this.spritesO.length; i++){
         this.spritesO[i].mover(dt);
-    } 
-    for(var i = 0; i<this.spritesD.length; i++){
-        this.spritesD[i].mover(dt);
-    }
-    for(var i = 0; i<this.spritesEV.length; i++){
-        this.spritesEV[i].mover(dt);
-    }
-    for(var i = 0; i<this.spritesXP.length; i++){
-        this.spritesXP[i].mover(dt);
     } 
     if(this.pc != null){
         this.pc.mover(dt);
@@ -183,19 +132,9 @@ Scene.prototype.comportar = function(){
             this.spritesT[i].comportar();
         }
     }
-    for(var i = 0; i<this.spritesTE.length; i++){
-        if(this.spritesTE[i].comportar){
-            this.spritesTE[i].comportar();
-        }
-    }
     for(var i = 0; i<this.spritesO.length; i++){
         if(this.spritesO[i].comportar){
             this.spritesO[i].comportar();
-        }
-    }
-    for(var i = 0; i<this.spritesD.length; i++){
-        if(this.spritesD[i].comportar){
-            this.spritesD[i].comportar();
         }
     }
 
@@ -254,42 +193,7 @@ Scene.prototype.checaColisao = function(){
             }
         }
     }
-    //remoção de tiro ao sair da tela. por questões de desempenho foi necessário (quando o tiro ia pra baixo, 
-    //o jogo ia pra 30 frames/seg)
-    for(var i = 0; i < this.spritesTE.length; i++){
-        if(this.bruxa != null && this.spritesTE[i].colidiuCom(this.bruxa)){
-            this.adicionar(new Animation({x: this.spritesTE[i].x, y:this.spritesTE[i].y, imagem: "explosion"}));
-            this.assets.play("explosion");
-            this.toRemove.push(this.spritesTE[i]);
-            this.bruxa.vidas--;
-            this.bruxa.imune = 0.3;
-        }
-        if(this.spritesTE[i]!=null){
-            if(this.spritesTE[i].y > this.h - 32 - this.spritesTE[i].h || this.spritesTE[i].y < 0 + 32
-                || this.spritesTE[i].x > this.w - 32 || this.spritesTE[i].x < 0 + 32){
-                this.ctx.globalAlpha = this.ctx.globalAlpha * 0.5;
-            }
 
-        }
-        if(this.spritesTE[i]!=null){
-            if(this.spritesTE[i].y > this.h - this.spritesTE[i].h || this.spritesTE[i].y < 0
-                || this.spritesTE[i].x > this.w || this.spritesTE[i].x < 0){
-                this.toRemove.push(this.spritesTE[i]);
-            }
-
-        }
-        //colisao tiro com eventador
-        for(var j = 0; j < this.spritesEV.length; j++) {
-            if (this.spritesTE[i].colidiuCom(this.spritesEV[j]) && this.spritesTE[i].props.tipo == "tiroQ" 
-                && this.spritesEV[j].evented == 0){
-                this.adicionar(new Animation({x: this.spritesEV[j].x, y:this.spritesEV[j].y, imagem: "explosion"}));
-                this.assets.play("explosion");
-                this.toRemove.push(this.spritesTE[i]);
-                this.spritesEV[j].evented = 1;
-                this.spritesEV[j].evento();
-                }       
-        }
-    }
     //colisao pc com poder
     for (var i = 0; i < this.spritesPoder.length; i++){
         if(this.spritesPoder[i].colidiuCom(this.pc)){
@@ -304,25 +208,6 @@ Scene.prototype.checaColisao = function(){
             this.toRemove.push(this.spritesPoder[i]);
         }
 
-    }
-    //colisao com teleporte
-    for (var i = 0; i < this.spritesTP.length; i++) {
-        if(this.pc.colidiuCom(this.spritesTP[i])) {
-            this.stageIndex = this.spritesTP[i].props.idx;
-            this.pc.x = this.spritesTP[i].tX;
-            this.pc.y = this.spritesTP[i].tY;
-            this.spritesTP = [];
-            this.spritesE = [];
-            this.spritesT = [];
-            this.spritesO = [];
-            this.spritesD = [];
-            this.spritesTE = [];
-            this.spritesEV = [];
-            this.spritesXP = [];
-            this.spritesPoder = [];
-            this.spriteCounter = 0;
-
-        }
     }
 
     //colisao com item de inventario
@@ -385,17 +270,15 @@ Scene.prototype.checaColisao = function(){
     }
     if(this.pc.vidas == 0 && this.pc.atingido <=0 ){
         this.pc.mana = 0;
-        this.spritesTP = [];
         this.spritesE = [];
         this.spritesT = [];
         this.spritesO = [];
-        this.spritesD = [];
         this.spritesTE = [];
-        this.spritesEV = [];
         this.spritesXP = [];
         this.spritesPoder = [];
         this.spriteCounter = 0;
         this.stageIndex = 1;
+        this.dialogo("Fim de jogo.")
     }
 };
 
