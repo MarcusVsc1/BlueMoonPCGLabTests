@@ -72,7 +72,6 @@ GameManager.prototype.criarEstagios = function(){
     pos2 = {x: x, y: y}
 
     coordenadas = [pos1, pos2]
-    console.log(coordenadas)
 
     var evento = function() {
         this.toggled = !this.toggled;
