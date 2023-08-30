@@ -476,17 +476,17 @@ Scene.prototype.desenharHUD = function() {
     //desenha o titulo e a imagem de lua
     ctx.font = "30px Medieval";
     ctx.fillStyle = "white";
-    ctx.fillText("Lyra",24,this.h-120);/*
+    ctx.fillText("Lyra",24,this.h-120);
     ctx.save();
     //desenha as vidas
-    var posCoracao = 12;
+    var posCoracao = 90;
     for(var i = 0; i < this.pc.vidas; i++){
         ctx.drawImage(this.assets.img("heart"),
-            posCoracao,this.h-100,
-            16,13
+            posCoracao,this.h-53,
+            20,17
             );
-        posCoracao = posCoracao + 16;
-    }
+        posCoracao = posCoracao + 20;
+    }/*
     //desenha a mana
     posCoracao = 275;
     for(var i = 0; i < this.pc.mana; i++){
