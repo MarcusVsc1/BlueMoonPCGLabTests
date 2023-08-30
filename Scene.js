@@ -82,7 +82,7 @@ Scene.prototype.desenhar = function () {
         this.spritesPoder[i].desenhar(this.ctx);
     }
     for (var i = 0; i < this.spritesO.length; i++) {
-        if(this.spritesO[i].y < this.pc.y && this.spritesO[i].props.subtipo != 'interruptor') 
+        if(this.spritesO[i].y < this.pc.y || this.spritesO[i].props.subtipo == 'interruptor') 
         this.spritesO[i].desenhar(this.ctx);
     }
 
@@ -92,10 +92,9 @@ Scene.prototype.desenhar = function () {
     this.pc.desenhar(this.ctx)
     
     for (var i = 0; i < this.spritesO.length; i++) {
-        if(this.spritesO[i].y > this.pc.y || this.spritesO[i].props.subtipo == 'interruptor') this.spritesO[i].desenhar(this.ctx);
+        if(this.spritesO[i].y > this.pc.y && this.spritesO[i].props.subtipo != 'interruptor') this.spritesO[i].desenhar(this.ctx);
     }
 
-    this.pc.desenhar(this.ctx)
 
    /* for (var i = 0; i < this.spritesE.length; i++) {
         if (this.spritesE[i].y > this.pc.y) this.spritesE[i].desenhar(this.ctx);
