@@ -69,9 +69,9 @@ Scene.prototype.desenhar = function () {
         if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
     }
     this.updateCameraPosition();
-    if (this.pc.direcao == 0) {
+    //if (this.pc.direcao == 0) {
         if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
-    }
+    //}
     for (var i = 0; i < this.spritesXP.length; i++) {
         this.spritesXP[i].desenhar(this.ctx);
     }

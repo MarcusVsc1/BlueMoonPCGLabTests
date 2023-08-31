@@ -20,6 +20,9 @@ class PuzzleAgentsManager {
         // para testes de alavanca
         var lv = new LeverAgent()
         lv.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        // testes de chave e porta
+        var kd = new KeyAndDoorAgent()
+        kd.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         
     }
 }

@@ -47,19 +47,11 @@ GameManager.prototype.criarEstagios = function(){
 
     console.timeEnd('createMap');
 
-    const indiceAleatorio = Math.floor(Math.random() * this.dungeonGenerator.graph.adjacencyList.length);
-    var x = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio].cells[2].y
-    var y = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio].cells[2].x
+   
 
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
         assets: assetsMng, m: dungeonCriada});
     console.log("Kruskal com sucesso")
-     // cria chave e porta
-    spriteLista.push(this.criarChave(18, 18, 0));
-    spriteLista.push(this.criarChave(18, 19, 1));
-    spriteLista.push(this.criarChave(19, 19, 2));
-    spriteLista.push(this.criarChave(19, 18, 3));
-    spriteLista.push(this.criarPorta(y, x, 3));  
     
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
     
