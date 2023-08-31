@@ -222,7 +222,7 @@ GameManager.prototype.criarPoder = function (numero, posX, posY) {
 GameManager.prototype.criarChave = function (posX, posY, keyId) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
                 imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel",
-                mensagem: 'Adquirida Chave '+KeyColor[keyId]}});
+                mensagem: 'Adquirida Chave '+KeyColorEnum[keyId]}});
 }
 
 //cria uma porta.
