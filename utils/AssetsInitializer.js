@@ -40,7 +40,9 @@ var assetsMng = new AssetsManager();
         assetsMng.loadAudio("earth", "assets/earth.ogg");
         assetsMng.loadAudio("door", "assets/door.ogg");
         assetsMng.loadAudio("earth2", "assets/earth2.ogg");
-        assetsMng.loadAudio("castelo", "assets/tema1.mp3")
+        assetsMng.loadAudio("tema1", "assets/tema1.mp3")
+        assetsMng.loadAudio("tema2", "assets/tema2.mp3")
+        assetsMng.loadAudio("tema3", "assets/tema3.mp3")
         assetsMng.loadAudio("key", "assets/key.ogg")
         assetsMng.loadAudio("switchOn", "assets/switch.ogg")
         assetsMng.loadAudio("switchOn2", "assets/switch2.ogg")
