@@ -285,7 +285,9 @@ Scene.prototype.checaColisao = function () {
         this.spritesPoder = [];
         this.spriteCounter = 0;
         this.stageIndex = 1;
-        this.dialogo("Fim de jogo.")
+        this.pc.x = 1
+        this.pc.y = 1
+        this.dialogo = "Fim de jogo."
     }
 };
 
@@ -606,7 +608,7 @@ Scene.prototype.desenharDialogo = function () {
         ctx.font = "30px Medieval";
         ctx.fillStyle = `rgba(255, 255, 255, ${this.mensagemOpacity})`;
         ctx.fillText(this.dialogo, 90, this.h - 75);
-        if (this.frameCounter >= 180) {
+        if (this.frameCounter >= 180 && this.stageIndex < 1) {
             this.mensagemOpacity -= 0.02;
         }
         if (this.mensagemOpacity <= 0) {
