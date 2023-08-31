@@ -51,7 +51,6 @@ GameManager.prototype.criarEstagios = function(){
     var x = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio].cells[2].y
     var y = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio].cells[2].x
 
-    dungeonCriada[x][y] = 8
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
         assets: assetsMng, m: dungeonCriada});
     console.log("Kruskal com sucesso")
@@ -60,26 +59,7 @@ GameManager.prototype.criarEstagios = function(){
     spriteLista.push(this.criarChave(18, 19, 1));
     spriteLista.push(this.criarChave(19, 19, 2));
     spriteLista.push(this.criarChave(19, 18, 3));
-    spriteLista.push(this.criarPorta(y, x, 3));
-
-    pos1 = {x: x, y: y}
-
-    var x = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio > 0 ? 0 : 1].cells[2].y
-    var y = this.dungeonGenerator.graph.adjacencyList[indiceAleatorio > 0 ? 0 : 1].cells[2].x
-    
-    pos2 = {x: x, y: y}
-
-    coordenadas = [pos1, pos2]
-
-    var evento = function() {
-        this.toggled = !this.toggled;
-        cena1.map.cells[this.coordenadas[!this.toggled ? 1 :0].y][this.coordenadas[!this.toggled ? 1 : 0].x].tipo = 4
-        cena1.map.cells[this.coordenadas[this.toggled ? 1 : 0].y][this.coordenadas[this.toggled ? 1 :0].x].tipo = 8
-        cena1.assets.play("switchOn");
-    }
-
-    spriteLista.push(this.criarAlavanca(19, 19, evento, coordenadas));
-    
+    spriteLista.push(this.criarPorta(y, x, 3));    
     
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
     
