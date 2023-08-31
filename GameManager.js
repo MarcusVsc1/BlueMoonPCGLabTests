@@ -55,14 +55,12 @@ GameManager.prototype.criarEstagios = function(){
     mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
         assets: assetsMng, m: dungeonCriada});
     console.log("Kruskal com sucesso")
-    /* // cria chave e porta
+     // cria chave e porta
     spriteLista.push(this.criarChave(18, 18, 0));
     spriteLista.push(this.criarChave(18, 19, 1));
     spriteLista.push(this.criarChave(19, 19, 2));
     spriteLista.push(this.criarChave(19, 18, 3));
-    spriteLista.push(this.criarPorta(y, x, 3));*/
-    /* // cria a bota antilava
-    spriteLista.push(this.criarBotaAntiLava(19, 20));  */
+    spriteLista.push(this.criarPorta(y, x, 3));
 
     pos1 = {x: x, y: y}
 
@@ -223,7 +221,8 @@ GameManager.prototype.criarPoder = function (numero, posX, posY) {
 //cria uma chave.
 GameManager.prototype.criarChave = function (posX, posY, keyId) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
-                imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel" }});
+                imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel",
+                mensagem: 'Adquirida Chave '+KeyColor[keyId]}});
 }
 
 //cria uma porta.
@@ -234,7 +233,8 @@ GameManager.prototype.criarPorta = function (posX, posY, doorId) {
 
 GameManager.prototype.criarBotaAntiLava = function (posX, posY) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 16, vm:0, imgX:17, imgY:0,
-                imagem: "gear", desenhar: desenharColecionavel, props: { tipo: "objeto", subtipo: "colecionavel", event: "lava" }});
+                imagem: "gear", desenhar: desenharColecionavel, props: { tipo: "objeto", subtipo: "colecionavel", event: "lava",
+                mensagem: 'Adquirida Bota Antilava' }});
 }
 
 GameManager.prototype.criarAlavanca = function (posX, posY, evento, coordenadas) {
@@ -243,6 +243,6 @@ GameManager.prototype.criarAlavanca = function (posX, posY, evento, coordenadas)
 }
 
 GameManager.prototype.criarInterruptor = function (posX, posY, evento, switchId) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:10, imgY:1, event: evento,
-                imagem: "switch", desenhar: desenharAlavanca,  toggled: false, props: { tipo: "objeto", subtipo: "interruptor" }});
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:10, imgY:1, event: evento, switchId: switchId,
+                imagem: "switch", desenhar: desenharAlavanca,  toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
 }

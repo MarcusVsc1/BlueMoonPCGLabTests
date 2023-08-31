@@ -230,6 +230,7 @@ Scene.prototype.checaColisao = function () {
                             this.inventoryItem.y = this.spritesO[k].y
                             this.spritesO.push(this.inventoryItem)
                         }
+                        this.dialogo = this.spritesO[k].props.mensagem
                         this.toRemove.push(this.spritesO[k])
                         this.inventoryItem = this.spritesO[k]
                         this.assets.play("quest");
