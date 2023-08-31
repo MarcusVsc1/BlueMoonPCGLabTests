@@ -43,3 +43,4 @@ var assetsMng = new AssetsManager();
         assetsMng.loadAudio("castelo", "assets/tema1.mp3")
         assetsMng.loadAudio("key", "assets/key.ogg")
         assetsMng.loadAudio("switchOn", "assets/switch.ogg")
+        assetsMng.loadAudio("switchOn2", "assets/switch2.ogg")
