@@ -2,9 +2,10 @@ class KeyAndDoorAgent {
 
 
     gerarPuzzle(mapGraph, puzzleGraph) {
-        const indiceAleatorio = Math.floor(Math.random() * mapGraph.adjacencyList.length);
-        var x = mapGraph.adjacencyList[indiceAleatorio].cells[2].y
-        var y = mapGraph.adjacencyList[indiceAleatorio].cells[2].x
+        var indiceAleatorio = Math.floor(Math.random() * mapGraph.adjacencyList.length-1);
+        indiceAleatorio = indiceAleatorio < 0 ? 0 : indiceAleatorio
+        var x = mapGraph.adjacencyList[indiceAleatorio].cells[0].y
+        var y = mapGraph.adjacencyList[indiceAleatorio].cells[0].x
 
         cena1.adicionar(gerenciador.criarChave(18, 18, 0));
         cena1.adicionar(gerenciador.criarChave(18, 19, 1));

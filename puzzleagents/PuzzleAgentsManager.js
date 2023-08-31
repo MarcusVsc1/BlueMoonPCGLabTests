@@ -6,7 +6,10 @@ class PuzzleAgentsManager {
             new SwitchAgent(), 
             new LavaRoomAgent(), 
             new LeverAgent(), 
-            null, null, null],
+            new KeyAndDoorAgent(), 
+            null, 
+            null
+        ],
         this.createPuzzleGraph()
     }
 
