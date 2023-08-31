@@ -235,6 +235,7 @@ Scene.prototype.checaColisao = function () {
                         this.inventoryItem = this.spritesO[k]
                         this.assets.play("quest");
                         this.spritesO[k].swCD = 0.6;
+                        this.frameCounter = 0
                         break;
                     case 'porta':
                         if (this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId) {
