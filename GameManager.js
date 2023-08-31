@@ -59,7 +59,7 @@ GameManager.prototype.criarEstagios = function(){
     spriteLista.push(this.criarChave(18, 19, 1));
     spriteLista.push(this.criarChave(19, 19, 2));
     spriteLista.push(this.criarChave(19, 18, 3));
-    spriteLista.push(this.criarPorta(y, x, 3));    
+    spriteLista.push(this.criarPorta(y, x, 3));  
     
     this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
     
