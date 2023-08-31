@@ -82,7 +82,7 @@ Scene.prototype.desenhar = function () {
         this.spritesPoder[i].desenhar(this.ctx);
     }
     for (var i = 0; i < this.spritesO.length; i++) {
-        if(this.spritesO[i].y < this.pc.y || this.spritesO[i].props.subtipo == 'interruptor') 
+        if(this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId) 
         this.spritesO[i].desenhar(this.ctx);
     }
 
@@ -92,7 +92,7 @@ Scene.prototype.desenhar = function () {
     this.pc.desenhar(this.ctx)
     
     for (var i = 0; i < this.spritesO.length; i++) {
-        if(this.spritesO[i].y > this.pc.y && this.spritesO[i].props.subtipo != 'interruptor') this.spritesO[i].desenhar(this.ctx);
+        if(this.spritesO[i].y > this.pc.y && this.spritesO[i].switchId == null) this.spritesO[i].desenhar(this.ctx);
     }
 
 
@@ -373,7 +373,7 @@ Scene.prototype.gameDefiner = function () {
 
 Scene.prototype.desenharHUD = function () {
 
-    //desenha o titulo e a imagem de lua
+    //desenha o nome da personagem
     ctx.font = "30px Medieval";
     ctx.fillStyle = "white";
     ctx.fillText("Lyra", 24, this.h - 120);
