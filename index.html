@@ -41,7 +41,6 @@
 <body style="background-color: black">
     <canvas></canvas>
     <script>
-        
 
         var canvas = document.querySelector("canvas");
         canvas.width = 1080;
@@ -171,7 +170,6 @@
                 this.scene.toRemove.push(this);
             }
         }
-
 
         function moverObjeto() {
             this.spCD = this.spCD - dt;
@@ -350,20 +348,37 @@
         var dt, anterior = 0;
         requestAnimationFrame(passo);
 
-        
+        /*
+            funções de debug
+        */
 
-        function addNodeToExtras(idx) {
+        function markRoomById(idx) {
             console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
             cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
         }
 
-        function addCorridorToExtras(idx) {
-            edge = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })[0]
-            console.log(edge.cells)
-            cena1.extras.push(...edge.cells)
+        function markTerminalCellsByRoomId(idx) {
+            console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].terminalCells)
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].terminalCells)
         }
 
-        function removeSceneExtras(idx) {
+        function markCorridorByFromRoom(idx) {
+            edges = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })
+            for (edge of edges) {
+                console.log(edge.cells)
+                cena1.extras.push(...edge.cells)
+            }
+        }
+
+        function markAllCorridors() {
+            cena1.gamer.dungeonGenerator.graph.adjacencyList.forEach(corridor => cena1.extras.push(... corridor.cells))
+        }
+
+        function markAllTerminalCells() {
+            cena1.gamer.dungeonGenerator.graph.nodes.forEach(node => cena1.extras.push(... node.terminalCells))
+        }       
+
+        function removeRoomMarkById(idx) {
             let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
             cena1.extras.forEach(extra => {
                 cells.forEach(pos => {
@@ -372,6 +387,14 @@
                     }
                 })
             });
+        }
+
+        function cleanMarkedCells() {
+            cena1.extras = []
+        }
+
+        function playTheme(themeIdx) {
+            cena1.assets.play("tema"+themeIdx)
         }
 
         function calcularPosicaoMedia(cells) {
