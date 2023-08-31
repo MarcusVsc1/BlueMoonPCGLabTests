@@ -74,7 +74,55 @@ class DungeonGenerator {
         this.graph.nodes.forEach(room => {
             this.fillRoomInteriorWithEmpty(room.cells, map, width, height);
         });
+        console.time('removedor')
+        this.removeCorridorUnnecessaryCells(map)
+        console.timeEnd('removedor')
         this.addWalls(height, width, map);
+    }
+
+    removeCorridorUnnecessaryCells(map) {
+        for (var corridor of this.graph.adjacencyList) {
+            var toRemove = []
+            if(corridor.cells.length > 2) {
+                for (var i = 0; i < corridor.cells.length / 2; i++) {
+                    var actualNeighbors = this.findNeighborsByType(map, corridor.cells[i], 0)
+                    var nextNeighbors = this.findNeighborsByType(map, corridor.cells[i + 1], 0)
+                    if (actualNeighbors.length > 0 && nextNeighbors.length > 0) {
+                        var newTerminalCell = nextNeighbors[0]
+                        toRemove.push(corridor.cells[i])
+                        var room = this.graph.findRoomByCoordinates(newTerminalCell.x, newTerminalCell.y)
+                        room.addTerminalCell(newTerminalCell)
+                        map[corridor.cells[i].y][corridor.cells[i].x] = 6
+                    }
+                    else {
+                        break;
+                    }
+                }
+                for (var i = corridor.cells.length - 1; i >= corridor.cells.length / 2; i--) {
+                    actualNeighbors = this.findNeighborsByType(map, corridor.cells[i], 0)
+                    nextNeighbors = this.findNeighborsByType(map, corridor.cells[i - 1], 0)
+                    if (actualNeighbors.length > 0 && nextNeighbors.length > 0) {
+                        var newTerminalCell = nextNeighbors[0]
+                        toRemove.push(corridor.cells[i])
+                        var room = this.graph.findRoomByCoordinates(newTerminalCell.x, newTerminalCell.y)
+                        room.addTerminalCell(newTerminalCell)
+                        map[corridor.cells[i].y][corridor.cells[i].x] = 6
+                    } else {
+                        break;
+                    }
+                }
+            }
+            corridor.cells = corridor.cells.filter(cell => !toRemove.some(removed => cell.x == removed.x && cell.y == removed.y))
+        }
+        for (var room of this.graph.nodes) {
+            var toRemove = []
+            for (var terminalCell of room.terminalCells) {
+                if (this.findNeighborsByType(map, terminalCell, 4).length == 0) {
+                    toRemove.push(terminalCell)
+                }
+            }
+            room.terminalCells = room.terminalCells.filter(cell => !toRemove.some(removed => cell.x == removed.x && cell.y == removed.y))
+        }
     }
 
     addWalls(height, width, map) {
@@ -195,12 +243,11 @@ class DungeonGenerator {
         for (const cell of cells) {
             const { x, y } = cell;
 
-            if (x > 0 && x < width - 1 && y > 0 && y < height - 1 && map[y][x] == 4) {
+            if (x > 0 && x < width - 1 && y > 0 && y < height - 1 /* && map[y][x] == 4*/) {
                 map[y][x] = 0; // Empty tile
             }
         }
     }
-
 
     corridorPassesByRoom(corridor, map, roomA, roomB) {
         for (const cell of corridor) {
@@ -280,15 +327,18 @@ class DungeonGenerator {
                         y: distanceInfo.cells.cellB.y
                     };
                     var corridor = this.createCorridorBetweenCells(cellA, cellB, map)
-                    if (!this.corridorHasObstacles(corridor, map) && !roomA.unavailableCells.find(cell => cell.x === cellA.x && cell.y === cellA.y) &&
-                        !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y)) {
+                    if (!roomA.unavailableCells.find(cell => cell.x === cellA.x && cell.y === cellA.y) &&
+                        !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y) && !this.corridorHasObstacles(corridor, map)) {
+                        this.removerDuplicatas(corridor)
                         roomA.unavailableCells.push(... this.findNeighborCells(cellA, 3))
                         roomA.addTerminalCell(cellA)
                         roomB.unavailableCells.push(... this.findNeighborCells(cellB, 3))
                         roomB.addTerminalCell(cellB)
+                        var corridorClone = this.removerDuplicatas(corridor)
                         this.fillCorridor(corridor, map)
-                        this.graph.addEdge(roomA, roomB, corridor)
-                        this.corridorPassesByRoom([...corridor], map, roomA, roomB);
+                        var corridorClone = corridorClone.slice(1, -1)
+                        this.graph.addEdge(roomA, roomB, corridorClone)
+                        this.corridorPassesByRoom([...corridorClone], map, roomA, roomB);
                         break;
                     }
                 }
@@ -305,5 +355,30 @@ class DungeonGenerator {
         return true;
 
     }
-   
+
+    removerDuplicatas(arr) {
+        const uniqueSet = new Set(arr.map(elemento => JSON.stringify(elemento)));
+        return Array.from(uniqueSet).map(item => JSON.parse(item));
+    }
+
+    /*
+        Métodos auxiliares
+    */
+
+    findNeighborsByType(map, cell, type) {
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        const neighbors = [];
+
+        for (const [dx, dy] of directions) {
+            const newX = cell.x + dx;
+            const newY = cell.y + dy;
+
+            if (map[newY][newX] === type) {
+                neighbors.push({ x: newX, y: newY });
+            }
+        }
+
+        return neighbors;
+    }
+
 }

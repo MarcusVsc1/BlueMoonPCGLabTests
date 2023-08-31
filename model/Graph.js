@@ -2,7 +2,7 @@ class Graph {
     constructor() {
         this.nodes = [];
         this.adjacencyList = [],
-        this.MAX_EDGES_PER_ROOM = Infinity
+            this.MAX_EDGES_PER_ROOM = Infinity
     }
 
     addNode(room) {
@@ -11,10 +11,6 @@ class Graph {
 
     addEdge(fromRoom, toRoom, cells) {
         this.adjacencyList.push({ fromRoom: fromRoom.roomId, toRoom: toRoom.roomId, cells: cells });
-    }
-
-    getAdjacentRooms(room) {
-        return this.adjacencyList.get(room.id).map(roomId => this.nodes.find(node => node.id === roomId));
     }
 
     hasEdge(fromRoom, toRoom) {
@@ -71,15 +67,14 @@ class Graph {
     }
 
     findRoomByCoordinates(x, y) {
-        for (const room of this.nodes) {
-            const { x: roomX, y: roomY, width, height } = room;
-
-            if (x >= roomX && x < roomX + width && y >= roomY && y < roomY + height) {
-                return room;
+        for (const node of this.nodes) {
+            for (const cell of node.cells) {
+                if (cell.x === x && cell.y === y) {
+                    return node;
+                }
             }
         }
-
-        return null;
+        return null; // Caso não encontre nenhum nó correspondente
     }
 
     getClosestRoomId(roomId) {
@@ -111,7 +106,7 @@ class Graph {
 
         for (const cellA of availableCellsA) {
             for (const cellB of availableCellsB) {
-                const distance = Math.hypot((cellB.x - cellA.x),(cellB.y - cellA.y));
+                const distance = Math.hypot((cellB.x - cellA.x), (cellB.y - cellA.y));
                 closestCellsAndDistances.push({ cells: { cellA, cellB }, distance });
             }
         }
@@ -125,10 +120,10 @@ class Graph {
         const neighbors = [];
 
         this.adjacencyList.forEach(edge => {
-            if(edge.fromRoom == room.roomId){
+            if (edge.fromRoom == room.roomId) {
                 neighbors.push(this.getNodeById(edge.toRoom))
             }
-            if(edge.toRoom == room.roomId){
+            if (edge.toRoom == room.roomId) {
                 neighbors.push(this.getNodeById(edge.fromRoom))
             }
         })
@@ -139,47 +134,47 @@ class Graph {
     areNodesConnected(nodeA, nodeB) {
         const visited = new Set();
         const queue = [nodeA];
-    
+
         while (queue.length > 0) {
             const currentNode = queue.shift();
-    
+
             if (currentNode.roomId == nodeB.roomId) {
                 return true; // Nodes are connected
             }
-    
+
             visited.add(currentNode);
 
             var neighbors = this.getNeighbors(currentNode).filter(neighbor => !visited.has(neighbor));
-    
-            queue.push(... neighbors);
-            
+
+            queue.push(...neighbors);
+
         }
-    
+
         return false; // Nodes are not connected
     }
 
     findFarthestRooms() {
         const farthestRooms = [];
         let maxDistance = -1;
-    
+
         for (const startRoom of this.nodes) {
             const distances = new Map(); // Map para armazenar distâncias das salas
             const visited = new Set(); // Conjunto para controlar salas visitadas
             const queue = [{ room: startRoom, distance: 0 }];
-    
+
             while (queue.length > 0) {
                 const { room, distance } = queue.shift();
-    
+
                 if (!visited.has(room)) {
                     visited.add(room);
                     distances.set(room, distance);
-    
+
                     for (const neighbor of this.getNeighbors(room)) {
                         queue.push({ room: neighbor, distance: distance + 1 });
                     }
                 }
             }
-    
+
             // Encontrar a maior distância no grafo
             if (distances.size > maxDistance) {
                 maxDistance = distances.size;
@@ -189,8 +184,8 @@ class Graph {
                 farthestRooms.push(startRoom);
             }
         }
-    
+
         return farthestRooms;
-    } 
+    }
 
 }
