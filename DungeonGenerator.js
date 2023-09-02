@@ -1,7 +1,7 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 40;
-        this.NUM_ROOMS = 4;
+        this.MAP_SIZE = 60;
+        this.NUM_ROOMS = 10;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
         this.BUFFER = 2;
@@ -85,8 +85,8 @@ class DungeonGenerator {
             var toRemove = []
             if(corridor.cells.length > 2) {
                 for (var i = 0; i < corridor.cells.length / 2; i++) {
-                    var actualNeighbors = this.findNeighborsByType(map, corridor.cells[i], 0)
-                    var nextNeighbors = this.findNeighborsByType(map, corridor.cells[i + 1], 0)
+                    var actualNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i], 0)
+                    var nextNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i + 1], 0)
                     if (actualNeighbors.length > 0 && nextNeighbors.length > 0) {
                         var newTerminalCell = nextNeighbors[0]
                         toRemove.push(corridor.cells[i])
@@ -99,8 +99,8 @@ class DungeonGenerator {
                     }
                 }
                 for (var i = corridor.cells.length - 1; i >= corridor.cells.length / 2; i--) {
-                    actualNeighbors = this.findNeighborsByType(map, corridor.cells[i], 0)
-                    nextNeighbors = this.findNeighborsByType(map, corridor.cells[i - 1], 0)
+                    actualNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i], 0)
+                    nextNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i - 1], 0)
                     if (actualNeighbors.length > 0 && nextNeighbors.length > 0) {
                         var newTerminalCell = nextNeighbors[0]
                         toRemove.push(corridor.cells[i])
@@ -117,7 +117,7 @@ class DungeonGenerator {
         for (var room of this.graph.nodes) {
             var toRemove = []
             for (var terminalCell of room.terminalCells) {
-                if (this.findNeighborsByType(map, terminalCell, 4).length == 0) {
+                if (DungeonGenerator.findNeighborsByType(map, terminalCell, 4).length == 0) {
                     toRemove.push(terminalCell)
                 }
             }
@@ -356,24 +356,28 @@ class DungeonGenerator {
 
     }
 
-    removerDuplicatas(arr) {
-        const uniqueSet = new Set(arr.map(elemento => JSON.stringify(elemento)));
-        return Array.from(uniqueSet).map(item => JSON.parse(item));
-    }
-
+    
     /*
-        Métodos auxiliares
+    Métodos auxiliares
     */
 
-    findNeighborsByType(map, cell, type) {
+   removerDuplicatas(arr) {
+       const uniqueSet = new Set(arr.map(elemento => JSON.stringify(elemento)));
+       return Array.from(uniqueSet).map(item => JSON.parse(item));
+   }
+
+    static findNeighborsByType(map, cell, type) {
         const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
         const neighbors = [];
+
+        const numLinhas = map.length;
+        const numColunas = map[0].length;
 
         for (const [dx, dy] of directions) {
             const newX = cell.x + dx;
             const newY = cell.y + dy;
-
-            if (map[newY][newX] === type) {
+            if (newX >= 0 && newX < numColunas && newY >= 0 && newY < numLinhas &&
+                map[newY][newX] === type) {
                 neighbors.push({ x: newX, y: newY });
             }
         }

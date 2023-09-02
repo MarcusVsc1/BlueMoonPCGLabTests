@@ -26,16 +26,19 @@
     <script src="Grid.js"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
-    <script src="model/Graph.js"></script>
+    <script src="datastructures/Graph.js"></script>
     <script src="model/Room.js"></script>
     <script src="utils/DrawingUtils.js"></script>
     <script src="utils/AssetsInitializer.js"></script>
     <script src="enum/KeyColorEnum.js"></script>
+    <script src="enum/DirectionsEnum.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
     <script src="puzzleagents/SwitchAgent.js"></script>
     <script src="puzzleagents/LavaRoomAgent.js"></script>
     <script src="puzzleagents/KeyAndDoorAgent.js"></script>
     <script src="puzzleagents/LeverAgent.js"></script>
+    <script src="puzzleagents/MazeAgent.js"></script>
+
 </head>
 
 <body style="background-color: black">
@@ -66,7 +69,7 @@
 
         var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador, });
         cena1.adicionar(pc);
-
+        
         var puzzleAgents = new PuzzleAgentsManager(
             gerenciador.dungeonGenerator.graph
         )
@@ -395,6 +398,7 @@
 
         function playTheme(themeIdx) {
             cena1.assets.play("tema"+themeIdx)
+            
         }
 
         function calcularPosicaoMedia(cells) {

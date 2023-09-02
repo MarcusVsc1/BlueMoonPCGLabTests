@@ -36,7 +36,7 @@ class SwitchAgent {
             cena1.adicionar(gerenciador.criarInterruptor(posicao.x, posicao.y, this.switchEvent,  ++SwitchAgent.id)) 
             switches.push(SwitchAgent.id)
         }
-        switches = this.fisherYales(switches)
+        switches = SwitchAgent.fisherYales(switches)
         SwitchAgent.switchGroups.push({
             correctCombination: switches,
             actualCombination:[],
@@ -88,7 +88,7 @@ class SwitchAgent {
         return posicoes;
     }
 
-    fisherYales(array) {
+    static fisherYales(array) {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [array[i], array[j]] = [array[j], array[i]];

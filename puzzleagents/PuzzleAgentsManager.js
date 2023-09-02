@@ -7,13 +7,14 @@ class PuzzleAgentsManager {
             new LavaRoomAgent(), 
             new LeverAgent(), 
             new KeyAndDoorAgent(), 
-            null, 
+            new MazeAgent(), 
             null
         ],
         this.createPuzzleGraph()
     }
 
     createPuzzleGraph() {
+        /*
         //para teste de switch (interruptor)
         var sw = new SwitchAgent()
         sw.gerarPuzzle(this.mapGraph, this.puzzleGraph)
@@ -26,6 +27,10 @@ class PuzzleAgentsManager {
         // testes de chave e porta
         var kd = new KeyAndDoorAgent()
         kd.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        */
+        //para testes de maze
+        var mz = new MazeAgent()
+        mz.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         
     }
 }
