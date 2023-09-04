@@ -1,6 +1,6 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 60;
+        this.MAP_SIZE = 50;
         this.NUM_ROOMS = 10;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
@@ -83,7 +83,7 @@ class DungeonGenerator {
     removeCorridorUnnecessaryCells(map) {
         for (var corridor of this.graph.adjacencyList) {
             var toRemove = []
-            if(corridor.cells.length > 2) {
+            if(corridor.cells.length > 3) {
                 for (var i = 0; i < corridor.cells.length / 2; i++) {
                     var actualNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i], 0)
                     var nextNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i + 1], 0)
