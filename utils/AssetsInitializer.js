@@ -28,6 +28,7 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("gear", "assets/gear.png");
         assetsMng.loadImage("switch", "assets/switch.png");
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
+        assetsMng.loadImage("box", "assets/box.png");
         assetsMng.loadAudio("sword", "assets/sword.ogg");
         assetsMng.loadAudio("sword2", "assets/sword2.ogg");
         assetsMng.loadAudio("explosion", "assets/explosion.mp3");

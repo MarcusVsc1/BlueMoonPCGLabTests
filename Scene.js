@@ -7,6 +7,7 @@ function Scene(params) {
         spritesPoder: [],
         spritesXP: [],
         spritesO: [],
+        spritesXSoko: [],
         toRemove: [],
         ctx: null,
         w: 1600,
@@ -25,6 +26,7 @@ function Scene(params) {
         cameraY: 0,
         extras: [],
         paintCorridor: [],
+        darkRooms: [],
         inventoryItem: null
     }
     Object.assign(this, exemplo, params);
@@ -60,6 +62,10 @@ Scene.prototype.adicionar = function (sprite) {
         this.spritesXP.push(sprite);
     }
 
+    if (sprite.props.tipo == "goal") {
+        this.spritesXSoko.push(sprite);
+    }
+
     sprite.scene = this;
 };
 
@@ -86,6 +92,10 @@ Scene.prototype.desenhar = function () {
         this.spritesO[i].desenhar(this.ctx);
     }
 
+    for (var i = 0; i < this.spritesXSoko.length; i++) {
+        this.spritesXSoko[i].desenhar(this.ctx, this.pc.x, this.pc.y);
+    }
+
     /*if (this.pc.direcao != 0) {
         if (this.pc.desenhar) { }
     }*/
@@ -101,6 +111,7 @@ Scene.prototype.desenhar = function () {
     }*/
     desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
     desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
+    preencherComPreto(this.darkRooms)
 };
 
 

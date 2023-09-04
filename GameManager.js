@@ -218,3 +218,13 @@ GameManager.prototype.criarInterruptor = function (posX, posY, evento, switchId)
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:10, imgY:1, event: evento, switchId: switchId,
                 imagem: "switch", desenhar: desenharAlavanca,  toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
 }
+
+GameManager.prototype.criarGoalSokoban = function (posX, posY) {
+    return new Sprite({ x: posX*32, y: posY*32, w: 32, h: 32, vm:0,
+                desenhar: desenharQuadradoComX, props: { tipo: "goal" }});
+}
+
+GameManager.prototype.criarCaixaSokoban = function (posX, posY) {
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, vm:0, imagem: "box",
+                desenhar: desenharCaixa, props: { tipo: "goal" }});
+}

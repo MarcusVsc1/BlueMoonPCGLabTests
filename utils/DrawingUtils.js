@@ -195,10 +195,36 @@ function desenharCelulas(cells, fillStyle) {
 function preencherComPreto(rooms) {
     ctx.save();
     for (var room of rooms) {
+        const salaX = room.cells[0].x * 32
+        const salaY = room.cells[0].y * 32
+        const larguraSala = room.roomWidth * 32
+        const alturaSala = room.roomHeight * 32      
+
+        const pcX = pc.x/* posição X do personagem */;
+        const pcY = pc.y/* posição Y do personagem */;
+
+        // Raio do buraco circular
+        const raioDoBuraco = 30;
+
+        // Posição do buraco em relação ao canto superior esquerdo da sala (considerando a translação)
+        const buracoX = pcX - salaX - raioDoBuraco - cena1.cameraX;
+        const buracoY = pcY - salaY - raioDoBuraco - cena1.cameraY;
+
+        ctx.translate(salaX, salaY)
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(buracoX + raioDoBuraco, buracoY + raioDoBuraco, raioDoBuraco, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+
         ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-        ctx.fillRect(room.cells[0].x * 32 - cena1.cameraX, room.cells[0].y * 32 - cena1.cameraY, room.roomWidth * 32, room.roomHeight * 32);
+        ctx.fillRect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala);
+        
+        ctx.restore();
+
     }
-    
+
     ctx.restore();
 
 }
@@ -209,7 +235,7 @@ function desenharQuadradoComX(ctx) {
     ctx.save();
 
     // Translade o contexto para as coordenadas x e y
-    ctx.translate(this.x - cena1.cameraX, this.y  - cena1.cameraY);
+    ctx.translate(this.x - cena1.cameraX, this.y - cena1.cameraY);
 
     // Deixa a linha mais grossa
     ctx.lineWidth = 2;
@@ -230,5 +256,23 @@ function desenharQuadradoComX(ctx) {
     ctx.closePath();
 
     // Restaure o estado do contexto para não afetar outros desenhos
+    ctx.restore();
+}
+
+function desenharCaixa() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.drawImage(
+        this.scene.assets.img(this.imagem),
+        0,
+        0,
+        255,
+        256,
+        -this.w / 2 - cena1.cameraX,
+        -this.h / 2 - cena1.cameraY,
+        32,
+        32
+    );
+
     ctx.restore();
 }
