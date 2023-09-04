@@ -39,6 +39,7 @@ GameManager.prototype.criarEstagios = function(){
     while(!this.dungeonGenerator.sucesso){
         console.log("Erro no Kruskal")
         contador++
+        Room.id = 0
         this.dungeonGenerator.graph = new Graph();
         var dungeonCriada = this.dungeonGenerator.createMap();
         console.log("Quantidade de vezes que a dungeon foi refeita: "+contador)
