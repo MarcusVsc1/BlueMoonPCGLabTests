@@ -214,12 +214,15 @@ function preencherComPreto(rooms) {
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(buracoX + raioDoBuraco, buracoY + raioDoBuraco, raioDoBuraco, 0, Math.PI * 2);
+        ctx.rect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala)
+        if(pc.x >= salaX && pc.x <= salaX + larguraSala && pc.y >= salaY && pc.y <= salaY + alturaSala){
+            ctx.arc(buracoX + raioDoBuraco, buracoY + raioDoBuraco, raioDoBuraco, 0, Math.PI * 2);
+        }
+        ctx.clip('evenodd');
         ctx.closePath();
-        ctx.clip();
 
         ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-        ctx.fillRect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala);
+        ctx.fill();
         
         ctx.restore();
 
