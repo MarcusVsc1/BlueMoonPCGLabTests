@@ -191,3 +191,44 @@ function desenharCelulas(cells, fillStyle) {
         ctx.fillRect(element.x * 32 - cena1.cameraX, element.y * 32 - cena1.cameraY, 32, 32);
     });
 }
+
+function preencherComPreto(rooms) {
+    ctx.save();
+    for (var room of rooms) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+        ctx.fillRect(room.cells[0].x * 32 - cena1.cameraX, room.cells[0].y * 32 - cena1.cameraY, room.roomWidth * 32, room.roomHeight * 32);
+    }
+    
+    ctx.restore();
+
+}
+
+function desenharQuadradoComX(ctx) {
+    var tamanho = 32
+    // Salve o estado atual do contexto
+    ctx.save();
+
+    // Translade o contexto para as coordenadas x e y
+    ctx.translate(this.x - cena1.cameraX, this.y  - cena1.cameraY);
+
+    // Deixa a linha mais grossa
+    ctx.lineWidth = 2;
+
+    // Defina a cor do traço (contorno) para vermelho
+    ctx.strokeStyle = "red";
+
+    // Desenhe o quadrado sem preenchimento
+    ctx.strokeRect(0, 0, tamanho, tamanho);
+
+    // Desenhe o "X" no meio do quadrado
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(tamanho, tamanho);
+    ctx.moveTo(0, tamanho);
+    ctx.lineTo(tamanho, 0);
+    ctx.stroke();
+    ctx.closePath();
+
+    // Restaure o estado do contexto para não afetar outros desenhos
+    ctx.restore();
+}

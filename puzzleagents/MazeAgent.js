@@ -8,6 +8,7 @@ class MazeAgent {
         if (rooms.length > 0) {
             var room = rooms[0]
             console.log("Id da sala " + room.roomId)
+            darkRoom(room.roomId)
 
             this.roomTotalCells = room.roomHeight * room.roomWidth
             var roomMatrix = this.inicializarMatriz(room.roomHeight, room.roomWidth)

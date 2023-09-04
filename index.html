@@ -31,7 +31,6 @@
     <script src="utils/DrawingUtils.js"></script>
     <script src="utils/AssetsInitializer.js"></script>
     <script src="enum/KeyColorEnum.js"></script>
-    <script src="enum/DirectionsEnum.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
     <script src="puzzleagents/SwitchAgent.js"></script>
     <script src="puzzleagents/LavaRoomAgent.js"></script>
@@ -46,8 +45,8 @@
     <script>
 
         var canvas = document.querySelector("canvas");
-        canvas.width = 1080;
-        canvas.height = 600
+        canvas.width = 640;
+        canvas.height = 480
         var ctx = canvas.getContext("2d");
         var teclas = {
             esquerda: 0,
@@ -358,6 +357,11 @@
         function markRoomById(idx) {
             console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
             cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
+        }
+
+        function darkRoom(idx) {
+            console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
+            cena1.darkRooms.push(cena1.gamer.dungeonGenerator.graph.nodes[idx])
         }
 
         function markTerminalCellsByRoomId(idx) {
