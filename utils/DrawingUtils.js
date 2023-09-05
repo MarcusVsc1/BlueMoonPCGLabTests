@@ -204,7 +204,7 @@ function preencherComPreto(rooms) {
         const pcY = pc.y/* posição Y do personagem */;
 
         // Raio do buraco circular
-        const raioDoBuraco = 30;
+        const raioDoBuraco = 48;
 
         // Posição do buraco em relação ao canto superior esquerdo da sala (considerando a translação)
         const buracoX = pcX - salaX - raioDoBuraco - cena1.cameraX;
@@ -216,7 +216,7 @@ function preencherComPreto(rooms) {
         ctx.beginPath();
         ctx.rect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala)
         if(pc.x >= salaX && pc.x <= salaX + larguraSala && pc.y >= salaY && pc.y <= salaY + alturaSala){
-            ctx.arc(buracoX + raioDoBuraco, buracoY + raioDoBuraco, raioDoBuraco, 0, Math.PI * 2);
+            ctx.arc(buracoX + raioDoBuraco - 2, buracoY + raioDoBuraco - 4, raioDoBuraco, 0, Math.PI * 2);
         }
         ctx.clip('evenodd');
         ctx.closePath();
