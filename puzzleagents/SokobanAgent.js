@@ -1,7 +1,7 @@
 class SokobanAgent {
 
     gerarPuzzle(mapGraph, puzzleGraph) {
-        var rooms = mapGraph.nodes.filter(node => node.roomHeight * node.roomWidth < 48 && node.terminalCells.length == 1)
+        var rooms = mapGraph.nodes.filter(node => node.roomHeight <= 6 && node.roomWidth <= 6)
         if (rooms.length > 0) {
             var room = rooms[0]
             console.log("Id da sala " + room.roomId)
