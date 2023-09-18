@@ -5,12 +5,13 @@ class Game {
     static winnerScore = 0
     constructor() {
         this.winner = null
-        
+
     }
     /** Generate and return the initial game state. */
     start(initialPosition, m, n) {
         const objetoInicial = {
-            tipo: "parede"
+            tipo: "parede",
+            visitado: false
         };
 
         const matriz = new Array(m);
@@ -22,7 +23,7 @@ class Game {
             }
         }
 
-        matriz[initialPosition.x][initialPosition.y] = { tipo: "jogador" }
+        matriz[initialPosition.x][initialPosition.y] = { tipo: "jogador", visitado: true }
 
         return new SokobanState(matriz)
     }
@@ -30,8 +31,8 @@ class Game {
     /** Return the current player’s legal moves from given state. */
     legalPlays(state) {
         let legalPlays = []
-        
-        if(!state.finish){
+
+        if (!state.finish) {
             var player = this.findPositionByType(state.board, "jogador")[0]
             //verifica se já congelou o tabuleiro
             if (!state.snapped) {
@@ -118,6 +119,7 @@ class Game {
         }
         newState.board[player.x][player.y].tipo = "vazio"
         newState.board[player.x + direction.x][player.y + direction.y].tipo = "jogador"
+        newState.board[player.x + direction.x][player.y + direction.y].visitado = true
         newState.board[player.x + direction.x][player.y + direction.y].moves = undefined
         newState.playHistory = newHistory
         return Object.assign(new SokobanState(), newState)
@@ -150,6 +152,7 @@ class Game {
                 state.board[position.matrix1.x][position.matrix1.y].tipo = "vazio"
             }
         }
+        this.removeUnreachableCells(state)
     }
 
     calculateScore(state) {
@@ -158,7 +161,7 @@ class Game {
         const wb = 5;
         const wn = 1;
 
-        var scoreCaixas = this.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
+        var scoreCaixas = Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
         var scoreCongestionamento = this.calcularScoreCongestionamento(state);
         var scoreHeterogeneo = this.countCellsWithDifferentBeighbors(state.board);
         return Math.sqrt(wb * scoreHeterogeneo + wc * scoreCongestionamento + wn * scoreCaixas) / k
@@ -178,10 +181,10 @@ class Game {
             var matrix1 = position.matrix1
             var matrix2 = position.matrix2
 
-            var boxCount = this.countCells(snapshotMatrix, matrix1, matrix2, "caixa")
-            var goalCount = this.countCells(evalMatrix, matrix1, matrix2, "caixa")
-            var wallCount = this.countCells(evalMatrix, matrix1, matrix2, "parede")
-            var rectangleArea = (Math.abs(matrix2.x - matrix1.x) + 1) * (Math.abs(matrix2.y - matrix1.y) + 1) 
+            var boxCount = Game.countCells(snapshotMatrix, matrix1, matrix2, "caixa")
+            var goalCount = Game.countCells(evalMatrix, matrix1, matrix2, "caixa")
+            var wallCount = Game.countCells(evalMatrix, matrix1, matrix2, "parede")
+            var rectangleArea = (Math.abs(matrix2.x - matrix1.x) + 1) * (Math.abs(matrix2.y - matrix1.y) + 1)
             var boxScore = (alfa * boxCount + beta * goalCount) / (gama * (rectangleArea + wallCount))
             scoreCongestionamento = scoreCongestionamento + boxScore
 
@@ -189,7 +192,7 @@ class Game {
         return scoreCongestionamento
     }
 
-    countCells(matriz, coordenada1, coordenada2, tipo) {
+    static countCells(matriz, coordenada1, coordenada2, tipo) {
         const { x: x1, y: y1 } = coordenada1;
         const { x: x2, y: y2 } = coordenada2;
 
@@ -389,12 +392,31 @@ class Game {
                 if (elemento.tipo in mapeamento) {
                     return mapeamento[elemento.tipo];
                 } else if (elemento.tipo === "caixa") {
-                    return elemento.boxId;
+                    return "C"
                 } else {
                     // Se o tipo não corresponder a nenhum mapeamento, mantém o tipo original
                     return elemento.tipo;
                 }
             });
         });
+    }
+
+
+
+    removeUnreachableCells(state) {
+        var board = state.board
+        var snapshot = state.snapshot
+        const rows = board.length;
+        const cols = board[0].length;
+
+        // Remove unreachable cells
+        for (let i = 0; i < snapshot.length; i++) {
+            for (let j = 0; j < snapshot[i].length; j++) {
+                if (board[i][j].tipo === "vazio" && !board[i][j].visitado) {
+                    board[i][j].tipo = "parede";
+                    snapshot[i][j].tipo = "parede";
+                }
+            }
+        }
     }
 }
