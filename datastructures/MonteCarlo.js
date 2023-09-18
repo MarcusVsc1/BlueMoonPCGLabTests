@@ -21,11 +21,11 @@ class MonteCarlo {
     /** From given state, repeatedly run MCTS to build statistics. */
     runSearch(state, timeout = 2) {
         this.makeNode(state)
-        let end = Date.now() + timeout * 1000
-        var best = null
+        var best = state
         var bestScore = 0
         console.time("mcts")
-        while (Date.now() < end) {
+        let end = Date.now() + timeout * 1000
+        while (Date.now() < end && Game.countCells(best.board, { x: 0, y: 0 }, { x: best.board.length - 1, y: best.board[0].length - 1 }, "caixa") < 1) {
             var score = 0
             let node = this.select(state)
             if (node.isLeaf() === false) {
