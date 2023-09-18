@@ -1,19 +1,36 @@
 class PuzzleAgentsManager {
     constructor (mapGraph) {
         this.mapGraph = mapGraph,
-        this.puzzleGraph = new Graph(),
         this.raffle = [
-            new SwitchAgent(), 
             new LavaRoomAgent(), 
             new LeverAgent(), 
             new KeyAndDoorAgent(), 
-            new MazeAgent(), 
-            null
         ],
         this.createPuzzleGraph()
     }
 
     createPuzzleGraph() {
+        /*
+        loop para geração do grafo de puzzle
+        */
+        /*
+        var puzzleGraph = new PuzzleGraph(this.mapGraph);
+        var falhas = 0;
+        var finalizou = false;
+        while(!finalizou){
+            var agent = selecionarAgente(puzzleGraph, raffle)
+            var pgNew = agent.gerarPuzzle(puzzleGraph)
+            if(pgNew != null && this.possuiSolucao(pgNew)) {
+                puzzleGraph = pgNew;
+                var complexidade = calcularComplexidadeSolucao(puzzleGraph)
+            } else {
+                falhas++;
+            }
+            finalizou = deveParar(puzzleGraph, falhas, complexidade)
+        }
+        return puzzleGraph;
+        */
+
         /*
         //para teste de switch (interruptor)
         var sw = new SwitchAgent()
@@ -30,7 +47,11 @@ class PuzzleAgentsManager {
         */
         //para testes de maze
         var mz = new MazeAgent()
-        mz.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        //mz.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        
+        //para testes de sokoban
+        var sk = new SokobanAgent()
+        sk.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         
     }
 }

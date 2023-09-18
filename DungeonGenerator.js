@@ -1,7 +1,7 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 55;
-        this.NUM_ROOMS = 10;
+        this.MAP_SIZE = 70;
+        this.NUM_ROOMS = 18;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
         this.BUFFER = 3;
@@ -60,6 +60,7 @@ class DungeonGenerator {
             }
 
             const room = new Room(roomCells, roomHeight, roomWidth);
+            this.addWallsToRoom(room, map)
             this.graph.addNode(room);
             generatedRooms.push({ x, y, width: roomWidth, height: roomHeight, id: room.roomId });
         }
@@ -74,16 +75,14 @@ class DungeonGenerator {
         this.graph.nodes.forEach(room => {
             this.fillRoomInteriorWithEmpty(room.cells, map, width, height);
         });
-        console.time('removedor')
         this.removeCorridorUnnecessaryCells(map)
-        console.timeEnd('removedor')
         this.addWalls(height, width, map);
     }
 
     removeCorridorUnnecessaryCells(map) {
         for (var corridor of this.graph.adjacencyList) {
             var toRemove = []
-            if(corridor.cells.length > 3) {
+            if (corridor.cells.length > 3) {
                 for (var i = 0; i < corridor.cells.length / 2; i++) {
                     var actualNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i], 0)
                     var nextNeighbors = DungeonGenerator.findNeighborsByType(map, corridor.cells[i + 1], 0)
@@ -195,9 +194,7 @@ class DungeonGenerator {
 
     corridorHasObstacles(corridorCells, map) {
         const corridorWithoutEndpoints = corridorCells.slice(1, -1); // Remove initial and final cells
-        var val = ""
         for (const cell of corridorWithoutEndpoints) {
-            val = val + " " + map[cell.y][cell.x]
             if (map[cell.y][cell.x] != 9
             ) {
                 return true; // Corridor has obstacles
@@ -356,15 +353,15 @@ class DungeonGenerator {
 
     }
 
-    
+
     /*
     Métodos auxiliares
     */
 
-   removerDuplicatas(arr) {
-       const uniqueSet = new Set(arr.map(elemento => JSON.stringify(elemento)));
-       return Array.from(uniqueSet).map(item => JSON.parse(item));
-   }
+    removerDuplicatas(arr) {
+        const uniqueSet = new Set(arr.map(elemento => JSON.stringify(elemento)));
+        return Array.from(uniqueSet).map(item => JSON.parse(item));
+    }
 
     static findNeighborsByType(map, cell, type) {
         const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];

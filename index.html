@@ -37,6 +37,13 @@
     <script src="puzzleagents/KeyAndDoorAgent.js"></script>
     <script src="puzzleagents/LeverAgent.js"></script>
     <script src="puzzleagents/MazeAgent.js"></script>
+    <script src="puzzleagents/SokobanAgent.js"></script>
+    <script src="model/Game.js"></script>
+    <script src="datastructures/MonteCarlo.js"></script>
+    <script src="datastructures/MonteCarloNode.js"></script>
+    <script src="model/SokobanState.js"></script>
+    <script src="model/Play.js"></script>
+
 
 </head>
 
@@ -45,8 +52,8 @@
     <script>
 
         var canvas = document.querySelector("canvas");
-        canvas.width = 640;
-        canvas.height = 480
+        canvas.width = 1600;
+        canvas.height = 1080
         var ctx = canvas.getContext("2d");
         var teclas = {
             esquerda: 0,
@@ -55,6 +62,8 @@
             baixo: 0,
             espada: 0,
         }
+
+        ctx.scale = 0.001
 
         var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 

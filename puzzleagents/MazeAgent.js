@@ -4,7 +4,7 @@ class MazeAgent {
     }
 
     gerarPuzzle(mapGraph, puzzleGraph) {
-        var rooms = mapGraph.nodes.filter(node => node.roomHeight > 7 && node.roomWidth > 7 && node.terminalCells.length == 1)
+        var rooms = mapGraph.nodes.filter(node => node.roomHeight * node.roomWidth >= 48  && node.terminalCells.length == 1)
         if (rooms.length > 0) {
             var room = rooms[0]
             console.log("Id da sala " + room.roomId)
@@ -33,7 +33,6 @@ class MazeAgent {
             room.terminalCells.forEach(element => {
                 matrizMapeada[element.y - room.cells[0].y][element.x - room.cells[0].x] = 0
             });
-            console.log(matrizMapeada)
             this.mapToDungeon(room.cells[0], matrizMapeada)
 
         } else {
