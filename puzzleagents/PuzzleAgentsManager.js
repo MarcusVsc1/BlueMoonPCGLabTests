@@ -51,7 +51,7 @@ class PuzzleAgentsManager {
         
         //para testes de sokoban
         var sk = new SokobanAgent()
-        sk.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        //sk.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         
     }
 }
