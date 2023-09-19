@@ -153,39 +153,31 @@ class Graph {
         return false; // Nodes are not connected
     }
 
-    findFarthestRooms() {
-        const farthestRooms = [];
-        let maxDistance = -1;
-
-        for (const startRoom of this.nodes) {
-            const distances = new Map(); // Map para armazenar distâncias das salas
-            const visited = new Set(); // Conjunto para controlar salas visitadas
-            const queue = [{ room: startRoom, distance: 0 }];
-
-            while (queue.length > 0) {
-                const { room, distance } = queue.shift();
-
-                if (!visited.has(room)) {
-                    visited.add(room);
-                    distances.set(room, distance);
-
-                    for (const neighbor of this.getNeighbors(room)) {
-                        queue.push({ room: neighbor, distance: distance + 1 });
-                    }
-                }
-            }
-
-            // Encontrar a maior distância no grafo
-            if (distances.size > maxDistance) {
-                maxDistance = distances.size;
-                farthestRooms.length = 0; // Limpar o array anterior se houver uma distância maior
-                farthestRooms.push(startRoom);
-            } else if (distances.size === maxDistance) {
-                farthestRooms.push(startRoom);
-            }
+    findFarthestRoomFromStart(startRoom) {
+        const visited = new Set();
+        const queue = [{ room: startRoom, distance: 0 }];
+        let farthestRoom = startRoom;
+        let maxDistance = 0;
+      
+        while (queue.length > 0) {
+          const { room, distance } = queue.shift();
+      
+          if (distance > maxDistance) {
+            maxDistance = distance;
+            farthestRoom = room;
+          }
+      
+          visited.add(room);
+      
+          const neighbors = this.getNeighbors(room).filter(neighbor => !visited.has(neighbor));
+      
+          for (const neighbor of neighbors) {
+            queue.push({ room: neighbor, distance: distance + 1 });
+          }
         }
+      
+        return farthestRoom;
+      }
 
-        return farthestRooms;
-    }
 
 }

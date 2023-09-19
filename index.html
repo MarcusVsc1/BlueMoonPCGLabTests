@@ -68,9 +68,10 @@
         var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 
         var gerenciador = new GameManager(pc);
-
-        const farthestRooms = gerenciador.dungeonGenerator.graph.findFarthestRooms()
-        var posicao = this.calcularPosicaoMedia(farthestRooms[0].cells) 
+        var initialRoom = gerenciador.dungeonGenerator.graph.nodes.filter(node => node.terminalCells.length <=2 )[0]
+        var finalRoom = gerenciador.dungeonGenerator.graph.findFarthestRoomFromStart(initialRoom)
+        console.log("Final room: "+finalRoom.roomId)
+        var posicao = this.calcularPosicaoMedia(initialRoom.cells) 
 
         pc.x = posicao.x * 32
         pc.y = posicao.y * 32
