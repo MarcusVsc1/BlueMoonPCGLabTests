@@ -10,7 +10,7 @@ class Game {
     /** Generate and return the initial game state. */
     start(initialPosition, m, n) {
         const objetoInicial = {
-            tipo: "parede",
+            tipo: "vazio",
             visitado: false
         };
 
@@ -43,6 +43,7 @@ class Game {
                     legalPlays.push(new Play(cell))
                 }
                 //conjunto de jogadas: inserir um espaço vazio próximo a um espaço que não é parede (Delete obstacle)
+                /*
                 candidateCells.push(player)
                 candidateCells.push(... this.findPositionByType(state.board, "caixa"))
                 var newEmptyCells = this.findWallNeighbors(candidateCells, state.board)
@@ -50,20 +51,27 @@ class Game {
                     cell.tipo = "vazio"
                     legalPlays.push(new Play(cell))
                 }
+                */
+                if (Game.countCells(state.board, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") > 5) {
+                    legalPlays.push(new Play({}))
+                }
             } else {
-                // conjunto de jogadas: mover jogador (Move Agent)
-                const directions = [{ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }];
-                for (const direction of directions) {
-                    if (this.isMoveValid(player, direction, state.board)) {
-                        var params = { direction: null }
-                        params.direction = direction
-                        legalPlays.push(new Play(params))
+                if (Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") > 0) {
+                    // conjunto de jogadas: mover jogador (Move Agent)
+                    const directions = [{ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }];
+                    for (const direction of directions) {
+                        if (this.isMoveValid(player, direction, state.board)) {
+                            var params = { direction: null }
+                            params.direction = direction
+                            legalPlays.push(new Play(params))
+                        }
                     }
                 }
+                legalPlays.push(new Play({}))
             }
             //adiciona uma jogada vazia. no método nextState(), verifica se há congelou o nível
             //serve tanto para o Freeze Level quanto para o Evaluate Level
-            legalPlays.push(new Play({}))
+
         }
         return legalPlays
     }
@@ -155,16 +163,17 @@ class Game {
         this.removeUnreachableCells(state)
     }
 
-    calculateScore(state) {
-        const k = 50;
-        const wc = 10;
-        const wb = 5;
-        const wn = 1;
+    calculateScore(state, wc = 20, wb = 10, wn = 15, k = 15) {
 
         var scoreCaixas = Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
         var scoreCongestionamento = this.calcularScoreCongestionamento(state);
-        var scoreHeterogeneo = this.countCellsWithDifferentBeighbors(state.board);
+        var scoreHeterogeneo = this.calcularScoreHeterogeneo(state)
         return Math.sqrt(wb * scoreHeterogeneo + wc * scoreCongestionamento + wn * scoreCaixas) / k
+    }
+
+    calcularScoreHeterogeneo(state) {
+        var celulasHeterogeneas = this.countCellsWithDifferentBeighbors(state.board);
+        return celulasHeterogeneas / Math.sqrt(state.board.length * state.board[0].length)
     }
 
     /* 
@@ -172,7 +181,7 @@ class Game {
         cálculo: (alfa * numero de caixas + beta * número de células objetivo) / (gama * (área do retângulo * número de células de parede))
         usar para número de caixas a matriz snapshot e para células objetivo a matriz avaliada
     */
-    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 1) {
+    calcularScoreCongestionamento(state, alfa = 6, beta = 7, gama = 1) {
         var snapshotMatrix = state.snapshot;
         var evalMatrix = state.board;
         var boxPositions = this.findSameBoxIdBoxPositions(evalMatrix, snapshotMatrix)
@@ -181,8 +190,8 @@ class Game {
             var matrix1 = position.matrix1
             var matrix2 = position.matrix2
 
-            var boxCount = Game.countCells(snapshotMatrix, matrix1, matrix2, "caixa")
-            var goalCount = Game.countCells(evalMatrix, matrix1, matrix2, "caixa")
+            var boxCount = Game.countCells(snapshotMatrix, matrix1, matrix2, "caixa") - 1
+            var goalCount = Game.countCells(evalMatrix, matrix1, matrix2, "caixa") - 1
             var wallCount = Game.countCells(evalMatrix, matrix1, matrix2, "parede")
             var rectangleArea = (Math.abs(matrix2.x - matrix1.x) + 1) * (Math.abs(matrix2.y - matrix1.y) + 1)
             var boxScore = (alfa * boxCount + beta * goalCount) / (gama * (rectangleArea + wallCount))
@@ -400,8 +409,6 @@ class Game {
             });
         });
     }
-
-
 
     removeUnreachableCells(state) {
         var board = state.board

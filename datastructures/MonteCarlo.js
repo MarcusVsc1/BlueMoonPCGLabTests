@@ -25,38 +25,20 @@ class MonteCarlo {
         var bestScore = 0
         console.time("mcts")
         let end = Date.now() + timeout * 1000
-        while (Date.now() < end && Game.countCells(best.board, { x: 0, y: 0 }, { x: best.board.length - 1, y: best.board[0].length - 1 }, "caixa") < 1) {
+        while (Date.now() < end) {
             var score = 0
             let node = this.select(state)
-            if (node.isLeaf() === false) {
-                node = this.expand(node)
-                score = this.simulate(node)
+            if (!node.prunning) {
+                if (node.isLeaf() === false) {
+                    node = this.expand(node)
+                    score = this.simulate(node)
+                }
+                this.backpropagate(node, score)
+
             }
-            this.backpropagate(node, score)
         }
         console.timeEnd("mcts")
         return this.best
-    }
-
-    /** Get the best move from available statistics. */
-    bestPlay(state) {
-        this.makeNode(state)
-        // If not all children are expanded, not enough information
-        if (this.nodes.get(state.hash()).isFullyExpanded() === false)
-            throw new Error("Not enough information!")
-        let node = this.nodes.get(state.hash())
-        let allPlays = node.allPlays()
-        let bestPlay
-        let maxScore = -Infinity
-        for (let play of allPlays) {
-            let childNode = node.childNode(play)
-            let score = childNode.n_wins / childNode.n_plays
-            if (score > maxScore) {
-                bestPlay = play
-                maxScore = score
-            }
-        }
-        return bestPlay
     }
 
     /** Phase 1, Selection: Select until not fully expanded OR leaf */
@@ -76,6 +58,7 @@ class MonteCarlo {
             }
             node = node.childNode(bestPlay)
         }
+
         return node
     }
 
@@ -88,6 +71,7 @@ class MonteCarlo {
         let childUnexpandedPlays = this.game.legalPlays(childState)
         let childNode = node.expand(play, childState, childUnexpandedPlays)
         this.nodes.set(childState.hash(), childNode)
+
         return childNode
     }
 
@@ -100,7 +84,7 @@ class MonteCarlo {
             let play = plays[Math.floor(Math.random() * plays.length)]
             state = this.game.nextState(state, play)
         }
-        if(state.score > this.bestScore){
+        if (state.score > this.bestScore) {
             this.bestScore = state.score
             this.best = state
         }
@@ -109,7 +93,7 @@ class MonteCarlo {
 
     /** Phase 4, Backpropagation: Update ancestor statistics */
     backpropagate(node, score) {
-        
+
         while (node !== null) {
             node.n_plays += 1
             node.n_wins += score

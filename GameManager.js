@@ -34,7 +34,7 @@ GameManager.prototype.criarEstagios = function(){
     //estagio 1
     var contador = 0;
     console.time('createMap');
-    console.profile()
+    
     var dungeonCriada = this.dungeonGenerator.createMap();
     while(!this.dungeonGenerator.sucesso){
         console.log("Erro no Kruskal")
@@ -44,7 +44,7 @@ GameManager.prototype.criarEstagios = function(){
         var dungeonCriada = this.dungeonGenerator.createMap();
         console.log("Quantidade de vezes que a dungeon foi refeita: "+contador)
     }
-    console.profileEnd();
+    
 
     console.timeEnd('createMap');
 

@@ -1,7 +1,7 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 70;
-        this.NUM_ROOMS = 18;
+        this.MAP_SIZE = 55;
+        this.NUM_ROOMS = 8;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
         this.BUFFER = 3;
