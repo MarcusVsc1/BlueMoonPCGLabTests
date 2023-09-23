@@ -194,7 +194,7 @@ class Game {
         cálculo: (alfa * numero de caixas + beta * número de células objetivo) / (gama * (área do retângulo * número de células de parede))
         usar para número de caixas a matriz snapshot e para células objetivo a matriz avaliada
     */
-    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 5) {
+    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 10) {
         var snapshotMatrix = state.snapshot;
         var evalMatrix = state.board;
         var boxPositions = this.findSameBoxIdBoxPositions(evalMatrix, snapshotMatrix)
