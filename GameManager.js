@@ -37,7 +37,7 @@ GameManager.prototype.criarEstagios = function(){
     
     var dungeonCriada = this.dungeonGenerator.createMap();
     while(!this.dungeonGenerator.sucesso){
-        console.log("Erro no Kruskal")
+        console.log("Erro na criação do mapa")
         contador++
         Room.id = 0
         this.dungeonGenerator.graph = new Graph();
@@ -221,11 +221,11 @@ GameManager.prototype.criarInterruptor = function (posX, posY, evento, switchId)
 }
 
 GameManager.prototype.criarGoalSokoban = function (posX, posY) {
-    return new Sprite({ x: posX*32, y: posY*32, w: 32, h: 32, vm:0,
+    return new Sprite({ x: posX*32, y: posY*32, w: 32, h: 32, vm:0, posX: posX, posY: posY,
                 desenhar: desenharQuadradoComX, props: { tipo: "goal" }});
 }
 
 GameManager.prototype.criarCaixaSokoban = function (posX, posY) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, vm:0, imagem: "box",
-                desenhar: desenharCaixa, props: { tipo: "goal" }});
+    return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imagem: "box_",
+                initialX: posX, initialY: posY, desenhar: desenharCaixa, props: { tipo: "box", placed: false }});
 }

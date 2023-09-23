@@ -1,13 +1,14 @@
 class Room {
 
     static id = 0
-    constructor(cells, roomHeight, roomWidth) {
+    constructor(cells, roomHeight, roomWidth, tag = {}) {
         this.roomId = Room.id++;
         this.roomHeight = roomHeight;
         this.roomWidth = roomWidth
         this.cells = cells;
         this.unavailableCells = [];
         this.terminalCells = []
+        this.tag = tag
     }
 
     addTerminalCell(cell) {

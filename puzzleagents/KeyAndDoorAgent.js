@@ -1,27 +1,49 @@
 class KeyAndDoorAgent {
 
+    constructor(agentLevel = 0) {
+        this.agentLevel = agentLevel
+        this.defaultTag = { "tipo": "colecionável", "subTipo": "chavePorta" }
+    }
 
-    gerarPuzzle(puzzleGraph) {
-        var ps = selecionarPuzzleState(puzzleGraph);
-        var gargalo = encontrarGargalo(ps.mapGraph)
-        if(gargalo == null) {return null;}
-        var rt = encontrarAreaIsolada(ps.mapGraph)
-        if(rt == null) {return null;}
-        return atualizarPuzzleGraph(puzzleGraph, rt, gargalo)
-        /*
+    gerarPuzzle(mapGraph, room) {
+        if (this.agentLevel > 5) {
+            return false
+        }
+
+        room.tag = this.defaultTag
+
+        var collectible = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável")
+        var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]
+        var validCorridors = mapGraph.adjacencyList
+            .filter(
+                corridor => { return mapGraph.findCollectibleRoomsInPath(startRoom, corridor).length == collectible.length })
+            .filter(corridor => corridor.tag.subTipo != "chavePorta")
+            //.filter(corridor => {return mapGraph.isCorridorWithinDistance(startRoom, corridor, 3)})
+        if (validCorridors.length == 0) {
+            console.log("Não foram encontradas salas válidas")
+            room.tag = {}
+            return false
+        }
+
+        
+
+        var selectedCorridor = validCorridors[Math.floor(Math.random() * validCorridors.length)];
+        selectedCorridor.tag = this.defaultTag
+        
         //para teste
-        var indiceAleatorio = Math.floor(Math.random() * mapGraph.adjacencyList.length);
-        var x = mapGraph.adjacencyList[indiceAleatorio].cells[0].y
-        var y = mapGraph.adjacencyList[indiceAleatorio].cells[0].x
+        var doorX = selectedCorridor.cells[0].y
+        var doorY = selectedCorridor.cells[0].x
 
-        cena1.adicionar(gerenciador.criarChave(18, 18, 0));
-        cena1.adicionar(gerenciador.criarChave(18, 19, 1));
-        cena1.adicionar(gerenciador.criarChave(19, 20, 2));
-        cena1.adicionar(gerenciador.criarChave(19, 18, 3));
-        cena1.adicionar(gerenciador.criarPorta(y, x, 3));
+        var keyX = room.cells[0].y + Math.floor(room.roomHeight / 2)
+        var keyY = room.cells[0].x + Math.floor(room.roomWidth / 2)
 
-        gerenciador.estagios[0].mapa.cells[y][x].tipo = 10
-        */
+        cena1.adicionar(gerenciador.criarChave(keyY, keyX, this.agentLevel));
+        cena1.adicionar(gerenciador.criarPorta(doorY, doorX, this.agentLevel));
+
+        gerenciador.estagios[0].mapa.cells[doorY][doorX].tipo = 10
+
+        this.agentLevel++
+        
     }
 
 }
