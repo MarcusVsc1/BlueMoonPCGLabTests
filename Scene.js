@@ -27,7 +27,8 @@ function Scene(params) {
         extras: [],
         paintCorridor: [],
         darkRooms: [],
-        inventoryItem: null
+        inventoryItem: null,
+        sokobans: []
     }
     Object.assign(this, exemplo, params);
 }
@@ -91,9 +92,13 @@ Scene.prototype.desenhar = function () {
         if(this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId) 
         this.spritesO[i].desenhar(this.ctx);
     }
-
-    for (var i = 0; i < this.spritesXSoko.length; i++) {
-        this.spritesXSoko[i].desenhar(this.ctx, this.pc.x, this.pc.y);
+    for(var sokoban of this.sokobans){
+        for (var i = 0; i < sokoban.goals.length; i++) {
+            sokoban.goals[i].desenhar(this.ctx);
+        }
+        for (var i = 0; i < sokoban.boxes.length; i++) {
+            sokoban.boxes[i].desenhar(this.ctx);
+        }
     }
 
     /*if (this.pc.direcao != 0) {
@@ -137,6 +142,7 @@ Scene.prototype.mover = function (dt) {
     if (this.bruxa != null) {
         this.bruxa.mover(dt);
     }
+
 };
 
 //adiciona o comportamento dos sprites
@@ -164,6 +170,11 @@ Scene.prototype.comportar = function () {
     if (this.bruxa != null && this.bruxa.comportar) {
         this.bruxa.comportar();
     }
+
+    for(var sokoban of this.sokobans){
+        comportarSokoban(sokoban)
+    }
+    
 };
 
 
@@ -282,6 +293,19 @@ Scene.prototype.checaColisao = function () {
             }
         }
     } else { this.pc.lavaImmunity = false }
+
+    // checa colisão dos sokobans
+    for(var sokoban of this.sokobans){
+        for(var box of sokoban.boxes){
+            for(var spriteT  of this.spritesT){
+                if(spriteT.colidiuCom(box) && box.swCD <= 0){
+                    box.swCD = 0.6
+                    moverCaixa(box, pc)
+                }
+                box.swCD = box.swCD - 0.03
+            }
+        }
+    }
 
 
     if (this.pc.vidas == 0 && this.pc.atingido > 0) {

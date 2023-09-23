@@ -30,7 +30,7 @@ Grid.prototype.desenhar = function (ctx, scene) {
     //x e y na imagem
     var y = 0;
     var x = 0;
-    
+
     var positionX = 0;
     var positionY = 0;
     for (var c = 0; c < this.COLUMNS; c++) {
@@ -41,32 +41,32 @@ Grid.prototype.desenhar = function (ctx, scene) {
             var positionY = 0;
             switch (this.cells[c][l].tipo) {
                 case 0:
-                //chao
+                    //chao
                     y = 1;
                     x = 1;
                     break;
                 case 1:
-                //escada de pedra: esquerda
+                    //escada de pedra: esquerda
                     y = 0;
                     x = 6;
                     positionY = 2;
                     break;
                 case 2:
-                //escada de pedra: meio
+                    //escada de pedra: meio
                     y = 0;
                     x = 6;
                     positionY = 2;
                     positionX = 2;
                     break;
                 case 3:
-                //escada de pedra: direita
+                    //escada de pedra: direita
                     y = 0;
                     x = 6;
                     positionY = 2;
                     positionX = 4;
                     break;
                 case 4:
-                //cascalho laranja e verde
+                    //cascalho laranja e verde
                     y = 0;
                     x = 1;
                     break;
@@ -129,44 +129,42 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     positionX = 2;
                     break;
                 case 6:
-                //parede
+                    //parede
                     y = 2;
                     x = 5;
                     break;
                 case 7:
-                //lava
-                    y = 0;
-                    x = 0;
-                    standardTileset = this.assets.img("lava");
+                    //chão bloqueado
+                    y = 1;
+                    x = 1;
+
                     break;
                 case 8:
-                //buraco sombreado
+                    //buraco sombreado
                     y = 3;
                     x = 4;
                     positionX = 0;
                     positionY = 2;
                     break;
                 case 9:
-                //fundo preto de buraco
+                    //fundo preto de buraco
                     y = 3;
                     x = 4;
                     positionX = 1;
                     positionY = 3;
                     break;
                 case 10:
-                //barreira
+                    //barreira
                     y = 0;
                     x = 1;
                     break;
                 case 11:
-                // pe da parede de blocos
-                    y = 0;
-                    x = 4;
-                    positionX = 1;
-                    positionY = 4;
+                    // parede diferente
+                    y = 3;
+                    x = 5;
                     break;
                 case 12:
-                //parede de blocos
+                    //parede de blocos
                     y = 0;
                     x = 4;
                     positionX = 1;
@@ -176,16 +174,16 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     cor = "black";
             }
             ctx.drawImage(
-            standardTileset,
-            x*24*4 + 24*positionX,
-            y*36*4 + 24*positionY,
-            48,
-            48,
-            c * this.SIZE - scene.cameraX,
-            l * this.SIZE - scene.cameraY,
-            this.SIZE,
-            this.SIZE
-             );
+                standardTileset,
+                x * 24 * 4 + 24 * positionX,
+                y * 36 * 4 + 24 * positionY,
+                48,
+                48,
+                c * this.SIZE - scene.cameraX,
+                l * this.SIZE - scene.cameraY,
+                this.SIZE,
+                this.SIZE
+            );
             /*
             ctx.fillStyle = cor;
             ctx.fillRect(c * this.SIZE, l * this.SIZE, this.SIZE, this.SIZE);

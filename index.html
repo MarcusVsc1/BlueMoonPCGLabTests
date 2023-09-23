@@ -19,6 +19,7 @@
             display: block;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="Sprite.js"></script>
     <script src="Scene.js"></script>
     <script src="AssetsManager.js"></script>
@@ -27,6 +28,7 @@
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
     <script src="datastructures/Graph.js"></script>
+    <script src="datastructures/Edge.js"></script>
     <script src="model/Room.js"></script>
     <script src="utils/DrawingUtils.js"></script>
     <script src="utils/AssetsInitializer.js"></script>
@@ -61,6 +63,7 @@
             direita: 0,
             baixo: 0,
             espada: 0,
+            resetSokoban: 0
         }
 
         ctx.scale = 0.001
@@ -68,17 +71,11 @@
         var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 
         var gerenciador = new GameManager(pc);
-        var initialRoom = gerenciador.dungeonGenerator.graph.nodes.filter(node => node.terminalCells.length <=2 )[0]
-        var finalRoom = gerenciador.dungeonGenerator.graph.findFarthestRoomFromStart(initialRoom)
-        console.log("Final room: "+finalRoom.roomId)
-        var posicao = this.calcularPosicaoMedia(initialRoom.cells) 
 
-        pc.x = posicao.x * 32
-        pc.y = posicao.y * 32
 
         var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador, });
         cena1.adicionar(pc);
-        
+
         var puzzleAgents = new PuzzleAgentsManager(
             gerenciador.dungeonGenerator.graph
         )
@@ -117,9 +114,39 @@
                         this.globalCD = 0.2;
                         assetsMng.play("sword");
                     }
-
+                    if (teclas.resetSokoban) {
+                        verificarResetSokoban()
+                    }
                 }
             }
+        }
+
+        function verificarResetSokoban() {
+            for (var sokoban of cena1.sokobans) {
+                if (isPlayerInsideRoom(sokoban.room)) {
+                    pc.x = sokoban.startCell.y * 32 + sokoban.room.cells[0].x * 32 + 16
+                    pc.y = sokoban.startCell.x * 32 + sokoban.room.cells[0].y * 32 + 16
+                    for (var box of sokoban.boxes) {
+                        gerenciador.estagios[0].mapa.cells[box.posX][box.posY].tipo = 0
+                        box.posX = box.initialX
+                        box.posY = box.initialY
+                        gerenciador.estagios[0].mapa.cells[box.posX][box.posY].tipo = 11
+                        box.x = box.posX * 32 + 16
+                        box.y = box.posY * 32 + 16
+                    }
+                    cena1.dialogo = "Sokoban resetado!"
+                    assetsMng.play("cancel");
+                }
+            }
+        }
+
+        function isPlayerInsideRoom(room) {
+            const { x, y } = pc; // Coordenadas do jogador
+            const { cells } = room; // Array de células da sala
+
+            // Verificar se as coordenadas do jogador estão dentro das coordenadas da sala
+            return (x >= cells[0].x * 32 && x < (cells[0].x + room.roomWidth) * 32 && y >= cells[0].y * 32 && y < (cells[0].y + room.roomHeight) * 32)
+
         }
 
         function persegue(alvo) {
@@ -156,7 +183,7 @@
             this.x = this.x + this.vx * dt;
             this.y = this.y + this.vy * dt;
         }
-      
+
         //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
         function moverEspada() {
             switch (this.direcao) {
@@ -297,6 +324,79 @@
             }
         }
 
+        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
+        function moverCaixa(caixa, pc) {
+            var newPos
+            var oldPos = gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo
+            switch (pc.direcao) {
+                case 0:
+                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY + 1].tipo
+                    if (newPos == 0) {
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
+                        caixa.posY = caixa.posY + 1
+                        caixa.y = caixa.y + 32
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
+                    }
+                    break;
+                case 1:
+                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX - 1][caixa.posY].tipo
+                    if (newPos != 6 && newPos != 11) {
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
+                        caixa.posX = caixa.posX - 1
+                        caixa.x = caixa.x - 32
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
+                    }
+                    break;
+                case 2:
+                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX + 1][caixa.posY].tipo
+                    if (newPos == 0) {
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
+                        caixa.posX = caixa.posX + 1
+                        caixa.x = caixa.x + 32
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
+                    }
+                    break;
+                case 3:
+                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY - 1].tipo
+                    if (newPos == 0) {
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
+                        caixa.posY = caixa.posY - 1
+                        caixa.y = caixa.y - 32
+                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
+                    }
+                    break;
+            }
+
+        }
+
+        function comportarSokoban(sokoban) {
+            const allBoxesPlaced = sokoban.boxes.every(box => box.props && box.props.placed);
+            if (allBoxesPlaced) {
+                sokoban.countDown = sokoban.countDown - 0.1
+                if (sokoban.countDown <= 0) {
+                    var idx = cena1.sokobans.indexOf(sokoban)
+                    cena1.sokobans.splice(idx)
+                    assetsMng.play("magic");
+                    sokoban.room.cells.forEach(cell => {
+                        gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo = 0
+                    })
+                }
+            } else {
+                for (var box of sokoban.boxes) {
+                    for (var goal of sokoban.goals) {
+                        if (box.posX == goal.posX && box.posY == goal.posY) {
+                            box.props.placed = true
+                            break
+                        }
+                        box.props.placed = false
+                    }
+                }
+                sokoban.countDown = 0.5
+            }
+
+
+        }
+
         addEventListener("keydown", function (e) {
             switch (e.keyCode) {
                 case 75:
@@ -313,6 +413,9 @@
                     break;
                 case 83:
                     teclas.baixo = 1;
+                    break;
+                case 80:
+                    teclas.resetSokoban = 1;
                     break;
             }
         });
@@ -332,6 +435,9 @@
                     break;
                 case 83:
                     teclas.baixo = 0;
+                    break;
+                case 80:
+                    teclas.resetSokoban = 0;
                     break;
             }
         });
@@ -388,12 +494,12 @@
         }
 
         function markAllCorridors() {
-            cena1.gamer.dungeonGenerator.graph.adjacencyList.forEach(corridor => cena1.extras.push(... corridor.cells))
+            cena1.gamer.dungeonGenerator.graph.adjacencyList.forEach(corridor => cena1.extras.push(...corridor.cells))
         }
 
         function markAllTerminalCells() {
-            cena1.gamer.dungeonGenerator.graph.nodes.forEach(node => cena1.extras.push(... node.terminalCells))
-        }       
+            cena1.gamer.dungeonGenerator.graph.nodes.forEach(node => cena1.extras.push(...node.terminalCells))
+        }
 
         function removeRoomMarkById(idx) {
             let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
@@ -411,8 +517,8 @@
         }
 
         function playTheme(themeIdx) {
-            cena1.assets.play("tema"+themeIdx)
-            
+            cena1.assets.play("tema" + themeIdx)
+
         }
 
         function calcularPosicaoMedia(cells) {

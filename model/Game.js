@@ -2,10 +2,8 @@
 
 /** Class representing the game board. */
 class Game {
-    static winnerScore = 0
     constructor() {
         this.winner = null
-
     }
     /** Generate and return the initial game state. */
     start(initialPosition, m, n) {
@@ -110,6 +108,7 @@ class Game {
         newState.snapped = true
         newState.snapshot = state.board
         newState.playHistory = newHistory
+        newState.finalBoard = JSON.parse(JSON.stringify(state.board))
         return Object.assign(new SokobanState(), newState)
     }
 
@@ -118,7 +117,11 @@ class Game {
         var direction = play.direction
         var player = this.findPositionByType(newState.board, "jogador")[0]
         var nextPosition = newState.board[player.x + direction.x][player.y + direction.y]
+        var moved = false
         if (nextPosition.tipo == "caixa") {
+            if(nextPosition.moves > 0){
+                moved = true
+            }
             newState.board[player.x + direction.x * 2][player.y + direction.y * 2] = {
                 tipo: "caixa",
                 moves: nextPosition.moves + 1,
@@ -130,6 +133,11 @@ class Game {
         newState.board[player.x + direction.x][player.y + direction.y].visitado = true
         newState.board[player.x + direction.x][player.y + direction.y].moves = undefined
         newState.playHistory = newHistory
+        newState.boardHistory.push(Game.mapearMatriz(newState.board))
+        if (moved == true) {
+            newState.finalBoard = JSON.parse(JSON.stringify(newState.board))
+        }
+
         return Object.assign(new SokobanState(), newState)
     }
 
@@ -137,7 +145,10 @@ class Game {
         var newState = JSON.parse(JSON.stringify(state))
         newState.finish = true
         newState.playHistory = newHistory
+        newState.board = JSON.parse(JSON.stringify(newState.finalBoard))
+
         this.postProcessing(newState)
+        newState.boardHistory.push(Game.mapearMatriz(newState.board))
         newState.score = this.calculateScore(newState)
         return Object.assign(new SokobanState(), newState)
     }
@@ -157,13 +168,15 @@ class Game {
             }
             if (box.moves == 1) {
                 state.snapshot[position.matrix2.x][position.matrix2.y].tipo = "vazio"
+                state.snapshot[position.matrix2.x][position.matrix2.y].visitado = true
                 state.board[position.matrix1.x][position.matrix1.y].tipo = "vazio"
+                state.board[position.matrix1.x][position.matrix1.y].visitado = true
             }
         }
         this.removeUnreachableCells(state)
     }
 
-    calculateScore(state, wc = 20, wb = 10, wn = 15, k = 15) {
+    calculateScore(state, wb = 10, wc = 5, wn = 5, k = 50) {
 
         var scoreCaixas = Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
         var scoreCongestionamento = this.calcularScoreCongestionamento(state);
@@ -173,7 +186,7 @@ class Game {
 
     calcularScoreHeterogeneo(state) {
         var celulasHeterogeneas = this.countCellsWithDifferentBeighbors(state.board);
-        return celulasHeterogeneas / Math.sqrt(state.board.length * state.board[0].length)
+        return celulasHeterogeneas /// Math.sqrt(state.board.length * state.board[0].length)
     }
 
     /* 
@@ -181,7 +194,7 @@ class Game {
         cálculo: (alfa * numero de caixas + beta * número de células objetivo) / (gama * (área do retângulo * número de células de parede))
         usar para número de caixas a matriz snapshot e para células objetivo a matriz avaliada
     */
-    calcularScoreCongestionamento(state, alfa = 6, beta = 7, gama = 1) {
+    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 1) {
         var snapshotMatrix = state.snapshot;
         var evalMatrix = state.board;
         var boxPositions = this.findSameBoxIdBoxPositions(evalMatrix, snapshotMatrix)
@@ -194,7 +207,7 @@ class Game {
             var goalCount = Game.countCells(evalMatrix, matrix1, matrix2, "caixa") - 1
             var wallCount = Game.countCells(evalMatrix, matrix1, matrix2, "parede")
             var rectangleArea = (Math.abs(matrix2.x - matrix1.x) + 1) * (Math.abs(matrix2.y - matrix1.y) + 1)
-            var boxScore = (alfa * boxCount + beta * goalCount) / (gama * (rectangleArea + wallCount))
+            var boxScore = (alfa * boxCount + beta * goalCount) / (gama * (rectangleArea - wallCount))
             scoreCongestionamento = scoreCongestionamento + boxScore
 
         }

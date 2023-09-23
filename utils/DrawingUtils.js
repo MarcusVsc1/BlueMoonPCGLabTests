@@ -262,11 +262,11 @@ function desenharQuadradoComX(ctx) {
     ctx.restore();
 }
 
-function desenharCaixa() {
+function desenharCaixa(ctx) {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.drawImage(
-        this.scene.assets.img(this.imagem),
+        this.scene.assets.img(this.imagem+this.props.placed),
         0,
         0,
         255,

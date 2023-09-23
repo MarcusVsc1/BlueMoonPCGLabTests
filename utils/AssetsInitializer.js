@@ -21,14 +21,17 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("key_1", "assets/key_1.png");
         assetsMng.loadImage("key_2", "assets/key_2.png");
         assetsMng.loadImage("key_3", "assets/key_3.png");
+        assetsMng.loadImage("key_4", "assets/key_4.png");
         assetsMng.loadImage("door_0", "assets/door_0.png");
         assetsMng.loadImage("door_1", "assets/door_1.png");
         assetsMng.loadImage("door_2", "assets/door_2.png");
         assetsMng.loadImage("door_3", "assets/door_3.png");
+        assetsMng.loadImage("door_4", "assets/door_4.png");
         assetsMng.loadImage("gear", "assets/gear.png");
         assetsMng.loadImage("switch", "assets/switch.png");
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
-        assetsMng.loadImage("box", "assets/box.png");
+        assetsMng.loadImage("box_false", "assets/box_false.png");
+        assetsMng.loadImage("box_true", "assets/box_true.png");
         assetsMng.loadAudio("sword", "assets/sword.ogg");
         assetsMng.loadAudio("sword2", "assets/sword2.ogg");
         assetsMng.loadAudio("explosion", "assets/explosion.mp3");
@@ -47,3 +50,5 @@ var assetsMng = new AssetsManager();
         assetsMng.loadAudio("key", "assets/key.ogg")
         assetsMng.loadAudio("switchOn", "assets/switch.ogg")
         assetsMng.loadAudio("switchOn2", "assets/switch2.ogg")
+        assetsMng.loadAudio("magic", "assets/magic.ogg")
+        assetsMng.loadAudio("cancel", "assets/cancel.ogg")
