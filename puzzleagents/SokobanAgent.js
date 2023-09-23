@@ -21,9 +21,9 @@ class SokobanAgent {
             // From initial state, take turns to play game until finished
             console.time("total mcts")
             while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
-                winner = mcts.runSearch(state, 0.15)
+                winner = mcts.runSearch(state, 0.5)
                 tentativas++
-                if(tentativas == 30){
+                if(tentativas == 10){
                     mcts = new MonteCarlo(game)
                     tentativas = 0
                 }

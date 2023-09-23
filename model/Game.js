@@ -176,7 +176,7 @@ class Game {
         this.removeUnreachableCells(state)
     }
 
-    calculateScore(state, wb = 10, wc = 5, wn = 5, k = 50) {
+    calculateScore(state, wb = 10, wc = 5, wn = 1, k = 50) {
 
         var scoreCaixas = Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
         var scoreCongestionamento = this.calcularScoreCongestionamento(state);
@@ -194,7 +194,7 @@ class Game {
         cálculo: (alfa * numero de caixas + beta * número de células objetivo) / (gama * (área do retângulo * número de células de parede))
         usar para número de caixas a matriz snapshot e para células objetivo a matriz avaliada
     */
-    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 1) {
+    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 5) {
         var snapshotMatrix = state.snapshot;
         var evalMatrix = state.board;
         var boxPositions = this.findSameBoxIdBoxPositions(evalMatrix, snapshotMatrix)
