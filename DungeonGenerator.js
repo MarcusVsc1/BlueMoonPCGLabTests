@@ -1,6 +1,6 @@
 class DungeonGenerator {
     constructor() {
-        this.MAP_SIZE = 55;
+        this.MAP_SIZE = 40;
         this.NUM_ROOMS = 8;
         this.MIN_ROOM_SIZE = 5;
         this.MAX_ROOM_SIZE = 10;
@@ -29,6 +29,8 @@ class DungeonGenerator {
 
         const map = [];
 
+        
+
         for (let y = 0; y < height; y++) {
             map.push(new Array(width).fill(9));
         }
@@ -40,11 +42,16 @@ class DungeonGenerator {
             const roomHeight = Math.floor(Math.random() * (this.MAX_ROOM_SIZE - this.MIN_ROOM_SIZE + 1)) + this.MIN_ROOM_SIZE;
 
             let x, y;
+            var end = Date.now() + this.MAP_SIZE * 10
             do {
                 x = Math.floor(Math.random() * (width - roomWidth - 1)) + 1;
                 y = Math.floor(Math.random() * (height - roomHeight - 1)) + 1;
+                if(Date.now() > end) {
+                    this.sucesso = false
+                    console.log('Erro ao iniciar as salas')
+                    return null
+                }
             } while (this.isOverlapWithBuffer(generatedRooms, { x, y, width: roomWidth, height: roomHeight }, this.BUFFER));
-
             for (let ty = y; ty < y + roomHeight; ty++) {
                 for (let tx = x; tx < x + roomWidth; tx++) {
                     map[ty][tx] = 0; // Floor
@@ -200,6 +207,26 @@ class DungeonGenerator {
                 return true; // Corridor has obstacles
             }
         }
+
+        var roomCells = this.graph.nodes.map(node => node.cells).flatMap(cells => cells);
+        var init = 0
+        var end = corridorWithoutEndpoints.length - 1
+        while (map[corridorWithoutEndpoints[init].y][corridorWithoutEndpoints[init].x] != 9) {
+            init++
+        }
+        while (map[corridorWithoutEndpoints[init].y][corridorWithoutEndpoints[init].x] != 9) {
+            init++
+        }
+        var neighborCells = new Set()
+        for (var i = init; i < end; i++) {
+            neighborCells.add(DungeonGenerator.findNeighbors(map, corridorWithoutEndpoints[i]))
+        }
+        const array = [].concat(...Array.from(neighborCells))
+        if(!array.every(elemento => map[elemento.y][elemento.x] == 9 ||
+            map[elemento.y][elemento.x] == 6)){
+            return true
+        }
+        
         return false; // Corridor is obstacle-free
     }
 
@@ -377,6 +404,24 @@ class DungeonGenerator {
                 map[newY][newX] === type) {
                 neighbors.push({ x: newX, y: newY });
             }
+        }
+
+        return neighbors;
+    }
+
+    static findNeighbors(map, cell) {
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        const neighbors = [];
+
+        const numLinhas = map.length;
+        const numColunas = map[0].length;
+
+        for (const [dx, dy] of directions) {
+            const newX = cell.x + dx;
+            const newY = cell.y + dy;
+
+            neighbors.push({ x: newX, y: newY });
+
         }
 
         return neighbors;
