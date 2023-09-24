@@ -29,7 +29,7 @@ class DungeonGenerator {
 
         const map = [];
 
-        
+
 
         for (let y = 0; y < height; y++) {
             map.push(new Array(width).fill(9));
@@ -42,11 +42,11 @@ class DungeonGenerator {
             const roomHeight = Math.floor(Math.random() * (this.MAX_ROOM_SIZE - this.MIN_ROOM_SIZE + 1)) + this.MIN_ROOM_SIZE;
 
             let x, y;
-            var end = Date.now() + this.MAP_SIZE * 10
+            var end = Date.now() + this.MAP_SIZE * 5
             do {
                 x = Math.floor(Math.random() * (width - roomWidth - 1)) + 1;
                 y = Math.floor(Math.random() * (height - roomHeight - 1)) + 1;
-                if(Date.now() > end) {
+                if (Date.now() > end) {
                     this.sucesso = false
                     console.log('Erro ao iniciar as salas')
                     return null
@@ -208,27 +208,30 @@ class DungeonGenerator {
             }
         }
 
-        var roomCells = this.graph.nodes.map(node => node.cells).flatMap(cells => cells);
+        var roomsCells = this.graph.nodes.map(node => node.cells).flatMap(cells => cells);
         var init = 0
         var end = corridorWithoutEndpoints.length - 1
         while (map[corridorWithoutEndpoints[init].y][corridorWithoutEndpoints[init].x] != 9) {
             init++
         }
-        while (map[corridorWithoutEndpoints[init].y][corridorWithoutEndpoints[init].x] != 9) {
-            init++
+        while (map[corridorWithoutEndpoints[end].y][corridorWithoutEndpoints[end].x] != 9) {
+            end--
         }
         var neighborCells = new Set()
-        for (var i = init; i < end; i++) {
+        for (var i = init +2; i < end-2; i++) {
             neighborCells.add(DungeonGenerator.findNeighbors(map, corridorWithoutEndpoints[i]))
         }
-        const array = [].concat(...Array.from(neighborCells))
-        if(!array.every(elemento => map[elemento.y][elemento.x] == 9 ||
-            map[elemento.y][elemento.x] == 6)){
+        neighborCells = [].concat(...Array.from(neighborCells))
+        if (!this.disjoint(neighborCells, roomsCells)) {
             return true
         }
-        
+
         return false; // Corridor is obstacle-free
     }
+
+    disjoint(array1, array2) {
+        return array1.every(elemento1 => !array2.some(elemento2 => elemento1.x === elemento2.x && elemento1.y === elemento2.y));
+      }
 
     fillCorridor(corridorCells, map) {
         for (const cell of corridorCells) {
@@ -352,7 +355,8 @@ class DungeonGenerator {
                     };
                     var corridor = this.createCorridorBetweenCells(cellA, cellB, map)
                     if (!roomA.unavailableCells.find(cell => cell.x === cellA.x && cell.y === cellA.y) &&
-                        !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y) && !this.corridorHasObstacles(corridor, map)) {
+                        !roomB.unavailableCells.find(cell => cell.x === cellB.x && cell.y === cellB.y) &&
+                        !this.corridorHasObstacles(corridor, map)) {
                         this.removerDuplicatas(corridor)
                         roomA.unavailableCells.push(... this.findNeighborCells(cellA, 3))
                         roomA.addTerminalCell(cellA)
@@ -371,6 +375,7 @@ class DungeonGenerator {
         for (var node of this.graph.nodes) {
             for (var otherNode of this.graph.nodes) {
                 if (node != otherNode && !this.graph.areNodesConnected(node, otherNode)) {
+                    console.log("Erro no kruskal")
                     return false;
                 }
             }
