@@ -229,3 +229,8 @@ GameManager.prototype.criarCaixaSokoban = function (posX, posY) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imagem: "box_",
                 initialX: posX, initialY: posY, desenhar: desenharCaixa, props: { tipo: "box", placed: false }});
 }
+
+GameManager.prototype.criarDispositivoAntiLava = function (x, y, evento, room) {
+    return new Sprite({ x: x, y: y, w: 32, h: 32, spriteSize: 48, vm:0, imgX:0, imgY:0, event: evento,
+                imagem: "switch", desenhar: desenharAlavanca, room: room, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
+}

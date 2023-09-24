@@ -47,9 +47,8 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     break;
                 case 1:
                     //escada de pedra: esquerda
-                    y = 0;
-                    x = 6;
-                    positionY = 2;
+                    y = 2;
+                    x = 0;
                     break;
                 case 2:
                     //escada de pedra: meio

@@ -52,22 +52,22 @@ class PuzzleAgentsManager {
         var sw = new SwitchAgent()
         sw.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         // para testes de sala de lava
-        var lr = new LavaRoomAgent()
-        lr.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         // para testes de alavanca
-        var lv = new LeverAgent()
-        lv.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         // testes de chave e porta
         var kd = new KeyAndDoorAgent()
         kd.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        var lv = new LeverAgent()
+        lv.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         //para testes de maze
         var mz = new MazeAgent()
         //mz.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         //para testes de sokoban
-        */
+        
         var sk = new SokobanAgent()
         sk.gerarPuzzle(this.mapGraph, this.puzzleGraph)
-        
+        */
+       var lr = new LavaRoomAgent()
+       lr.gerarPuzzle(this.mapGraph, this.puzzleGraph)
     }
 
     initiate() {
