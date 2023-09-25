@@ -133,7 +133,6 @@ class Game {
         newState.board[player.x + direction.x][player.y + direction.y].visitado = true
         newState.board[player.x + direction.x][player.y + direction.y].moves = undefined
         newState.playHistory = newHistory
-        newState.boardHistory.push(Game.mapearMatriz(newState.board))
         if (moved == true) {
             newState.finalBoard = JSON.parse(JSON.stringify(newState.board))
         }
@@ -148,7 +147,6 @@ class Game {
         newState.board = JSON.parse(JSON.stringify(newState.finalBoard))
 
         this.postProcessing(newState)
-        newState.boardHistory.push(Game.mapearMatriz(newState.board))
         newState.score = this.calculateScore(newState)
         return Object.assign(new SokobanState(), newState)
     }
@@ -176,7 +174,7 @@ class Game {
         this.removeUnreachableCells(state)
     }
 
-    calculateScore(state, wb = 10, wc = 5, wn = 1, k = 50) {
+    calculateScore(state, wb = 7, wc = 20, wn = 2, k = 50) {
 
         var scoreCaixas = Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
         var scoreCongestionamento = this.calcularScoreCongestionamento(state);
@@ -194,7 +192,7 @@ class Game {
         cálculo: (alfa * numero de caixas + beta * número de células objetivo) / (gama * (área do retângulo * número de células de parede))
         usar para número de caixas a matriz snapshot e para células objetivo a matriz avaliada
     */
-    calcularScoreCongestionamento(state, alfa = 4, beta = 4, gama = 10) {
+    calcularScoreCongestionamento(state, alfa = 6, beta = 6, gama = 15) {
         var snapshotMatrix = state.snapshot;
         var evalMatrix = state.board;
         var boxPositions = this.findSameBoxIdBoxPositions(evalMatrix, snapshotMatrix)

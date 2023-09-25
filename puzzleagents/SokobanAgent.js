@@ -1,7 +1,7 @@
 class SokobanAgent {
 
     gerarPuzzle(mapGraph) {
-        var rooms = mapGraph.nodes//.filter(node => node.roomHeight * node.roomWidth < 49)
+        var rooms = mapGraph.nodes.filter(node => node.roomHeight * node.roomWidth < 49)
         if (rooms.length > 0) {
             var room = rooms[0]
             console.log("Id da sala " + room.roomId)
@@ -18,23 +18,19 @@ class SokobanAgent {
             var winner = state;
             winner.score = 0
             var tentativas = 0
+            mcts.best = winner
             // From initial state, take turns to play game until finished
             console.time("total mcts")
             while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
                 winner = mcts.runSearch(state, 0.5)
                 tentativas++
-                if(tentativas == 10){
+                if(tentativas == 20){
                     mcts = new MonteCarlo(game)
                     tentativas = 0
                 }
             }
             console.timeEnd("total mcts")
-            var content = '' 
-            winner.boardHistory.forEach(matrix => {
-                content = content + this.formatMatrix(matrix) + "\n/////////////////////////////////////////////////\n"
-            })
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            //saveAs(blob, 'arquivo.txt');
+
             console.log("Score: "+winner.score)
             var matrizMapeada = this.mapBoardToGameMap(winner)
 

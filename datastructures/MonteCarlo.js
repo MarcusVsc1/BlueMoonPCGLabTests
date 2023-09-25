@@ -81,7 +81,8 @@ class MonteCarlo {
             let play = plays[Math.floor(Math.random() * plays.length)]
             state = this.game.nextState(state, play)
         }
-        if (state.score > this.bestScore) {
+        if (state.score > this.bestScore &&
+            Game.countCells(state.board, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") >= 2) {
             this.bestScore = state.score
             this.best = state
         }

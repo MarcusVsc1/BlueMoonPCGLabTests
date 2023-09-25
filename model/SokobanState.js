@@ -5,7 +5,6 @@ class SokobanState {
     this.board = board
     this.snapped = snapped
     this.finish = finish
-    this.boardHistory = []
   }
 
   hash() {
