@@ -293,13 +293,18 @@ Scene.prototype.checaColisao = function () {
             }
         }
     } else { this.pc.lavaImmunity = false }
+    if(this.map.cells[playerPositionX][playerPositionY].tipo == 1){
+        this.pc.desaceleracao = 0.95
+    } else {
+        this.pc.desaceleracao = 1
+    }
 
     // checa colisão dos sokobans
     for(var sokoban of this.sokobans){
         for(var box of sokoban.boxes){
             for(var spriteT  of this.spritesT){
                 if(spriteT.colidiuCom(box) && box.swCD <= 0){
-                    box.swCD = 0.6
+                    box.swCD = 0.4  
                     moverCaixa(box, pc)
                 }
                 box.swCD = box.swCD - 0.03

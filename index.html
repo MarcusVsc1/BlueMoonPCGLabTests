@@ -91,7 +91,9 @@
                         this.vx = +this.standardSpd;
                         this.direcao = 2;
                     }
-                    if (teclas.esquerda === teclas.direita) { this.vx = 0; }
+                    if (teclas.esquerda === teclas.direita) { 
+                        this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0; 
+                    }
                     if (teclas.cima) {
                         this.vy = -this.standardSpd;
                         this.direcao = 3;
@@ -100,7 +102,9 @@
                         this.vy = +this.standardSpd;
                         this.direcao = 0;
                     }
-                    if (teclas.cima === teclas.baixo) { this.vy = 0; }
+                    if (teclas.cima === teclas.baixo) { 
+                        this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0; 
+                    }
                     if (teclas.espada && this.swCD <= 0 && this.globalCD <= 0) {
                         var tiro = new Sprite({
                             x: this.x, y: this.y,
@@ -108,7 +112,9 @@
                             vm: 0, w: 12, h: 12, imgX: 3, imgY: 1, imune: 0,
                             props: { tipo: "tiro", modelo: "espada" }, desenhar: desenhaEspada, mover: moverEspada, pc: this
                         });
-                        this.charStop = 0.2;
+                        if(this.desaceleracao != 1) {
+                            this.charStop = 0.2;
+                        }
                         this.scene.adicionar(tiro);
                         this.swCD = 0.5;
                         this.globalCD = 0.2;
@@ -441,6 +447,7 @@
                     break;
             }
         });
+
         var keyPressed = {};
         addEventListener('keydown', function (e) {
 
@@ -451,7 +458,7 @@
             }
 
         }, false);
-
+        
         function passo(t) {
             dt = (t - anterior) / 1000;
             if (assetsMng.progresso() === 100) {

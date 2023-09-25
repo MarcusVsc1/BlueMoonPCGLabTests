@@ -36,7 +36,8 @@ function Sprite(params = {}) {
         cameraX: 0,
         cameraY: 0,
         standardSpd: 300,
-        lavaImmunity: false
+        lavaImmunity: false,
+        desaceleracao: 1
     }
     Object.assign(this, exemplo, params);
 }
@@ -48,63 +49,65 @@ Sprite.prototype.desenhar = function (ctx) {
     this.cameraY = this.y - this.scene.cameraY
     ctx.save();
     ctx.translate(this.cameraX, this.cameraY);
-    if(this.imune > 0 && this.atingido <= 0){
-      ctx.globalAlpha = 0.5*Math.cos(60*this.imune);
+    if (this.imune > 0 && this.atingido <= 0) {
+        ctx.globalAlpha = 0.5 * Math.cos(60 * this.imune);
     }
-    if(this.lavaImmunity) {ctx.globalAlpha = 0.5}
+    if (this.lavaImmunity) { ctx.globalAlpha = 0.5 }
     var d = this.direcao;
     var img = this.imagem;
     var picX = this.imgX;
     var picY = this.imgY;
 
-    if(this.atingido > 0 && this.imune > 0){
+    if (this.atingido > 0 && this.imune > 0) {
         d = 0;
         img = "expressoes";
         picX = 0;
         picY = 1;
     }
 
-    if(this.atravessa == 1) {ctx.globalAlpha = 0.5;}
-    
+    if (this.atravessa == 1) { ctx.globalAlpha = 0.5; }
+
     var F = Math.floor(this.frame);
-    if(this.vx == 0 && this.vy == 0 && this.props.tipo == "pc") {F = 1;}
-    if(this.charStop > 0) {F = 0;}
+    if (this.vx == 0 && this.vy == 0 && this.props.tipo == "pc") { F = 1; }
+    if (this.charStop > 0) { F = 0; }
     ctx.drawImage(
         this.scene.assets.img(img),
-        144*picX + (F%3)*48,
-        192*picY + d*48 + 1,
+        144 * picX + (F % 3) * 48,
+        192 * picY + d * 48 + 1,
         48,
         48,
-        -this.w-3.1,
-        -this.h-12,
+        -this.w - 3.1,
+        -this.h - 12,
         30,
         30,
     );
 
     ctx.restore();
     ctx.globalAlpha = 1.0;
-    
+
 };
 
 Sprite.prototype.mover = function (dt) {
-    if(this.imune > 0 && this.atingido <= 0) {
-           this.imune = this.imune - 1*dt;
-        }
-    if (this.charStop <= 0 && this.atingido <= 0){
-        if(this.ortogonal == 0){this.moverOrtogonal(dt);}
+    if (this.imune > 0 && this.atingido <= 0) {
+        this.imune = this.imune - 1 * dt;
+    }
+    if (this.charStop <= 0 && this.atingido <= 0) {
+        if (this.ortogonal == 0) { this.moverOrtogonal(dt); }
         else this.moverCircular(dt);
     } else {
-        if(this.imune <= 0){this.frame += 8*dt;}
-        if(this.charStop > 0){ this.charStop = this.charStop - 1*dt;}
-        if(this.atingido > 0){ this.atingido = this.atingido - 1*dt;}
+        if (this.imune <= 0) { this.frame += 8 * dt; }
+        if (this.atingido > 0) { this.atingido = this.atingido - 1 * dt; }
         this.vx = 0;
         this.vy = 0;
         this.x = this.x + this.vx * dt;
         this.y = this.y + this.vy * dt;
         this.mc = Math.floor(this.x / this.scene.map.SIZE);
         this.ml = Math.floor(this.y / this.scene.map.SIZE);
+        if (this.charStop > 0) {
+            this.charStop = this.charStop - 1 * dt;
+        }
     }
- 
+
 }
 
 Sprite.prototype.moverCircular = function (dt) {
@@ -122,8 +125,8 @@ Sprite.prototype.moverCircular = function (dt) {
 }
 
 Sprite.prototype.moverOrtogonal = function (dt) {
-    this.a = this.a + this.va*dt;
-    this.frame += 8*dt;
+    this.a = this.a + this.va * dt;
+    this.frame += 8 * dt;
 
 
     this.mc = Math.floor((this.x) / this.scene.map.SIZE);
@@ -142,19 +145,19 @@ Sprite.prototype.aplicaRestricoes = function (dt) {
     dnx = dx;
     dy = this.vy * dt;
     dny = dy;
-    if (dx > 0 && this.scene.map.cells[this.mc + 1][this.ml].tipo >=6 && this.atravessa != 1) {
+    if (dx > 0 && this.scene.map.cells[this.mc + 1][this.ml].tipo >= 6 && this.atravessa != 1) {
         dnx = this.scene.map.SIZE * (this.mc + 1) - (this.x + this.w / 2);
         dx = Math.min(dnx, dx);
     }
-    if (dx < 0 && this.scene.map.cells[this.mc - 1][this.ml].tipo >=6 && this.atravessa != 1) {
+    if (dx < 0 && this.scene.map.cells[this.mc - 1][this.ml].tipo >= 6 && this.atravessa != 1) {
         dnx = this.scene.map.SIZE * (this.mc) - (this.x - this.w / 2);
         dx = Math.max(dnx, dx);
     }
-    if (dy > 0 && this.scene.map.cells[this.mc][this.ml + 1].tipo >=6 && this.atravessa != 1) {
+    if (dy > 0 && this.scene.map.cells[this.mc][this.ml + 1].tipo >= 6 && this.atravessa != 1) {
         dny = this.scene.map.SIZE * (this.ml + 1) - (this.y + this.h / 2);
         dy = Math.min(dny, dy);
     }
-    if (dy < 0 && this.scene.map.cells[this.mc][this.ml - 1].tipo >=6 && this.atravessa != 1) {
+    if (dy < 0 && this.scene.map.cells[this.mc][this.ml - 1].tipo >= 6 && this.atravessa != 1) {
         dny = this.scene.map.SIZE * (this.ml) - (this.y - this.h / 2);
         dy = Math.max(dny, dy);
     }

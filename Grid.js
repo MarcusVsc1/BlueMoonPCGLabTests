@@ -46,16 +46,15 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     x = 1;
                     break;
                 case 1:
-                    //escada de pedra: esquerda
-                    y = 2;
+                    //gelo
+                    y = 3;
                     x = 0;
+                    standardTileset = this.assets.img("dungeon");
                     break;
                 case 2:
-                    //escada de pedra: meio
-                    y = 0;
-                    x = 6;
-                    positionY = 2;
-                    positionX = 2;
+                    //piso frio
+                    y = 2;
+                    x = 0;
                     break;
                 case 3:
                     //escada de pedra: direita
@@ -69,7 +68,6 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     y = 0;
                     x = 1;
                     break;
-                //tapete
                 case 5:
                     //lava
                     y = 0;

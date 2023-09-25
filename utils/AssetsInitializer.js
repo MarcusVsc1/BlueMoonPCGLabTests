@@ -28,6 +28,7 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("door_3", "assets/door_3.png");
         assetsMng.loadImage("door_4", "assets/door_4.png");
         assetsMng.loadImage("gear", "assets/gear.png");
+        assetsMng.loadImage("dungeon", "assets/dungeon.png");
         assetsMng.loadImage("switch", "assets/switch.png");
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
         assetsMng.loadImage("box_false", "assets/box_false.png");

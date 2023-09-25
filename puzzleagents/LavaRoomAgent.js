@@ -46,7 +46,7 @@ class LavaRoomAgent {
         cena1.assets.play("water");
         for(const cell of this.room.cells) {
             if (gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo != 6) {// Lava tile
-                gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo = 1; 
+                gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo = 2; 
             }
         }
         this.event = function() {} 
