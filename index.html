@@ -47,7 +47,7 @@
     <script src="model/Play.js"></script>
     <script src="auxagents/IceRoomAgent.js"></script>
     <script src="auxagents/SpikeAgent.js"></script>
-
+    <script src="auxagents/FireballTrapAgent.js"></script>
 
 </head>
 
@@ -93,8 +93,8 @@
                         this.vx = +this.standardSpd;
                         this.direcao = 2;
                     }
-                    if (teclas.esquerda === teclas.direita) { 
-                        this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0; 
+                    if (teclas.esquerda === teclas.direita) {
+                        this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0;
                     }
                     if (teclas.cima) {
                         this.vy = -this.standardSpd;
@@ -104,8 +104,8 @@
                         this.vy = +this.standardSpd;
                         this.direcao = 0;
                     }
-                    if (teclas.cima === teclas.baixo) { 
-                        this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0; 
+                    if (teclas.cima === teclas.baixo) {
+                        this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0;
                     }
                     if (teclas.espada && this.swCD <= 0 && this.globalCD <= 0) {
                         var tiro = new Sprite({
@@ -114,7 +114,7 @@
                             vm: 0, w: 12, h: 12, imgX: 3, imgY: 1, imune: 0,
                             props: { tipo: "tiro", modelo: "espada" }, desenhar: desenhaEspada, mover: moverEspada, pc: this
                         });
-                        if(this.desaceleracao != 1) {
+                        if (this.desaceleracao != 1) {
                             this.charStop = 0.2;
                         }
                         this.scene.adicionar(tiro);
@@ -170,18 +170,18 @@
         }
 
         function ativarEspinho() {
-            if(this.scene.globalCounter >= this.startCd) {
+            if (this.scene.globalCounter >= this.startCd) {
                 this.startCd = 0
                 this.contador = 0
-                this.toggled  = !this.toggled
+                this.toggled = !this.toggled
                 this.comportar = comportarEspinho2
             }
-            
+
         }
 
         function comportarEspinho2() {
-            if(this.scene.globalCounter % this.repeatCd == 0){
-                this.toggled  = !this.toggled
+            if (this.scene.globalCounter % this.repeatCd == 0) {
+                this.toggled = !this.toggled
             }
         }
 
@@ -275,6 +275,38 @@
                 assetsMng.play("earth");
                 this.globalCD = 4;
             }
+        }
+
+        function multiplicarFogo() {
+            if(this.globalCD < 0 && this.toggled){
+                cena1.toRemove.push(this)
+            }
+            
+            if (this.globalCD < 0 && !this.toggled) {
+                const cell = { x: this.posX, y: this.posY }
+                const map = this.scene.estagio.mapa.cells
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                const neighbors = [];
+                const type = 0
+
+                const numLinhas = map.length;
+                const numColunas = map[0].length;
+
+                for (const [dx, dy] of directions) {
+                    const newX = cell.x + dx;
+                    const newY = cell.y + dy;
+                    if (newX >= 0 && newX < numColunas && newY >= 0 && newY < numLinhas &&
+                        map[newX][newY].tipo === type && !this.firePlaces.some(fire => fire.x == newX && fire.y == newY)) {
+                        var newFire = { x: newX, y: newY }
+                        neighbors.push(newFire);
+                        this.firePlaces.push(newFire);
+                    }
+                }
+                neighbors.forEach(fire => cena1.adicionar(gerenciador.criarFireball(fire.x, fire.y, this.firePlaces)))
+                this.globalCD = 2
+                this.toggled = true
+            }
+            
         }
 
         //cria uma caveira, comportamento do necromante
@@ -476,7 +508,7 @@
             }
 
         }, false);
-        
+
         function passo(t) {
             dt = (t - anterior) / 1000;
             if (assetsMng.progresso() === 100) {

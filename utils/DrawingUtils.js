@@ -21,6 +21,7 @@ function desenhaTiro() {
     ctx.save();
     ctx.translate(this.x, this.y);
     var F = Math.floor(this.frame);
+    if(this.toggled) {ctx.globalAlpha = 0.5}
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
         144 * this.imgX + (F % 3) * 48,
@@ -29,8 +30,8 @@ function desenhaTiro() {
         48,
         -this.w - 4 - cena1.cameraX,
         -this.h / 2 - 15 - cena1.cameraY,
-        30,
-        30,
+        32,
+        32,
     );
 
     ctx.restore();

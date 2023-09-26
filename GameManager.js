@@ -239,3 +239,8 @@ GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
     return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:0, imgY:1, startCd: startCd, repeatCd: repeatCd,
                contador: 0, comportar: ativarEspinho, imagem: "object", desenhar: desenharEspinho, toggled: false, props: { tipo: "espinho" }});
 }
+
+GameManager.prototype.criarFireball = function (posX, posY, fireplaces) {
+    return new Sprite({ x: posX*32 + 32, y: posY*32 + 32, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:0, imgY:1, globalCD: 1.2, firePlaces: fireplaces == null ? [{x: posX, y: posY}] : fireplaces,
+               contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, toggled: false, props: { tipo: "tiroE" }});
+}

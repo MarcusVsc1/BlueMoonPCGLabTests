@@ -5,6 +5,7 @@ function Scene(params) {
         spritesE: [],
         spritesSpike: [],
         spritesT: [],
+        spritesTE: [],
         spritesPoder: [],
         spritesXP: [],
         spritesO: [],
@@ -73,6 +74,10 @@ Scene.prototype.adicionar = function (sprite) {
         this.spritesXSoko.push(sprite);
     }
 
+    if (sprite.props.tipo == "tiroE" || sprite.props.tipo == "tiroQ") {
+        this.spritesTE.push(sprite);
+    }
+
     sprite.scene = this;
 };
 
@@ -86,7 +91,7 @@ Scene.prototype.desenhar = function () {
         this.spritesSpike[i].desenhar(this.ctx);
     }
     //if (this.pc.direcao == 0) {
-        if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
+    if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
     //}
     for (var i = 0; i < this.spritesXP.length; i++) {
         this.spritesXP[i].desenhar(this.ctx);
@@ -97,11 +102,14 @@ Scene.prototype.desenhar = function () {
     for (var i = 0; i < this.spritesPoder.length; i++) {
         this.spritesPoder[i].desenhar(this.ctx);
     }
-    for (var i = 0; i < this.spritesO.length; i++) {
-        if(this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId) 
-        this.spritesO[i].desenhar(this.ctx);
+    for (var i = 0; i < this.spritesTE.length; i++) {
+        this.spritesTE[i].desenhar(this.ctx);
     }
-    for(var sokoban of this.sokobans){
+    for (var i = 0; i < this.spritesO.length; i++) {
+        if (this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId)
+            this.spritesO[i].desenhar(this.ctx);
+    }
+    for (var sokoban of this.sokobans) {
         for (var i = 0; i < sokoban.goals.length; i++) {
             sokoban.goals[i].desenhar(this.ctx);
         }
@@ -114,15 +122,15 @@ Scene.prototype.desenhar = function () {
         if (this.pc.desenhar) { }
     }*/
     this.pc.desenhar(this.ctx)
-    
+
     for (var i = 0; i < this.spritesO.length; i++) {
-        if(this.spritesO[i].y > this.pc.y && this.spritesO[i].switchId == null) this.spritesO[i].desenhar(this.ctx);
+        if (this.spritesO[i].y > this.pc.y && this.spritesO[i].switchId == null) this.spritesO[i].desenhar(this.ctx);
     }
 
 
-   /* for (var i = 0; i < this.spritesE.length; i++) {
-        if (this.spritesE[i].y > this.pc.y) this.spritesE[i].desenhar(this.ctx);
-    }*/
+    /* for (var i = 0; i < this.spritesE.length; i++) {
+         if (this.spritesE[i].y > this.pc.y) this.spritesE[i].desenhar(this.ctx);
+     }*/
     desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
     desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
     preencherComPreto(this.darkRooms)
@@ -143,6 +151,9 @@ Scene.prototype.mover = function (dt) {
     }
     for (var i = 0; i < this.spritesPoder.length; i++) {
         this.spritesPoder[i].mover(dt);
+    }
+    for (var i = 0; i < this.spritesTE.length; i++) {
+        this.spritesTE[i].mover(dt);
     }
     for (var i = 0; i < this.spritesO.length; i++) {
         this.spritesO[i].mover(dt);
@@ -174,6 +185,11 @@ Scene.prototype.comportar = function () {
             this.spritesT[i].comportar();
         }
     }
+    for(var i = 0; i<this.spritesTE.length; i++){
+        if(this.spritesTE[i].comportar){
+            this.spritesTE[i].comportar();
+        }
+    }
     for (var i = 0; i < this.spritesO.length; i++) {
         if (this.spritesO[i].comportar) {
             this.spritesO[i].comportar();
@@ -188,10 +204,10 @@ Scene.prototype.comportar = function () {
         this.bruxa.comportar();
     }
 
-    for(var sokoban of this.sokobans){
+    for (var sokoban of this.sokobans) {
         comportarSokoban(sokoban)
     }
-    
+
 };
 
 
@@ -241,6 +257,23 @@ Scene.prototype.checaColisao = function () {
         }
     }
 
+    //colisao tiro inimigo com pc
+    for(var i = 0; i < this.spritesTE.length; i++){
+        if(this.spritesTE[i]!=null){
+            if(this.spritesTE[i].y > this.h - this.spritesTE[i].h || this.spritesTE[i].y < 0
+                || this.spritesTE[i].x > this.w || this.spritesTE[i].x < 0){
+                this.toRemove.push(this.spritesTE[i]);
+            }
+        }
+        if(this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE"){
+            if(this.pc.imune<=0){    
+                this.pc.atingido = 0.3;
+                this.pc.vidas--;
+                this.pc.imune=2;
+            }
+        }
+    }
+
     //colisao pc com poder
     for (var i = 0; i < this.spritesPoder.length; i++) {
         if (this.spritesPoder[i].colidiuCom(this.pc)) {
@@ -254,7 +287,13 @@ Scene.prototype.checaColisao = function () {
             this.estagio.sprites.splice(idx, 1);
             this.toRemove.push(this.spritesPoder[i]);
         }
-
+        if(this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE"){
+            if(this.pc.imune<=0){    
+                this.pc.atingido = 0.3;
+                this.pc.vidas--;
+                this.pc.imune=2;
+            }
+        }
     }
 
     //colisao com item de inventario
@@ -296,8 +335,8 @@ Scene.prototype.checaColisao = function () {
         }
     }
 
-    for(var k = 0; k < this.spritesSpike.length; k++) {
-        if(this.spritesSpike[k].colidiuCom(this.pc) && this.spritesSpike[k].toggled) {
+    for (var k = 0; k < this.spritesSpike.length; k++) {
+        if (this.spritesSpike[k].colidiuCom(this.pc) && this.spritesSpike[k].toggled) {
             if (this.pc.imune <= 0) {
                 this.pc.vidas--;
                 this.pc.imune = 2;
@@ -324,18 +363,18 @@ Scene.prototype.checaColisao = function () {
     } else { this.pc.lavaImmunity = false }
 
     //verifica se o piso é de gelo
-    if(this.map.cells[playerPositionX][playerPositionY].tipo == 1){
+    if (this.map.cells[playerPositionX][playerPositionY].tipo == 1) {
         this.pc.desaceleracao = 0.95
     } else {
         this.pc.desaceleracao = 1
     }
 
     // checa colisão dos sokobans
-    for(var sokoban of this.sokobans){
-        for(var box of sokoban.boxes){
-            for(var spriteT  of this.spritesT){
-                if(spriteT.colidiuCom(box) && box.swCD <= 0){
-                    box.swCD = 0.4  
+    for (var sokoban of this.sokobans) {
+        for (var box of sokoban.boxes) {
+            for (var spriteT of this.spritesT) {
+                if (spriteT.colidiuCom(box) && box.swCD <= 0) {
+                    box.swCD = 0.4
                     moverCaixa(box, pc)
                 }
                 box.swCD = box.swCD - 0.03
@@ -354,6 +393,7 @@ Scene.prototype.checaColisao = function () {
         this.spritesO = [];
         this.spritesTE = [];
         this.spritesXP = [];
+        this.spritesTE = [];
         this.spritesPoder = [];
         this.spriteCounter = 0;
         this.stageIndex = 1;

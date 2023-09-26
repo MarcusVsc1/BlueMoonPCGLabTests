@@ -29,7 +29,7 @@ class SpikeAgent {
 
     criarSpikesEmCruz(room) {
         const celulas = this.celulasEmCruz(room)
-        var timer = 180
+        var timer = 90
         celulas.forEach(cell => cena1.adicionar(gerenciador.criarEspinho(cell.x, cell.y, 0, timer)))
 
         var spikePlay = this.spikeEvent(timer, room)

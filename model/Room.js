@@ -16,19 +16,16 @@ class Room {
     }
 
     findEdgeCells() {
-        const edgeCells = [];
+        var borderCells = [];
 
-        for (let i = 0; i < this.roomWidth; i++) {
-            for (let j = 0; j < this.roomHeight; j++) {
-                const index = i * this.roomHeight + j;
-    
-                if (i === 0 || i === this.roomWidth - 1 || j === 0 || j === this.roomWidth - 1) {
-                    edgeCells.push(this.cells[index]);
+        for (var i = 0; i < this.roomWidth; i++) {
+            for (var j = 0; j < this.roomHeight; j++) {
+                if (i === 0 || i === this.roomWidth - 1 || j === 0 || j === this.roomHeight - 1) {
+                    borderCells.push({x: i + this.cells[0].x, y: j + this.cells[0].y});
                 }
             }
         }
-
-        return edgeCells;
+        return borderCells
     }
 
 }

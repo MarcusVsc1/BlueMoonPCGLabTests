@@ -133,7 +133,7 @@ class Graph {
 
         closestCellsAndDistances.sort((a, b) => a.distance - b.distance);
 
-        return closestCellsAndDistances;
+        return closestCellsAndDistances.slice(0, Math.floor(closestCellsAndDistances.length / 2));
     }
 
     getNeighbors(room) {
