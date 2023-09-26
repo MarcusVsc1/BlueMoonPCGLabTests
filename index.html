@@ -45,6 +45,8 @@
     <script src="datastructures/MonteCarloNode.js"></script>
     <script src="model/SokobanState.js"></script>
     <script src="model/Play.js"></script>
+    <script src="auxagents/IceRoomAgent.js"></script>
+    <script src="auxagents/SpikeAgent.js"></script>
 
 
 </head>
@@ -164,6 +166,22 @@
                 else {
                     if (this.y > alvo.y - alvo.h / 2) { this.direcao = 3 }
                 }
+            }
+        }
+
+        function ativarEspinho() {
+            if(this.scene.globalCounter >= this.startCd) {
+                this.startCd = 0
+                this.contador = 0
+                this.toggled  = !this.toggled
+                this.comportar = comportarEspinho2
+            }
+            
+        }
+
+        function comportarEspinho2() {
+            if(this.scene.globalCounter % this.repeatCd == 0){
+                this.toggled  = !this.toggled
             }
         }
 

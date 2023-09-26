@@ -3,6 +3,7 @@ function Scene(params) {
         pc: null,
         boss: null,
         spritesE: [],
+        spritesSpike: [],
         spritesT: [],
         spritesPoder: [],
         spritesXP: [],
@@ -19,6 +20,7 @@ function Scene(params) {
         gamer: null,
         spriteCounter: 0,
         frameCounter: 0,
+        globalCounter: 0,
         mensagemOpacity: 1,
         dialogo: "",
         theEnd: 0,
@@ -44,6 +46,10 @@ Scene.prototype.adicionar = function (sprite) {
 
     if (sprite.props.tipo == "tiro") {
         this.spritesT.push(sprite);
+    }
+
+    if (sprite.props.tipo == "espinho") {
+        this.spritesSpike.push(sprite);
     }
 
     if (sprite.props.tipo == "npc") {
@@ -76,6 +82,9 @@ Scene.prototype.desenhar = function () {
         if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
     }
     this.updateCameraPosition();
+    for (var i = 0; i < this.spritesSpike.length; i++) {
+        this.spritesSpike[i].desenhar(this.ctx);
+    }
     //if (this.pc.direcao == 0) {
         if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
     //}
@@ -123,6 +132,9 @@ Scene.prototype.desenhar = function () {
 
 //move os sprites
 Scene.prototype.mover = function (dt) {
+    for (var i = 0; i < this.spritesSpike.length; i++) {
+        this.spritesSpike[i].mover(dt);
+    }
     for (var i = 0; i < this.spritesE.length; i++) {
         this.spritesE[i].mover(dt);
     }
@@ -147,6 +159,11 @@ Scene.prototype.mover = function (dt) {
 
 //adiciona o comportamento dos sprites
 Scene.prototype.comportar = function () {
+    for (var i = 0; i < this.spritesSpike.length; i++) {
+        if (this.spritesSpike[i].comportar) {
+            this.spritesSpike[i].comportar();
+        }
+    }
     for (var i = 0; i < this.spritesE.length; i++) {
         if (this.spritesE[i].comportar) {
             this.spritesE[i].comportar();
@@ -278,6 +295,18 @@ Scene.prototype.checaColisao = function () {
 
         }
     }
+
+    for(var k = 0; k < this.spritesSpike.length; k++) {
+        if(this.spritesSpike[k].colidiuCom(this.pc) && this.spritesSpike[k].toggled) {
+            if (this.pc.imune <= 0) {
+                this.pc.vidas--;
+                this.pc.imune = 2;
+                this.pc.atingido = 0.3;
+                this.assets.play("damage");
+            }
+        }
+    }
+
     //não exatamente colisão, mas verifica se a posição do jogador é em lava
     var playerPositionX = Math.floor(this.pc.x / 32);
     var playerPositionY = Math.floor(this.pc.y / 32);
@@ -293,6 +322,8 @@ Scene.prototype.checaColisao = function () {
             }
         }
     } else { this.pc.lavaImmunity = false }
+
+    //verifica se o piso é de gelo
     if(this.map.cells[playerPositionX][playerPositionY].tipo == 1){
         this.pc.desaceleracao = 0.95
     } else {
@@ -688,6 +719,7 @@ Scene.prototype.atualizarCamera = function (x, y) {
 }
 
 Scene.prototype.passo = function (dt) {
+    this.globalCounter++
     if (this.theEnd <= 0) {
         this.gameDefiner();
         this.limpar();

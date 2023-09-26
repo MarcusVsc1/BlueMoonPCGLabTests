@@ -54,3 +54,4 @@ var assetsMng = new AssetsManager();
         assetsMng.loadAudio("magic", "assets/magic.ogg")
         assetsMng.loadAudio("cancel", "assets/cancel.ogg")
         assetsMng.loadAudio("water", "assets/water.ogg")
+        assetsMng.loadAudio("spike", "assets/spike.ogg")

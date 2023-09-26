@@ -234,3 +234,8 @@ GameManager.prototype.criarDispositivoAntiLava = function (x, y, evento, room) {
     return new Sprite({ x: x, y: y, w: 32, h: 32, spriteSize: 48, vm:0, imgX:0, imgY:0, event: evento,
                 imagem: "switch", desenhar: desenharAlavanca, room: room, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
 }
+
+GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
+    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:0, imgY:1, startCd: startCd, repeatCd: repeatCd,
+               contador: 0, comportar: ativarEspinho, imagem: "object", desenhar: desenharEspinho, toggled: false, props: { tipo: "espinho" }});
+}

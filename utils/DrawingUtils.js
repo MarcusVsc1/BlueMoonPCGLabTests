@@ -279,3 +279,21 @@ function desenharCaixa(ctx) {
 
     ctx.restore();
 }
+
+function desenharEspinho() {
+    ctx.save();
+    ctx.translate(this.x, this.y); 
+    ctx.drawImage(
+        this.scene.assets.img(this.imagem),
+        this.spriteSize * this.imgX,
+        this.spriteSize * 3 * this.toggled + this.spriteSize * 4 * this.imgY,
+        this.spriteSize,
+        this.spriteSize,
+        -this.w / 2 - cena1.cameraX,
+        -this.h / 2 - cena1.cameraY,
+        24,
+        24
+    );
+
+    ctx.restore();
+}
