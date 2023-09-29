@@ -10,13 +10,17 @@ class EnemyFactory {
         ]
     }
 
-    createEnemyWithDrop(level, room, drop) {
+    createEnemyWithDrop(level, room, drop, posX, posY) {
         const possibleEnemies = this.enemyList.filter(enemy => enemy.nivel <= level)
         const enemyType = possibleEnemies[Math.floor(Math.random() * possibleEnemies.length)].tipo
-        const positionX = room.cells[0].x + Math.random() * (room.roomWidth - 1) 
-        const positionY = room.cells[0].y + Math.random() * (room.roomHeight - 1) 
+        const positionX = posX
+        const positionY = posY
+        if (!posX && !posY) {
+            const positionX = room.cells[0].x + Math.random() * (room.roomWidth - 1)
+            const positionY = room.cells[0].y + Math.random() * (room.roomHeight - 1)
+        }
         var enemy = gerenciador.criarInimigo(enemyType, positionX, positionY)
-        if(drop){
+        if (drop) {
             drop.swCD = 0.6
         }
         enemy.drop = drop
