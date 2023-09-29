@@ -100,24 +100,24 @@ GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
     var inimigo;
     switch (tipo){
         //morcego
-        case 0:
+        case "morcego":
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:40 + Math.random()*25, imgX:0, imgY:0, 
                 imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
             break;
         //diabinho
-        case 1:
+        case "diabinho":
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:20, imgX:0, imgY:1, 
                 imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
             break;
         //caveira
-        case 2:
+        case "caveira":
              inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 30, imgX:1, imgY:1, 
                 imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
              break;
         //ogro
-        case 3:
+        case "ogro":
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 20, imgX:2, imgY:0, 
-               vidas: 2, imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
+               vidas: 2, maxVidas: 2, imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
             break;
         //touro a esquerda
         case 4:
@@ -130,9 +130,9 @@ GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
                 direcao: 2, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }});
             break;
         //necromante
-        case 7:
+        case "necromante":
             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:1, vx:0, vy:0, globalCD: 1.5,
-                vidas: 2, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
+                vidas: 2, maxVidas: 2, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
             break;
         // touro para baixo
         case 8:
@@ -240,7 +240,7 @@ GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
                contador: 0, comportar: ativarEspinho, imagem: "object", desenhar: desenharEspinho, toggled: false, props: { tipo: "espinho" }});
 }
 
-GameManager.prototype.criarFireball = function (posX, posY, fireplaces) {
-    return new Sprite({ x: posX*32 + 32, y: posY*32 + 32, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:0, imgY:1, globalCD: 1.2, firePlaces: fireplaces == null ? [{x: posX, y: posY}] : fireplaces,
-               contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, toggled: false, props: { tipo: "tiroE" }});
+GameManager.prototype.criarFireball = function (posX, posY, level, fireplaces) {
+    return new Sprite({ x: posX*32 + 32, y: posY*32 + 32, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:0, imgY:1, globalCD: 1.2 - (level - 1) * 0.3, firePlaces: fireplaces == null ? [{x: posX, y: posY}] : fireplaces,
+               contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, level: level, toggled: false, props: { tipo: "tiroE" }});
 }

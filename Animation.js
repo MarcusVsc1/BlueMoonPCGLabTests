@@ -22,7 +22,7 @@ Animation.prototype.mover = function(dt){
 
 Animation.prototype.desenhar = function(){
     ctx.save();
-    ctx.translate(this.x, this.y);
+    ctx.translate(this.x - cena1.cameraX, this.y - cena1.cameraY);
     ctx.rotate(this.a + Math.PI/2);
     var F = Math.floor(this.frame);
     ctx.drawImage(

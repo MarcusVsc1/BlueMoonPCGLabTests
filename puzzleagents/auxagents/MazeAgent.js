@@ -4,6 +4,7 @@ class MazeAgent {
     }
 
     gerarPuzzle(mapGraph, puzzleGraph) {
+        this.frontierCells = []
         var rooms = mapGraph.nodes.filter(node => node.roomHeight * node.roomWidth >= 48  && node.terminalCells.length == 1)
         if (rooms.length > 0) {
             var room = rooms[0]

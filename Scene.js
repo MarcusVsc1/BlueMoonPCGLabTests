@@ -83,16 +83,17 @@ Scene.prototype.adicionar = function (sprite) {
 
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
 Scene.prototype.desenhar = function () {
-    for (var i = 0; i < this.spritesE.length; i++) {
-        if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
-    }
     this.updateCameraPosition();
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].desenhar(this.ctx);
     }
+    for (var i = 0; i < this.spritesE.length; i++) {
+        if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
+    }
     //if (this.pc.direcao == 0) {
     if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
     //}
+
     for (var i = 0; i < this.spritesXP.length; i++) {
         this.spritesXP[i].desenhar(this.ctx);
     }
@@ -128,9 +129,9 @@ Scene.prototype.desenhar = function () {
     }
 
 
-    /* for (var i = 0; i < this.spritesE.length; i++) {
-         if (this.spritesE[i].y > this.pc.y) this.spritesE[i].desenhar(this.ctx);
-     }*/
+    for (var i = 0; i < this.spritesE.length; i++) {
+        if (this.spritesE[i].y > this.pc.y) this.spritesE[i].desenhar(this.ctx);
+    }
     desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
     desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
     preencherComPreto(this.darkRooms)
@@ -158,6 +159,9 @@ Scene.prototype.mover = function (dt) {
     for (var i = 0; i < this.spritesO.length; i++) {
         this.spritesO[i].mover(dt);
     }
+    for(var i = 0; i<this.spritesXP.length; i++){
+        this.spritesXP[i].mover(dt);
+    } 
     if (this.pc != null) {
         this.pc.mover(dt);
     }
@@ -176,7 +180,7 @@ Scene.prototype.comportar = function () {
         }
     }
     for (var i = 0; i < this.spritesE.length; i++) {
-        if (this.spritesE[i].comportar) {
+        if (this.spritesE[i].comportar && (Math.hypot(this.spritesE[i].x - this.pc.x, this.spritesE[i].y - this.pc.y) < 256 || this.spritesE[i].provocou)){
             this.spritesE[i].comportar();
         }
     }
@@ -185,8 +189,8 @@ Scene.prototype.comportar = function () {
             this.spritesT[i].comportar();
         }
     }
-    for(var i = 0; i<this.spritesTE.length; i++){
-        if(this.spritesTE[i].comportar){
+    for (var i = 0; i < this.spritesTE.length; i++) {
+        if (this.spritesTE[i].comportar) {
             this.spritesTE[i].comportar();
         }
     }
@@ -250,6 +254,11 @@ Scene.prototype.checaColisao = function () {
                 this.spritesE[i].vidas--;
                 if (this.spritesE[i].vidas == 0) {
                     this.toRemove.push(this.spritesE[i]);
+                    if(this.spritesE[i].drop != null){
+                        this.spritesE[i].drop.x = this.spritesE[i].x
+                        this.spritesE[i].drop.y = this.spritesE[i].y
+                        this.adicionar(this.spritesE[i].drop)
+                    }
                 } else {
                     this.spritesE[i].imune = 0.3;
                 }
@@ -258,18 +267,12 @@ Scene.prototype.checaColisao = function () {
     }
 
     //colisao tiro inimigo com pc
-    for(var i = 0; i < this.spritesTE.length; i++){
-        if(this.spritesTE[i]!=null){
-            if(this.spritesTE[i].y > this.h - this.spritesTE[i].h || this.spritesTE[i].y < 0
-                || this.spritesTE[i].x > this.w || this.spritesTE[i].x < 0){
-                this.toRemove.push(this.spritesTE[i]);
-            }
-        }
-        if(this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE"){
-            if(this.pc.imune<=0){    
+    for (var i = 0; i < this.spritesTE.length; i++) {
+        if (this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE") {
+            if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
                 this.pc.vidas--;
-                this.pc.imune=2;
+                this.pc.imune = 2;
             }
         }
     }
@@ -287,11 +290,11 @@ Scene.prototype.checaColisao = function () {
             this.estagio.sprites.splice(idx, 1);
             this.toRemove.push(this.spritesPoder[i]);
         }
-        if(this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE"){
-            if(this.pc.imune<=0){    
+        if (this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE") {
+            if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
                 this.pc.vidas--;
-                this.pc.imune=2;
+                this.pc.imune = 2;
             }
         }
     }
@@ -303,17 +306,18 @@ Scene.prototype.checaColisao = function () {
                 this.spritesO[k].swCD < 0) {
                 switch (this.spritesO[k].props.subtipo) {
                     case 'colecionavel':
-                        if (this.inventoryItem) {
-                            this.inventoryItem.x = this.spritesO[k].x
-                            this.inventoryItem.y = this.spritesO[k].y
-                            this.spritesO.push(this.inventoryItem)
-                        }
-                        this.dialogo = this.spritesO[k].props.mensagem
-                        this.toRemove.push(this.spritesO[k])
-                        this.inventoryItem = this.spritesO[k]
-                        this.assets.play("quest");
-                        this.spritesO[k].swCD = 0.6;
-                        this.frameCounter = 0
+                            if (this.inventoryItem) {
+                                this.inventoryItem.x = this.spritesO[k].x
+                                this.inventoryItem.y = this.spritesO[k].y
+                                this.spritesO.push(this.inventoryItem)
+                            }
+                            if(this.spritesO[k].onGet) {this.spritesO[k].onGet()}
+                            this.dialogo = this.spritesO[k].props.mensagem
+                            this.toRemove.push(this.spritesO[k])
+                            this.inventoryItem = this.spritesO[k]
+                            this.assets.play("quest");
+                            this.spritesO[k].swCD = 0.6;
+                            this.frameCounter = 0
                         break;
                     case 'porta':
                         if (this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId) {

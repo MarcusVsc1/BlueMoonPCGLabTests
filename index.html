@@ -19,7 +19,6 @@
             display: block;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="Sprite.js"></script>
     <script src="Scene.js"></script>
     <script src="AssetsManager.js"></script>
@@ -32,22 +31,23 @@
     <script src="model/Room.js"></script>
     <script src="utils/DrawingUtils.js"></script>
     <script src="utils/AssetsInitializer.js"></script>
+    <script src="utils/EnemyFactory.js"></script>
     <script src="enum/KeyColorEnum.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
-    <script src="puzzleagents/SwitchAgent.js"></script>
-    <script src="puzzleagents/LavaRoomAgent.js"></script>
-    <script src="puzzleagents/KeyAndDoorAgent.js"></script>
-    <script src="puzzleagents/LeverAgent.js"></script>
-    <script src="puzzleagents/MazeAgent.js"></script>
-    <script src="puzzleagents/SokobanAgent.js"></script>
     <script src="model/Game.js"></script>
     <script src="datastructures/MonteCarlo.js"></script>
     <script src="datastructures/MonteCarloNode.js"></script>
     <script src="model/SokobanState.js"></script>
     <script src="model/Play.js"></script>
-    <script src="auxagents/IceRoomAgent.js"></script>
-    <script src="auxagents/SpikeAgent.js"></script>
-    <script src="auxagents/FireballTrapAgent.js"></script>
+    <script src="puzzleagents/collectibleAgents/LavaRoomAgent.js"></script>
+    <script src="puzzleagents/collectibleAgents/KeyAndDoorAgent.js"></script>
+    <script src="puzzleagents/collectibleAgents/LeverAgent.js"></script>
+    <script src="puzzleagents/auxagents/SwitchAgent.js"></script>
+    <script src="puzzleagents/auxagents/MazeAgent.js"></script>
+    <script src="puzzleagents/auxagents/SokobanAgent.js"></script>
+    <script src="puzzleagents/auxagents/IceRoomAgent.js"></script>
+    <script src="puzzleagents/auxagents/SpikeAgent.js"></script>
+    <script src="puzzleagents/auxagents/FireballTrapAgent.js"></script>
 
 </head>
 
@@ -68,9 +68,7 @@
             resetSokoban: 0
         }
 
-        ctx.scale = 0.001
-
-        var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
+        var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, maxVidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 
         var gerenciador = new GameManager(pc);
 
@@ -114,9 +112,7 @@
                             vm: 0, w: 12, h: 12, imgX: 3, imgY: 1, imune: 0,
                             props: { tipo: "tiro", modelo: "espada" }, desenhar: desenhaEspada, mover: moverEspada, pc: this
                         });
-                        if (this.desaceleracao != 1) {
-                            this.charStop = 0.2;
-                        }
+                        this.charStop = 0.2;
                         this.scene.adicionar(tiro);
                         this.swCD = 0.5;
                         this.globalCD = 0.2;
@@ -166,6 +162,7 @@
                 else {
                     if (this.y > alvo.y - alvo.h / 2) { this.direcao = 3 }
                 }
+                this.provocou = true
             }
         }
 
@@ -278,10 +275,10 @@
         }
 
         function multiplicarFogo() {
-            if(this.globalCD < 0 && this.toggled){
+            if (this.globalCD < 0 && this.toggled) {
                 cena1.toRemove.push(this)
             }
-            
+
             if (this.globalCD < 0 && !this.toggled) {
                 const cell = { x: this.posX, y: this.posY }
                 const map = this.scene.estagio.mapa.cells
@@ -302,11 +299,11 @@
                         this.firePlaces.push(newFire);
                     }
                 }
-                neighbors.forEach(fire => cena1.adicionar(gerenciador.criarFireball(fire.x, fire.y, this.firePlaces)))
-                this.globalCD = 2
+                neighbors.forEach(fire => cena1.adicionar(gerenciador.criarFireball(fire.x, fire.y, this.level, this.firePlaces)))
+                this.globalCD = 2 - (this.level - 1) * 0.3
                 this.toggled = true
             }
-            
+
         }
 
         //cria uma caveira, comportamento do necromante

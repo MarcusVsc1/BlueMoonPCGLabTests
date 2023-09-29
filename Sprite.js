@@ -28,11 +28,14 @@ function Sprite(params = {}) {
         scene: undefined,
         imagem: null,
         vidas: 1,
+        maxVidas: this.vidas,
+        lifebar: 23,
         mana: 5,
         charStop: 0,
         atingido: 0,
         atravessa: 0,
         ortogonal: 0,
+        getCd: 0,
         cameraX: 0,
         cameraY: 0,
         standardSpd: 300,
@@ -81,6 +84,12 @@ Sprite.prototype.desenhar = function (ctx) {
         30,
         30,
     );
+    if(this.props.tipo == "npc" && this.maxVidas > 1){
+        ctx.fillStyle = "white";
+        ctx.fillRect(-this.w,-this.h * 2.5,this.lifebar,5);
+        ctx.fillStyle = "red";
+        ctx.fillRect(-this.w,-this.h * 2.5,(this.lifebar*this.vidas)/this.maxVidas,5);
+    }
 
     ctx.restore();
     ctx.globalAlpha = 1.0;

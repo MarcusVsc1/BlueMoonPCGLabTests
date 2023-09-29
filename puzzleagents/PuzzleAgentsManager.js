@@ -66,8 +66,8 @@ class PuzzleAgentsManager {
         var sk = new SokobanAgent()
         sk.gerarPuzzle(this.mapGraph, this.puzzleGraph)
         */
-       var lr = new LavaRoomAgent()
-       lr.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        var lr = new LavaRoomAgent()
+        lr.gerarPuzzle(this.mapGraph, this.puzzleGraph)
     }
 
     initiate() {
@@ -80,13 +80,17 @@ class PuzzleAgentsManager {
         cena1.pc.y = posicao.y * 32
     }
 
-    selecionarAgente(room){
-        if(room.tag.tipo == undefined) {
+    selecionarAgente(room) {
+        if (room.tag.tipo == undefined) {
             return this.raffle[0]
-        } else {return null}
+        } else { return null }
     }
 
     deveParar(roomIdx, sortedRooms, falhas) {
         return roomIdx >= sortedRooms.length || falhas > sortedRooms.length
+    }
+
+    calcularNivel(distancia, total) {
+        return Math.ceil((distancia / total) * 4);
     }
 }

@@ -38,7 +38,7 @@ class LavaRoomAgent {
 
     createLavaRemoverDevice(room) {
         var posicao = this.calcularPosicaoMedia(room.roomHeight, room.roomWidth)
-        cena1.adicionar(gerenciador.criarDispositivoAntiLava(posicao.x + room.cells[0].x * 32, posicao.y + room.cells[0].y * 32, this.lavaRemoverEvent, room))
+        cena1.adicionar(gerenciador.criarDispositivoAntiLava(posicao.x + room.cells[0].x * 32, posicao.y + (room.cells[0].y + 2) * 32, this.lavaRemoverEvent, room))
     }
 
     lavaRemoverEvent() {
