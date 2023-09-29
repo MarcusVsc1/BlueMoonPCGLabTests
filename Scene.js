@@ -23,6 +23,7 @@ function Scene(params) {
         frameCounter: 0,
         globalCounter: 0,
         mensagemOpacity: 1,
+        caution: false,
         dialogo: "",
         theEnd: 0,
         cameraX: 0,
@@ -84,8 +85,21 @@ Scene.prototype.adicionar = function (sprite) {
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
 Scene.prototype.desenhar = function () {
     this.updateCameraPosition();
+    
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].desenhar(this.ctx);
+    }
+    for (var i = 0; i < this.spritesO.length; i++) {
+        if (this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId)
+            this.spritesO[i].desenhar(this.ctx);
+    }
+    for (var sokoban of this.sokobans) {
+        for (var i = 0; i < sokoban.goals.length; i++) {
+            sokoban.goals[i].desenhar(this.ctx);
+        }
+        for (var i = 0; i < sokoban.boxes.length; i++) {
+            sokoban.boxes[i].desenhar(this.ctx);
+        }
     }
     for (var i = 0; i < this.spritesE.length; i++) {
         if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
@@ -106,18 +120,8 @@ Scene.prototype.desenhar = function () {
     for (var i = 0; i < this.spritesTE.length; i++) {
         this.spritesTE[i].desenhar(this.ctx);
     }
-    for (var i = 0; i < this.spritesO.length; i++) {
-        if (this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId)
-            this.spritesO[i].desenhar(this.ctx);
-    }
-    for (var sokoban of this.sokobans) {
-        for (var i = 0; i < sokoban.goals.length; i++) {
-            sokoban.goals[i].desenhar(this.ctx);
-        }
-        for (var i = 0; i < sokoban.boxes.length; i++) {
-            sokoban.boxes[i].desenhar(this.ctx);
-        }
-    }
+    
+    
 
     /*if (this.pc.direcao != 0) {
         if (this.pc.desenhar) { }
@@ -311,13 +315,13 @@ Scene.prototype.checaColisao = function () {
                                 this.inventoryItem.y = this.spritesO[k].y
                                 this.spritesO.push(this.inventoryItem)
                             }
-                            if(this.spritesO[k].onGet) {this.spritesO[k].onGet()}
                             this.dialogo = this.spritesO[k].props.mensagem
                             this.toRemove.push(this.spritesO[k])
                             this.inventoryItem = this.spritesO[k]
                             this.assets.play("quest");
                             this.spritesO[k].swCD = 0.6;
                             this.frameCounter = 0
+                            if(this.spritesO[k].onGet) {this.spritesO[k].onGet()}
                         break;
                     case 'porta':
                         if (this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId) {
@@ -722,7 +726,7 @@ Scene.prototype.desenharDialogo = function () {
     if (this.dialogo != null) {
         this.frameCounter++
         ctx.font = "30px Medieval";
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.mensagemOpacity})`;
+        ctx.fillStyle = this.caution ? `rgba(255, 0, 0, ${this.mensagemOpacity})`: `rgba(255, 255, 255, ${this.mensagemOpacity})`;
         ctx.fillText(this.dialogo, 90, this.h - 75);
         if (this.frameCounter >= 180 && this.stageIndex < 1) {
             this.mensagemOpacity -= 0.02;
@@ -731,6 +735,7 @@ Scene.prototype.desenharDialogo = function () {
             this.dialogo = null;
             this.mensagemOpacity = 1;
             this.frameCounter = 0;
+            this.caution = false
         }
     }
 }
