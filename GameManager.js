@@ -131,8 +131,8 @@ GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
             break;
         //necromante
         case "necromante":
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:1, vx:0, vy:0, globalCD: 1.5,
-                vidas: 2, maxVidas: 2, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
+            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:1, vx:0, vy:0, globalCD: 2.0,
+                vidas: 1, maxVidas: 1, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
             break;
         // touro para baixo
         case 8:
