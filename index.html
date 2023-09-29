@@ -427,6 +427,7 @@
             if (allBoxesPlaced) {
                 sokoban.countDown = sokoban.countDown - 0.1
                 if (sokoban.countDown <= 0) {
+                    cena1.adicionar(sokoban.collectible)
                     var idx = cena1.sokobans.indexOf(sokoban)
                     cena1.sokobans.splice(idx)
                     assetsMng.play("magic");

@@ -1,50 +1,58 @@
 class SokobanAgent {
 
-    gerarPuzzle(mapGraph) {
-        var rooms = mapGraph.nodes.filter(node => node.roomHeight * node.roomWidth < 49)
-        if (rooms.length > 0) {
-            var room = rooms[0]
-            console.log("Id da sala " + room.roomId)
+    gerarAgenteAuxiliar(room, collectible) {
+        this.posicionarCollectible(room, collectible)
+        this.gerarSokoban(room, collectible)
+    }
 
-            this.roomTotalCells = room.roomHeight * room.roomWidth
+    posicionarCollectible(room, collectible){
+        var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
+        collectible.x = position.x
+        collectible.y = position.y
+    }
 
-            var startCell = {
-                x: room.terminalCells[0].y - room.cells[0].y,
-                y: room.terminalCells[0].x - room.cells[0].x,
-            }
-            let game = new Game()
-            let mcts = new MonteCarlo(game)
-            let state = game.start(startCell, room.roomHeight, room.roomWidth)
-            var winner = state;
-            winner.score = 0
-            var tentativas = 0
-            mcts.best = winner
-            // From initial state, take turns to play game until finished
-            console.time("total mcts")
-            while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
-                winner = mcts.runSearch(state, 0.5)
-                tentativas++
-                if(tentativas == 20){
-                    mcts = new MonteCarlo(game)
-                    tentativas = 0
-                }
-            }
-            console.timeEnd("total mcts")
+    gerarSokoban(room, collectible) {
 
-            console.log("Score: "+winner.score)
-            var matrizMapeada = this.mapBoardToGameMap(winner)
+        console.log("Id da sala " + room.roomId)
 
-            var boxes = this.placeBoxes(winner, room.cells[0])
-            var goals = this.placeGoals(winner, room.cells[0])
-            this.mapToDungeon(room.cells[0], matrizMapeada)
-            cena1.sokobans.push({boxes: boxes, goals: goals, room: room, startCell: startCell, countdown: 0.5})
-            
+        this.roomTotalCells = room.roomHeight * room.roomWidth
+
+        var startCell = {
+            x: room.terminalCells[0].y - room.cells[0].y,
+            y: room.terminalCells[0].x - room.cells[0].x,
         }
+        let game = new Game()
+        let mcts = new MonteCarlo(game)
+        let state = game.start(startCell, room.roomHeight, room.roomWidth)
+        var winner = state;
+        winner.score = 0
+        var tentativas = 0
+        mcts.best = winner
+        // From initial state, take turns to play game until finished
+        console.time("total mcts")
+        while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
+            winner = mcts.runSearch(state, 0.5)
+            tentativas++
+            if (tentativas == 20) {
+                mcts = new MonteCarlo(game)
+                tentativas = 0
+            }
+        }
+        console.timeEnd("total mcts")
+
+        console.log("Score: " + winner.score)
+        var matrizMapeada = this.mapBoardToGameMap(winner)
+
+        var boxes = this.placeBoxes(winner, room.cells[0])
+        var goals = this.placeGoals(winner, room.cells[0])
+        this.mapToDungeon(room.cells[0], matrizMapeada)
+        cena1.sokobans.push({ boxes: boxes, goals: goals, room: room, startCell: startCell, countdown: 0.5, collectible: collectible })
+
 
     }
 
     formatMatrix(matrix) {
-        return  matrix.map(row => row.map(item => "['" + item + "']").join(', ')).join('\n');
+        return matrix.map(row => row.map(item => "['" + item + "']").join(', ')).join('\n');
     }
 
     mapBoardToGameMap(winner) {
@@ -73,7 +81,7 @@ class SokobanAgent {
 
         for (let i = 0; i < numRows; i++) {
             for (let j = 0; j < numCols; j++) {
-                if(winner.snapshot[i][j].tipo == "caixa"){
+                if (winner.snapshot[i][j].tipo == "caixa") {
                     //console.log(pos1 + " " + pos2)
                     var pos1 = j + cell.x
                     var pos2 = i + cell.y
@@ -93,7 +101,7 @@ class SokobanAgent {
 
         for (let i = 0; i < numRows; i++) {
             for (let j = 0; j < numCols; j++) {
-                if(winner.board[i][j].tipo == "caixa"){
+                if (winner.board[i][j].tipo == "caixa") {
                     //console.log(pos1 + " " + pos2)
                     var pos1 = j + cell.x
                     var pos2 = i + cell.y
