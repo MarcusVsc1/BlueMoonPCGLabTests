@@ -72,6 +72,7 @@ class SpikeAgent {
         return function () {
             var counter = cena1.globalCounter;
             var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
+            //verifica a distância do jogador até a sala para poder ajustar o volume
             if (counter % timer == 0) {
                 var spikeSE = assetsMng.audios["spike"];
                 var hypot = Math.hypot((room.roomWidth * 32) / 2, (room.roomHeight * 32) / 2);
