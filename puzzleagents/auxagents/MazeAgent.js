@@ -1,44 +1,119 @@
 class MazeAgent {
     constructor() {
         this.frontierCells = []
+        this.levelMapper = new Map()
+        this.levelMapper.set(1, function (room, collectible) {
+            this.posicionarColecionavel(room, collectible)
+        }.bind(this))
+        this.levelMapper.set(2, function (room, collectible, level) {
+            this.createEnemy(room, collectible, level)
+        }.bind(this))
+        this.levelMapper.set(3, function (room, collectible, level) {
+            this.createEnemy(room, collectible, level)
+        }.bind(this))
+        this.levelMapper.set(4, function (room, collectible, level) {
+            this.createEnemy(room, collectible, level)
+        }.bind(this))
     }
 
-    gerarPuzzle(mapGraph, puzzleGraph) {
-        this.frontierCells = []
-        var rooms = mapGraph.nodes.filter(node => node.roomHeight * node.roomWidth >= 48  && node.terminalCells.length == 1)
-        if (rooms.length > 0) {
-            var room = rooms[0]
-            console.log("Id da sala " + room.roomId)
-            darkRoom(room.roomId)
+    gerarAgenteAuxiliar(room, collectible, level) {
+        this.criarLabirinto(room)
+        this.levelMapper.get(level)(room, collectible, level)
+    }
 
-            this.roomTotalCells = room.roomHeight * room.roomWidth
-            var roomMatrix = this.inicializarMatriz(room.roomHeight, room.roomWidth)
-
-            var startCell = {
-                x: room.terminalCells[0].y - room.cells[0].y,
-                y: room.terminalCells[0].x - room.cells[0].x,
-            }
-
-            var matrizFinal = this.randomizedPrim(startCell, roomMatrix)
-            var matrizMapeada = matrizFinal.map((linha) => {
-                return linha.map((elemento) => {
-                    if (elemento === "bloqueado") {
-                        return 6;
-                    } else if (elemento === "passagem") {
-                        return 0;
-                    } else {
-                        return elemento; // Se for outro valor, mantenha-o inalterado
-                    }
-                });
-            });
-            room.terminalCells.forEach(element => {
-                matrizMapeada[element.y - room.cells[0].y][element.x - room.cells[0].x] = 0
-            });
-            this.mapToDungeon(room.cells[0], matrizMapeada)
-
-        } else {
-            console.log("Salas indisponíveis")
+    posicionarColecionavel(room, collectible){
+        var startCell = {
+            x: room.terminalCells[0].x,
+            y: room.terminalCells[0].y,
+            distance: 0
         }
+        var queue = [startCell]
+        var visitados = []
+        while(queue.length > 0){
+            var atual = queue.shift()
+            visitados.push(atual)
+            var proximos = this.getFloorNeighbors(atual)
+            proximos.forEach(proximo => {
+                if(!visitados.some(visitado => { return visitado.x === proximo.x && visitado.y === proximo.y})){
+                    queue.push(proximo)
+                }
+            })
+        }
+       
+        const visitadosOrdenados = visitados.sort((pos1, pos2) => pos2.distance - pos1.distance);
+        collectible.x = visitadosOrdenados[0].x * 32 + 16
+        collectible.y = visitadosOrdenados[0].y * 32 + 16
+
+        cena1.adicionar(collectible)
+
+    }
+
+    getFloorNeighbors(cell) {
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        const neighbors = [];
+        var map = gerenciador.estagios[0].mapa
+
+        const numLinhas = map.cells.length;
+        const numColunas = map.cells[0].length;
+
+        for (const [dx, dy] of directions) {
+            const newX = cell.x + dx;
+            const newY = cell.y + dy;
+            if (newX >= 0 && newX < numColunas && newY >= 0 && newY < numLinhas &&
+                map.cells[newX][newY].tipo === 0) {
+                neighbors.push({ x: newX, y: newY, distance: cell.distance + 1 });
+            }
+        }
+
+        return neighbors;
+    }
+
+    createEnemy(room, collectible, level){
+        collectible.enemyFactory = new EnemyFactory()
+        collectible.level = level
+        collectible.startCell = room.terminalCells[0]
+        collectible.onGet = this.onGet
+        this.posicionarColecionavel(room, collectible)
+    }
+
+    onGet() {
+        assetsMng.play("darkness")
+        cena1.dialogo = "CUIDADO! Um inimigo apareceu!"
+        cena1.caution = true
+        this.enemyFactory.createEnemyWithDrop(this.level, null, null, this.startCell.x, this.startCell.y)
+        this.onGet = null
+    }
+
+    criarLabirinto(room) {
+        this.frontierCells = []
+
+        console.log("Id da sala " + room.roomId)
+        darkRoom(room.roomId)
+
+        this.roomTotalCells = room.roomHeight * room.roomWidth
+        var roomMatrix = this.inicializarMatriz(room.roomHeight, room.roomWidth)
+
+        var startCell = {
+            x: room.terminalCells[0].y - room.cells[0].y,
+            y: room.terminalCells[0].x - room.cells[0].x,
+        }
+
+        var matrizFinal = this.randomizedPrim(startCell, roomMatrix)
+        var matrizMapeada = matrizFinal.map((linha) => {
+            return linha.map((elemento) => {
+                if (elemento === "bloqueado") {
+                    return 6;
+                } else if (elemento === "passagem") {
+                    return 0;
+                } else {
+                    return elemento; // Se for outro valor, mantenha-o inalterado
+                }
+            });
+        });
+        room.terminalCells.forEach(element => {
+            matrizMapeada[element.y - room.cells[0].y][element.x - room.cells[0].x] = 0
+        });
+        this.mapToDungeon(room.cells[0], matrizMapeada)
 
     }
 
