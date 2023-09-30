@@ -8,7 +8,7 @@ function GameManager(pc) {
     this.estagios = [];
     this.criarEstagios();
     this.tema = new Audio();
-    this.globalVar = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+    this.globalVar = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 }
 
 /*modelo de mapa
@@ -28,58 +28,61 @@ mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
         });*/
 
 //contem os dados de cada estágio do jogo
-GameManager.prototype.criarEstagios = function(){
+GameManager.prototype.criarEstagios = function () {
     var spriteLista = [];
     var eventoLista = [];
     //estagio 1
     var contador = 0;
     console.time('createMap');
-    
+
     var dungeonCriada = this.dungeonGenerator.createMap();
-    while(!this.dungeonGenerator.sucesso){
+    while (!this.dungeonGenerator.sucesso) {
         console.log("Erro na criação do mapa")
         contador++
         Room.id = 0
         this.dungeonGenerator.graph = new Graph();
         var dungeonCriada = this.dungeonGenerator.createMap();
-        console.log("Quantidade de vezes que a dungeon foi refeita: "+contador)
+        console.log("Quantidade de vezes que a dungeon foi refeita: " + contador)
     }
-    
+
 
     console.timeEnd('createMap');
 
-   
 
-    mapa = new Grid({COLUMNS:this.dungeonGenerator.MAP_SIZE, LINES:this.dungeonGenerator.MAP_SIZE,
-        assets: assetsMng, m: dungeonCriada});
+
+    mapa = new Grid({
+        COLUMNS: this.dungeonGenerator.MAP_SIZE, LINES: this.dungeonGenerator.MAP_SIZE,
+        assets: assetsMng, m: dungeonCriada
+    });
     console.log("Kruskal com sucesso")
-    
-    this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
-    
+
+    this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
+
     // tela de game over
 
-    mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
-        [
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,9,9,9,9,9,9,9,9,9,9,9],
-        ]
-        });
+    mapa = new Grid({
+        COLUMNS: 12, LINES: 10, assets: assetsMng, m:
+            [
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+            ]
+    });
     spriteLista = [];
     eventoLista = [];
 
     spriteLista.push(this.criarObjeto(3, 5.5, 4.5, 1));
 
-    evento1 = function(){
-        pc.comportar = function (){};
-        pc.desenhar = function (){};
+    evento1 = function () {
+        pc.comportar = function () { };
+        pc.desenhar = function () { };
         cena1.dialogo = "Você perdeu! A pequena Lyra não consegue salvar seu pai..._Aperte F5 para reiniciar o jogo."
         gerenciador.tema.src = "assets/gameover.ogg";
         gerenciador.tema.loop = false;
@@ -91,53 +94,69 @@ GameManager.prototype.criarEstagios = function(){
     }
 
     eventoLista.push(evento1);
-    this.estagios.push(this.fabricaDeEstagios(mapa,spriteLista,eventoLista));
+    this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
 }
 
 //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
 //cria um inimigo passando como parâmetro seu tipo e sua posição X e Y
-GameManager.prototype.criarInimigo = function(tipo, posX, posY) {
+GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
     var inimigo;
-    switch (tipo){
+    switch (tipo) {
         //morcego
         case "morcego":
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:40 + Math.random()*25, imgX:0, imgY:0, 
-                imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 40 + Math.random() * 25, imgX: 0, imgY: 0,
+                imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }
+            });
             break;
         //diabinho
         case "diabinho":
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:20, imgX:0, imgY:1, 
-                imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 20, imgX: 0, imgY: 1,
+                imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }
+            });
             break;
         //caveira
         case "caveira":
-             inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 30, imgX:1, imgY:1, 
-                imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
-             break;
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 30, imgX: 1, imgY: 1,
+                imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }
+            });
+            break;
         //ogro
         case "ogro":
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 20, imgX:2, imgY:0, 
-               vidas: 2, maxVidas: 2, imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 20, imgX: 2, imgY: 0,
+                vidas: 2, maxVidas: 2, imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }
+            });
             break;
         //touro a esquerda
         case 4:
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:0, vx:0, vy:0,
-                direcao: 1, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 3, imgY: 0, vx: 0, vy: 0,
+                direcao: 1, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }
+            });
             break;
         //touro a direita
         case 5:
-            inimigo = new Sprite({ x: posX*32+26, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:0, vx:0, vy:0,
-                direcao: 2, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 26, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 3, imgY: 0, vx: 0, vy: 0,
+                direcao: 2, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }
+            });
             break;
         //necromante
         case "necromante":
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:1, vx:0, vy:0, globalCD: 2.0,
-                vidas: 1, maxVidas: 1, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 3, imgY: 1, vx: 0, vy: 0, globalCD: 2.0,
+                vidas: 1, maxVidas: 1, imagem: "monster", comportar: necromancia, props: { tipo: "npc" }
+            });
             break;
         // touro para baixo
         case 8:
-            inimigo = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm: 0, imgX:3, imgY:0, vx:0, vy:0,
-                direcao: 0, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }});
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 3, imgY: 0, vx: 0, vy: 0,
+                direcao: 0, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }
+            });
             break;
     }
     return inimigo;
@@ -163,29 +182,43 @@ GameManager.prototype.criarObjeto = function (numero, posX, posY, direct) {
     switch (numero) {
         //gargula
         case 0:
-            objeto = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, direcao: direct, imgX:0, imgY:0, 
-                imagem: "gargoyle", mover: moverObjeto, props: { tipo: "objeto" }});
+            objeto = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: direct, imgX: 0, imgY: 0,
+                imagem: "gargoyle", mover: moverObjeto, props: { tipo: "objeto" }
+            });
             break;
         //lyra caida
         case 3:
-            objeto = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, direcao: 1, imgX:2, imgY:1, 
-                imagem: "expressoes", mover: moverObjeto, props: { tipo: "objeto" }});
+            objeto = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 1, imgX: 2, imgY: 1,
+                imagem: "expressoes", mover: moverObjeto, props: { tipo: "objeto" }
+            });
             break;
     }
     return objeto;
 }
 
 //cria poder de recuperar hp e mana
-GameManager.prototype.criarPoder = function (numero, posX, posY) {
+GameManager.prototype.criarPoder = function (tipo, posX, posY) {
     var poder;
-    switch (numero) {
-        case 0:
-            poder = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, direcao: 0, imgX:numero, imgY: 1, 
-                imagem: "crystal", desenhar: desenhaTiro, props: { tipo: "poder", modelo: "hp" }});
+    switch (tipo) {
+        case 'hp':
+            poder = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 0, imgY: 1,
+                imagem: "crystal", swCD: 0, desenhar: desenhaTiro, props: { tipo: "poder", modelo: "hp" }
+            });
             break;
-        case 1:
-            poder = new Sprite({ x: posX*32+16, y: posY*32+16, w: 12, h: 12, vm:0, direcao: 0, imgX:numero, imgY: 1, 
-                imagem: "crystal", desenhar: desenhaTiro, props: { tipo: "poder", modelo: "mana" }});
+        case 'mana':
+            poder = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 1, imgY: 1,
+                imagem: "crystal", swCD: 0, desenhar: desenhaTiro, props: { tipo: "poder", modelo: "mana" }
+            });
+            break;
+        case 'heart':
+            poder = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
+                imagem: "heart2", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "heart" }
+            });
             break;
     }
     return poder;
@@ -193,54 +226,78 @@ GameManager.prototype.criarPoder = function (numero, posX, posY) {
 
 //cria uma chave.
 GameManager.prototype.criarChave = function (posX, posY, keyId) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 32, vm:0, imgX:0, imgY:0, keyId: keyId,
-                imagem: "key_"+keyId, desenhar: desenharChave, props: { tipo: "objeto", subtipo: "colecionavel",
-                mensagem: 'Adquirida Chave '+KeyColorEnum[keyId]}});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 32, vm: 0, imgX: 0, imgY: 0, keyId: keyId,
+        imagem: "key_" + keyId, desenhar: desenharChave, props: {
+            tipo: "objeto", subtipo: "colecionavel",
+            mensagem: 'Adquirida Chave ' + KeyColorEnum[keyId]
+        }
+    });
 }
 
 //cria uma porta.
 GameManager.prototype.criarPorta = function (posX, posY, doorId) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:2, imgY:1, doorId: doorId,
-                imagem: "door_"+doorId, desenhar: desenharPorta, props: { tipo: "objeto", subtipo: "porta" }});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 2, imgY: 1, doorId: doorId,
+        imagem: "door_" + doorId, desenhar: desenharPorta, props: { tipo: "objeto", subtipo: "porta" }
+    });
 }
 
 GameManager.prototype.criarBotaAntiLava = function (posX, posY) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 16, vm:0, imgX:17, imgY:0,
-                imagem: "gear", desenhar: desenharColecionavel, props: { tipo: "objeto", subtipo: "colecionavel", event: "lava",
-                mensagem: 'Adquirida Bota Antilava' }});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 16, vm: 0, imgX: 17, imgY: 0,
+        imagem: "gear", desenhar: desenharColecionavel, props: {
+            tipo: "objeto", subtipo: "colecionavel", event: "lava",
+            mensagem: 'Adquirida Bota Antilava'
+        }
+    });
 }
 
 GameManager.prototype.criarAlavanca = function (posX, posY, evento, coordenadas) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:2, imgY:0, event: evento,
-                imagem: "switch", desenhar: desenharAlavanca, coordenadas: coordenadas, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 48, vm: 0, imgX: 2, imgY: 0, event: evento,
+        imagem: "switch", desenhar: desenharAlavanca, coordenadas: coordenadas, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }
+    });
 }
 
 GameManager.prototype.criarInterruptor = function (posX, posY, evento, switchId) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:10, imgY:1, event: evento, switchId: switchId,
-                imagem: "switch", desenhar: desenharAlavanca,  toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 48, vm: 0, imgX: 10, imgY: 1, event: evento, switchId: switchId,
+        imagem: "switch", desenhar: desenharAlavanca, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }
+    });
 }
 
 GameManager.prototype.criarGoalSokoban = function (posX, posY) {
-    return new Sprite({ x: posX*32, y: posY*32, w: 32, h: 32, vm:0, posX: posX, posY: posY,
-                desenhar: desenharQuadradoComX, props: { tipo: "goal" }});
+    return new Sprite({
+        x: posX * 32, y: posY * 32, w: 32, h: 32, vm: 0, posX: posX, posY: posY,
+        desenhar: desenharQuadradoComX, props: { tipo: "goal" }
+    });
 }
 
 GameManager.prototype.criarCaixaSokoban = function (posX, posY) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, posX: posX, posY: posY, w: 32, h: 32, vm:0, imagem: "box_",
-                initialX: posX, initialY: posY, desenhar: desenharCaixa, props: { tipo: "box", placed: false }});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imagem: "box_",
+        initialX: posX, initialY: posY, desenhar: desenharCaixa, props: { tipo: "box", placed: false }
+    });
 }
 
 GameManager.prototype.criarDispositivoAntiLava = function (x, y, evento, room) {
-    return new Sprite({ x: x, y: y, w: 32, h: 32, spriteSize: 48, vm:0, imgX:0, imgY:0, event: evento,
-                imagem: "switch", desenhar: desenharAlavanca, room: room, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }});
+    return new Sprite({
+        x: x, y: y, w: 32, h: 32, spriteSize: 48, vm: 0, imgX: 0, imgY: 0, event: evento,
+        imagem: "switch", desenhar: desenharAlavanca, room: room, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }
+    });
 }
 
 GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
-    return new Sprite({ x: posX*32+16, y: posY*32+16, w: 32, h: 32, spriteSize: 48, vm:0, imgX:0, imgY:1, startCd: startCd, repeatCd: repeatCd,
-               contador: 0, comportar: ativarEspinho, imagem: "object", desenhar: desenharEspinho, toggled: false, props: { tipo: "espinho" }});
+    return new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 48, vm: 0, imgX: 0, imgY: 1, startCd: startCd, repeatCd: repeatCd,
+        contador: 0, comportar: ativarEspinho, imagem: "object", desenhar: desenharEspinho, toggled: false, props: { tipo: "espinho" }
+    });
 }
 
 GameManager.prototype.criarFireball = function (posX, posY, level, fireplaces) {
-    return new Sprite({ x: posX*32 + 32, y: posY*32 + 32, posX: posX, posY: posY, w: 32, h: 32, vm:0, imgX:0, imgY:1, globalCD: 1.2 - (level - 1) * 0.3, firePlaces: fireplaces == null ? [{x: posX, y: posY}] : fireplaces,
-               contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, level: level, toggled: false, props: { tipo: "tiroE" }});
+    return new Sprite({
+        x: posX * 32 + 32, y: posY * 32 + 32, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: 1.2 - (level - 1) * 0.3, firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
+        contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, level: level, toggled: false, props: { tipo: "tiroE" }
+    });
 }

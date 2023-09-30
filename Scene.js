@@ -85,7 +85,7 @@ Scene.prototype.adicionar = function (sprite) {
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
 Scene.prototype.desenhar = function () {
     this.updateCameraPosition();
-    
+
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].desenhar(this.ctx);
     }
@@ -120,8 +120,8 @@ Scene.prototype.desenhar = function () {
     for (var i = 0; i < this.spritesTE.length; i++) {
         this.spritesTE[i].desenhar(this.ctx);
     }
-    
-    
+
+
 
     /*if (this.pc.direcao != 0) {
         if (this.pc.desenhar) { }
@@ -163,9 +163,9 @@ Scene.prototype.mover = function (dt) {
     for (var i = 0; i < this.spritesO.length; i++) {
         this.spritesO[i].mover(dt);
     }
-    for(var i = 0; i<this.spritesXP.length; i++){
+    for (var i = 0; i < this.spritesXP.length; i++) {
         this.spritesXP[i].mover(dt);
-    } 
+    }
     if (this.pc != null) {
         this.pc.mover(dt);
     }
@@ -184,7 +184,7 @@ Scene.prototype.comportar = function () {
         }
     }
     for (var i = 0; i < this.spritesE.length; i++) {
-        if (this.spritesE[i].comportar && (Math.hypot(this.spritesE[i].x - this.pc.x, this.spritesE[i].y - this.pc.y) < 256 || this.spritesE[i].provocou)){
+        if (this.spritesE[i].comportar && (Math.hypot(this.spritesE[i].x - this.pc.x, this.spritesE[i].y - this.pc.y) < 256 || this.spritesE[i].provocou)) {
             this.spritesE[i].comportar();
         }
     }
@@ -258,10 +258,25 @@ Scene.prototype.checaColisao = function () {
                 this.spritesE[i].vidas--;
                 if (this.spritesE[i].vidas == 0) {
                     this.toRemove.push(this.spritesE[i]);
-                    if(this.spritesE[i].drop != null){
+                    if (this.spritesE[i].drop != null) {
                         this.spritesE[i].drop.x = this.spritesE[i].x
                         this.spritesE[i].drop.y = this.spritesE[i].y
                         this.adicionar(this.spritesE[i].drop)
+                    } else {
+                        var chance = Math.random()
+                        if (chance < 0.18) {
+                            var item = gerenciador.criarPoder('heart', this.spritesE[i].x / 32, this.spritesE[i].y / 32)
+                            item.timer = 60
+                            var evento = function (item) {
+                                item.timer--
+                                if (item.timer <= 0) {
+                                    cena1.adicionar(item)
+                                    var idx = cena1.estagio.eventos.indexOf(this);
+                                    cena1.estagio.eventos.splice(idx);
+                                }
+                            }
+                            this.estagio.eventos.push(() => evento(item))
+                        }
                     }
                 } else {
                     this.spritesE[i].imune = 0.3;
@@ -285,21 +300,20 @@ Scene.prototype.checaColisao = function () {
     for (var i = 0; i < this.spritesPoder.length; i++) {
         if (this.spritesPoder[i].colidiuCom(this.pc)) {
             this.assets.play("heal");
-            if (this.spritesPoder[i].props.modelo == "hp") {
-                this.pc.vidas = 7;
-            } else {
-                this.pc.mana = 5;
+            switch (this.spritesPoder[i].props.modelo) {
+                case 'hp':
+                    this.pc.vidas = 7;
+                    break
+                case 'heart':
+                    if (this.pc.vidas < 7) { this.pc.vidas++ }
+                    break
+                case 'mana':
+                    this.pc.mana = 5
+                    break
             }
             var idx = this.estagio.sprites.indexOf(this.spritesPoder[i]);
             this.estagio.sprites.splice(idx, 1);
             this.toRemove.push(this.spritesPoder[i]);
-        }
-        if (this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE") {
-            if (this.pc.imune <= 0) {
-                this.pc.atingido = 0.3;
-                this.pc.vidas--;
-                this.pc.imune = 2;
-            }
         }
     }
 
@@ -310,18 +324,18 @@ Scene.prototype.checaColisao = function () {
                 this.spritesO[k].swCD < 0) {
                 switch (this.spritesO[k].props.subtipo) {
                     case 'colecionavel':
-                            if (this.inventoryItem) {
-                                this.inventoryItem.x = this.spritesO[k].x
-                                this.inventoryItem.y = this.spritesO[k].y
-                                this.spritesO.push(this.inventoryItem)
-                            }
-                            this.dialogo = this.spritesO[k].props.mensagem
-                            this.toRemove.push(this.spritesO[k])
-                            this.inventoryItem = this.spritesO[k]
-                            this.assets.play("quest");
-                            this.spritesO[k].swCD = 0.6;
-                            this.frameCounter = 0
-                            if(this.spritesO[k].onGet) {this.spritesO[k].onGet()}
+                        if (this.inventoryItem) {
+                            this.inventoryItem.x = this.spritesO[k].x
+                            this.inventoryItem.y = this.spritesO[k].y
+                            this.spritesO.push(this.inventoryItem)
+                        }
+                        this.dialogo = this.spritesO[k].props.mensagem
+                        this.toRemove.push(this.spritesO[k])
+                        this.inventoryItem = this.spritesO[k]
+                        this.assets.play("quest");
+                        this.spritesO[k].swCD = 0.6;
+                        this.frameCounter = 0
+                        if (this.spritesO[k].onGet) { this.spritesO[k].onGet() }
                         break;
                     case 'porta':
                         if (this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId) {
@@ -726,7 +740,7 @@ Scene.prototype.desenharDialogo = function () {
     if (this.dialogo != null) {
         this.frameCounter++
         ctx.font = "30px Medieval";
-        ctx.fillStyle = this.caution ? `rgba(255, 0, 0, ${this.mensagemOpacity})`: `rgba(255, 255, 255, ${this.mensagemOpacity})`;
+        ctx.fillStyle = this.caution ? `rgba(255, 0, 0, ${this.mensagemOpacity})` : `rgba(255, 255, 255, ${this.mensagemOpacity})`;
         ctx.fillText(this.dialogo, 90, this.h - 75);
         if (this.frameCounter >= 180 && this.stageIndex < 1) {
             this.mensagemOpacity -= 0.02;
