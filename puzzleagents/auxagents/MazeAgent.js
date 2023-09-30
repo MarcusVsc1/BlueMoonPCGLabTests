@@ -157,7 +157,7 @@ class MazeAgent {
         matrix[cell.x][cell.y] = "passagem"
         this.frontierCells.push(... this.getFrontierCells(matrix, cell.x, cell.y))
         while (this.frontierCells.length > 0) {
-            var frontierCell = SwitchAgent.fisherYales(this.frontierCells).pop()
+            var frontierCell = UtilityMethods.fisherYales(this.frontierCells).pop()
             if (frontierCell != null) {
                 matrix[frontierCell.x][frontierCell.y] = "passagem"
                 matrix[frontierCell.inBetween.x][frontierCell.inBetween.y] = "passagem"

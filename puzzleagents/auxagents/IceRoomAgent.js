@@ -43,7 +43,7 @@ class IceRoomAgent {
 
     createEnemies(room, collectible, level) {
         var niveis = [level, level < 4 ? level - 2: level]
-        niveis = SwitchAgent.fisherYales(niveis)
+        niveis = UtilityMethods.fisherYales(niveis)
         this.enemyFactory.createEnemyWithDrop(niveis[0], room, collectible)
         this.enemyFactory.createEnemyWithDrop(niveis[1], room)
     }

@@ -42,7 +42,7 @@ class SwitchAgent {
         var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
         collectible.x = position.x
         collectible.y = position.y
-        switches = SwitchAgent.fisherYales(switches)
+        switches = UtilityMethods.fisherYales(switches)
         SwitchAgent.switchGroups.push({
             correctCombination: switches,
             actualCombination: [],
@@ -118,14 +118,6 @@ class SwitchAgent {
             posicao.y = posicao.y + translado.y
         }
         return posicoes;
-    }
-
-    static fisherYales(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
     }
 
 }
