@@ -331,4 +331,27 @@ class Graph {
         return false; // O corredor alvo não foi encontrado dentro da distância especificada
     }
 
+    findShortestPath(roomA, roomB) {
+        const visited = new Set();
+        const queue = [{ room: roomA, path: [roomA] }];
+
+        while (queue.length > 0) {
+            const { room, path } = queue.shift();
+
+            if (room === roomB) {
+                return path; // Caminho encontrado
+            }
+
+            visited.add(room);
+
+            for (const neighbor of this.getNeighbors(room)) {
+                if (!visited.has(neighbor)) {
+                    queue.push({ room: neighbor, path: [...path, neighbor] });
+                }
+            }
+        }
+
+        return null; // Não há caminho entre as salas
+    }
+
 }

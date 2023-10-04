@@ -11,7 +11,7 @@ class UtilityMethods {
     static lottery(map) {
         // Calcula a soma total das chances
         let totalWeight = 0;
-        for (const [, { chance }] of map.entries()) {
+        for (const [, { chance }] of map) {
             totalWeight += chance;
         }
 
@@ -20,11 +20,9 @@ class UtilityMethods {
 
         // Percorre o mapa para encontrar o elemento sorteado
         let accumulatedWeight = 0;
-        for (const [key, { chance }] of map.entries()) {
+        for (const [key, { chance }] of map) {
             accumulatedWeight += chance;
             if (randomValue < accumulatedWeight) {
-                // Reduz a chance do elemento pela metade
-                map.set(key, { agent: map.get(key).agent, chance: chance / 2 });
                 return key;
             }
         }

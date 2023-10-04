@@ -7,24 +7,27 @@ class LavaRoomAgent {
     gerarTag(mapGraph, room) {
         var lavaRoom = room
         if(this.hasBoots) {
-
-            if(mapGraph.getNeighbors(room).some(neighbor => {return neighbor.tag.subTipo === "LavaRoomAgent" }) ||
-                mapGraph.getNeighbors(room).length == 1 || Object.keys(room.tag).length > 0) {
+            if(mapGraph.getNeighbors(room).some(neighbor => {return neighbor.tag.auxiliar === "LavaRoomAgent" || neighbor.tag.subTipo === "LavaRoomAgent"}) ||
+            mapGraph.getNeighbors(room).length == 1 || Object.keys(room.tag).length > 0) {
                 return false
             }
+            console.log("Inserindo mais uma sala: "+room.roomId)
             lavaRoom = room
 
         } else {
-
+            var lastTag = room.tag
             var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]
             room.tag = this.defaultTag  
             var collectible = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável")
             var validRooms = mapGraph.nodes
-            .filter(node => {return !mapGraph.getNeighbors(node).some(node => {return node.tag.tipo === "colecionável" && node.tag.subTipo === "LavaRoomAgent"})})
+            .filter(node => {return !mapGraph.getNeighbors(node).some(node => {return node.tag.auxiliar === "LavaRoomAgent"})})
+            .filter(node => {return !mapGraph.getNeighbors(node).some(node => {return node.tag.subTipo === "LavaRoomAgent"})})
             .filter(node => {return Object.keys(node.tag).length == 0})
             .filter(node => {return mapGraph.getNeighbors(node).length > 1})
             .filter(node => {return mapGraph.findCollectibleRoomsInPathByRoom(startRoom, node).length == collectible.length})
+            console.log("Inserindo primeira sala: "+room.roomId)
             if(validRooms.length == 0){
+                room.tag = lastTag
                 return false
             }
             lavaRoom = validRooms[Math.floor(Math.random() * validRooms.length)];
@@ -33,9 +36,10 @@ class LavaRoomAgent {
 
         }
 
-        lavaRoom.tag = { tipo: "obstáculo", subTipo: "LavaRoomAgent" }
+        lavaRoom.tag = { auxiliar: "LavaRoomAgent" }
         this.fillRoomInteriorWithLava(lavaRoom.cells);
         this.createLavaRemoverDevice(lavaRoom)
+        return true
     }
 
     fillRoomInteriorWithLava(cells) {

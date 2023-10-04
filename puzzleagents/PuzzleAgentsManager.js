@@ -9,7 +9,7 @@ class PuzzleAgentsManager {
                 //  ['LeverAgent', { agent: new LeverAgent(), chance: 1 }],
                 // ['CombatRoom', { agent: new CombatRoom(), chance: 1 }],
                 //['RestingPlace', { agent: new RestingPlace(), chance: 1 }],
-                //  ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1 }]
+                ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1 }]
             ]),
 
             this.auxAgents = new Map([
@@ -53,7 +53,7 @@ class PuzzleAgentsManager {
                     if (!agent.gerarTag(this.mapGraph, room, this.auxAgents)) {
                         availableAgents.delete(agentKey)
                     } else {
-                        newAgent = this.mainAgents.get(agentKey)
+                        var newAgent = this.mainAgents.get(agentKey)
                         newAgent.chance /= 2
                         this.mainAgents.set(agentKey, newAgent)
                         break
@@ -119,7 +119,7 @@ class PuzzleAgentsManager {
 
         rooms.forEach(room => {
             if (room.tag.subTipo === 'KeyAndDoorAgent') {
-                subTipos.add(tag.tipo);
+                subTipos.add(room.tag.subTipo);
             }
         })
 

@@ -8,7 +8,8 @@ class KeyAndDoorAgent {
 
     gerarTag(mapGraph, room) {
 
-        
+        var lastTag = room.tag
+        room.tag = this.defaultTag
         var collectible = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável")
         var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]
         var validCorridors = mapGraph.adjacencyList
@@ -18,11 +19,11 @@ class KeyAndDoorAgent {
         //.filter(corridor => {return mapGraph.isCorridorWithinDistance(startRoom, corridor, 3)})
 
         if (validCorridors.length == 0) {
+            room.tag = lastTag
             console.log("Não foram encontrados corredores válidos para posicionar porta")
             return false
         }
 
-        room.tag = this.defaultTag
         var selectedCorridor = validCorridors[Math.floor(Math.random() * validCorridors.length)];
         selectedCorridor.tags.push(this.defaultTag)
 
@@ -33,12 +34,18 @@ class KeyAndDoorAgent {
         var keyY = room.cells[0].x + Math.floor(room.roomWidth / 2)
 
         cena1.adicionar(gerenciador.criarChave(keyY, keyX, this.agentLevel));
-        gerenciador.estagios[0].mapa.cells[doorY][doorX].tipo = 10
+        room.tag.collectible = gerenciador.criarChave(keyY, keyX, this.agentLevel)
         
-        room.tag.collectible = gerenciador.criarPorta(doorY, doorX, this.agentLevel)
+        gerenciador.estagios[0].mapa.cells[doorY][doorX].tipo = 10
+        cena1.adicionar(gerenciador.criarPorta(doorY, doorX, this.agentLevel));
 
         this.agentLevel++
         this.defaultTag.id++
+        if(lastTag.auxiliar) {
+            room.tag.auxiliar = lastTag.auxiliar
+        }
+
+        return true
 
     }
 
