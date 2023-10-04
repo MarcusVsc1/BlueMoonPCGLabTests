@@ -208,7 +208,7 @@ class Graph {
       métodos de puzzle
     */
 
-    findCollectibleRoomsInPath(startRoom, corridor) {
+    findCollectibleRoomsInPathByCorridor(startRoom, corridor) {
         const collectibleRooms = [];
         const visited = new Set();
         const queue = [startRoom]; // Inicie com a sala inicial como ponto de partida.
@@ -230,6 +230,35 @@ class Graph {
                     queue.push(neighbor);
                 }
             }
+        }
+
+        return collectibleRooms;
+    }
+
+    findCollectibleRoomsInPathByRoom(startRoom, room) {
+        const collectibleRooms = [];
+        const visited = new Set();
+        const queue = [startRoom]; // Inicie com a sala inicial como ponto de partida.
+
+        while (queue.length > 0) {
+            const currentRoom = queue.shift();
+
+            // Verifique se o nó atual é uma sala com a tag "colecionável".
+            if (currentRoom.tag.tipo === "colecionável") {
+                collectibleRooms.push(currentRoom);
+            }
+            
+            visited.add(currentRoom);
+
+            if(currentRoom.roomId !== room.roomId) {
+                for (const neighbor of this.getNeighbors(currentRoom)) {
+                    // Verifique se a aresta entre a sala atual e o vizinho é o corredor passado por parâmetro (corridor).
+                    if (!visited.has(neighbor)) {
+                        queue.push(neighbor);
+                    }
+                }
+            }
+
         }
 
         return collectibleRooms;

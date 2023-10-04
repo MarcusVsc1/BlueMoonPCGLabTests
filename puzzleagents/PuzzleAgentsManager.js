@@ -1,52 +1,71 @@
 class PuzzleAgentsManager {
     constructor(mapGraph) {
+
         this.mapGraph = mapGraph,
-            this.raffle = [
-                //new LavaRoomAgent(),
-                //new LeverAgent(),
-                new KeyAndDoorAgent()
-            ],
-            this.initialRoom = null
-        this.finalRoom = null
+            this.initialRoom = null,
+            this.finalRoom = null,
+            this.mainAgents = new Map([
+                ['LavaRoomAgent', { agent: new LavaRoomAgent(), chance: 1 }],
+                //  ['LeverAgent', { agent: new LeverAgent(), chance: 1 }],
+                // ['CombatRoom', { agent: new CombatRoom(), chance: 1 }],
+                //['RestingPlace', { agent: new RestingPlace(), chance: 1 }],
+                //  ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1 }]
+            ]),
+
+            this.auxAgents = new Map([
+                ['FireballTrapAgent', { agent: new FireballTrapAgent(), chance: 1 }],
+                ['IceRoomAgent', { agent: new IceRoomAgent(), chance: 1 }],
+                ['MazeAgent', { agent: new MazeAgent(), chance: 1 }],
+                ['SokobanAgent', { agent: new SokobanAgent(), chance: 1 }],
+                ['SpikeAgent', { agent: new SpikeAgent(), chance: 1 }],
+                ['SwitchAgent', { agent: new SwitchAgent(), chance: 1 }]
+            ]);
 
         this.populatePuzzles()
     }
 
     populatePuzzles() {
         this.initiate()
-        /*
+
         console.time("puzzles")
         var sortedRooms = this.mapGraph.sortRoomsByDistanceFromStart(this.initialRoom)
             .filter(room => room.roomId != this.initialRoom.roomId &&
-                room.roomId != this.finalRoom.roomId &&
-                (this.mapGraph.getNeighbors(room).length < 3 ||
-                    (this.mapGraph.getNeighbors(room).length == 3 && this.mapGraph.hasEdgeBetweenRooms(room, this.initialRoom)) ||
-                    (this.mapGraph.getNeighbors(room).length == 3 && this.mapGraph.hasEdgeBetweenRooms(room, this.finalRoom))
+                (this.mapGraph.getNeighbors(room).length < 5 ||
+                    (this.mapGraph.getNeighbors(room).length == this.mainAgents.length && this.mapGraph.hasEdgeBetweenRooms(room, this.initialRoom)) ||
+                    (this.mapGraph.getNeighbors(room).length == this.mainAgents.length && this.mapGraph.hasEdgeBetweenRooms(room, this.finalRoom))
                 ))
 
-        this.initialRoom.tag = {"tipo": "inicio"}
-        this.finalRoom.tag = {"tipo": "final"}
+        this.initialRoom.tag = { "tipo": "inicio" }
+        console.log("Room inicial: "+this.initialRoom.roomId)
 
         /*
         loop para popular os puzzles no grafo de mapa
         */
-        /*
+
         var roomIdx = 0
-        var falhas = 0
-        var finalizou = false
-        while (!finalizou) {
+        while (roomIdx < sortedRooms.length) {
             var room = sortedRooms[roomIdx]
-            var agent = this.selecionarAgente(room)
-            if (agent == null || agent.gerarPuzzle(this.mapGraph, room)) {
-                roomIdx++
-            } else {
-                falhas++
+            if (room.tag != null) {
+                var availableAgents = this.verificarAgentesDisponiveis(room)
+                while (availableAgents.size > 0) {
+                    const agentKey = this.selecionarAgente(availableAgents)
+                    var agent = this.mainAgents.get(agentKey).agent
+                    if (!agent.gerarTag(this.mapGraph, room, this.auxAgents)) {
+                        availableAgents.delete(agentKey)
+                    } else {
+                        newAgent = this.mainAgents.get(agentKey)
+                        newAgent.chance /= 2
+                        this.mainAgents.set(agentKey, newAgent)
+                        break
+                    }
+
+                }
             }
-            finalizou = this.deveParar(roomIdx, sortedRooms, falhas)
+            roomIdx++
         }
-        
+
         console.timeEnd("puzzles")
-        */
+
         /*
         //para teste de switch (interruptor)
         var sw = new SwitchAgent()
@@ -65,9 +84,10 @@ class PuzzleAgentsManager {
         
         var sk = new SokobanAgent()
         sk.gerarPuzzle(this.mapGraph, this.puzzleGraph)
-        */
+        
         var lr = new LavaRoomAgent()
-        lr.gerarPuzzle(this.mapGraph, this.puzzleGraph)
+        lr.gerarTag(this.mapGraph, this.puzzleGraph)
+        */
     }
 
     initiate() {
@@ -80,17 +100,33 @@ class PuzzleAgentsManager {
         cena1.pc.y = posicao.y * 32
     }
 
-    selecionarAgente(room) {
-        if (room.tag.tipo == undefined) {
-            return this.raffle[0]
-        } else { return null }
-    }
-
-    deveParar(roomIdx, sortedRooms, falhas) {
-        return roomIdx >= sortedRooms.length || falhas > sortedRooms.length
+    selecionarAgente(agents) {
+        return UtilityMethods.lottery(agents)
     }
 
     calcularNivel(distancia, total) {
         return Math.ceil((distancia / total) * 4);
+    }
+
+    verificarAgentesDisponiveis(room) {
+        const neighbors = this.mapGraph.getNeighbors(room)
+        const jsonString = JSON.stringify([...this.mainAgents]);
+        return this.filterMainAgents(JSON.parse(jsonString), neighbors);
+    }
+
+    filterMainAgents(mainAgents, rooms) {
+        const subTipos = new Set();
+
+        rooms.forEach(room => {
+            if (room.tag.subTipo === 'KeyAndDoorAgent') {
+                subTipos.add(tag.tipo);
+            }
+        })
+
+        const filteredMainAgents = new Map([...mainAgents].filter(([key, value]) => {
+            return !subTipos.has(key);
+        }));
+
+        return filteredMainAgents;
     }
 }

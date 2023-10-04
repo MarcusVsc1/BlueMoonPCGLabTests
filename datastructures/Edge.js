@@ -1,9 +1,9 @@
 class Edge {
-    constructor(fromRoom, toRoom, cells, tag = {}){
+    constructor(fromRoom, toRoom, cells){
         this.fromRoom = fromRoom
         this.toRoom = toRoom
         this.cells = cells
-        this.tag = tag
+        this.tags = []
     }
 
     hash() {
