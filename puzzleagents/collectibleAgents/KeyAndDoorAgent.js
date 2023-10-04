@@ -13,9 +13,9 @@ class KeyAndDoorAgent {
         var collectible = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável")
         var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]
         var validCorridors = mapGraph.adjacencyList
-            .filter(
-                corridor => { return mapGraph.findCollectibleRoomsInPathByCorridor(startRoom, corridor).length == collectible.length })
-            .filter(corridor => {return !corridor.tags.some(tag => tag.subTipo === 'KeyAndDoorAgent')})
+            .filter(corridor => { return mapGraph.findCollectibleRoomsInPathByCorridor(startRoom, corridor).length == collectible.length })
+            .filter(corridor => { return !corridor.tags.some(tag => tag.subTipo === 'KeyAndDoorAgent') })
+            .filter(corridor => { return corridor.fromRoom != room.roomId && corridor.toRoom != room.roomId})
         //.filter(corridor => {return mapGraph.isCorridorWithinDistance(startRoom, corridor, 3)})
 
         if (validCorridors.length == 0) {
@@ -35,13 +35,13 @@ class KeyAndDoorAgent {
 
         cena1.adicionar(gerenciador.criarChave(keyY, keyX, this.agentLevel));
         room.tag.collectible = gerenciador.criarChave(keyY, keyX, this.agentLevel)
-        
+
         gerenciador.estagios[0].mapa.cells[doorY][doorX].tipo = 10
         cena1.adicionar(gerenciador.criarPorta(doorY, doorX, this.agentLevel));
 
         this.agentLevel++
         this.defaultTag.id++
-        if(lastTag.auxiliar) {
+        if (lastTag.auxiliar) {
             room.tag.auxiliar = lastTag.auxiliar
         }
 
