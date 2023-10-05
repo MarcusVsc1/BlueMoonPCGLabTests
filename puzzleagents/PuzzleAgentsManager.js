@@ -36,7 +36,7 @@ class PuzzleAgentsManager {
                 ))
 
         this.initialRoom.tag = { "tipo": "inicio" }
-        console.log("Room inicial: "+this.initialRoom.roomId)
+        console.log("Room inicial: " + this.initialRoom.roomId)
 
         /*
         loop para popular os puzzles no grafo de mapa
@@ -88,7 +88,7 @@ class PuzzleAgentsManager {
         var lr = new LavaRoomAgent()
         lr.gerarTag(this.mapGraph, this.puzzleGraph)
         */
-        var tags = this.mapGraph.nodes.map(node => {return {room: node.roomId,tag: node.tag.subTipo}})
+        var tags = this.mapGraph.nodes.map(node => { return { room: node.roomId, tag: node.tag.subTipo } })
         console.log(tags)
     }
 
@@ -120,9 +120,7 @@ class PuzzleAgentsManager {
         const subTipos = new Set();
 
         rooms.forEach(room => {
-            if (room.tag.subTipo === 'KeyAndDoorAgent') {
-                subTipos.add(room.tag.subTipo);
-            }
+            subTipos.add(room.tag.subTipo);
         })
 
         const filteredMainAgents = new Map([...mainAgents].filter(([key, value]) => {
