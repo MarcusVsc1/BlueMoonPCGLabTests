@@ -6,9 +6,9 @@ class PuzzleAgentsManager {
             this.finalRoom = null,
             this.mainAgents = new Map([
                 ['LavaRoomAgent', { agent: new LavaRoomAgent(), chance: 1 }],
-                //  ['LeverAgent', { agent: new LeverAgent(), chance: 1 }],
-                // ['CombatRoom', { agent: new CombatRoom(), chance: 1 }],
-                //['RestingPlace', { agent: new RestingPlace(), chance: 1 }],
+                ['LeverAgent', { agent: new LeverAgent(), chance: 1 }],
+                //['CombatRoom', { agent: new CombatRoom(), chance: 1 }],
+                //['Hub', { agent: new Hub(), chance: 0.5 }],
                 ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1 }]
             ]),
 
@@ -88,6 +88,8 @@ class PuzzleAgentsManager {
         var lr = new LavaRoomAgent()
         lr.gerarTag(this.mapGraph, this.puzzleGraph)
         */
+        var tags = this.mapGraph.nodes.map(node => {return {room: node.roomId,tag: node.tag.subTipo}})
+        console.log(tags)
     }
 
     initiate() {

@@ -10,10 +10,10 @@ class KeyAndDoorAgent {
 
         var lastTag = room.tag
         room.tag = this.defaultTag
-        var collectible = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável")
+        var collectibles = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável" || node.tag.tipo === "alavanca")
         var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]
         var validCorridors = mapGraph.adjacencyList
-            .filter(corridor => { return mapGraph.findCollectibleRoomsInPathByCorridor(startRoom, corridor).length == collectible.length })
+            .filter(corridor => { return mapGraph.findCollectibleRoomsInPathByCorridor(startRoom, corridor).length == collectibles.length })
             .filter(corridor => { return !corridor.tags.some(tag => tag.subTipo === 'KeyAndDoorAgent') })
             .filter(corridor => { return corridor.fromRoom != room.roomId && corridor.toRoom != room.roomId})
         //.filter(corridor => {return mapGraph.isCorridorWithinDistance(startRoom, corridor, 3)})
@@ -43,6 +43,8 @@ class KeyAndDoorAgent {
         this.defaultTag.id++
         if (lastTag.auxiliar) {
             room.tag.auxiliar = lastTag.auxiliar
+        } else {
+            
         }
 
         return true

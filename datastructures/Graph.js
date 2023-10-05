@@ -217,7 +217,7 @@ class Graph {
             const currentRoom = queue.shift();
 
             // Verifique se o nó atual é uma sala com a tag "colecionável".
-            if (currentRoom.tag.tipo === "colecionável") {
+            if (currentRoom.tag.tipo === "colecionável" || currentRoom.tag.tipo === "alavanca") {
                 collectibleRooms.push(currentRoom);
             }
 
@@ -247,10 +247,10 @@ class Graph {
             if (currentRoom.tag.tipo === "colecionável") {
                 collectibleRooms.push(currentRoom);
             }
-            
+
             visited.add(currentRoom);
 
-            if(currentRoom.roomId !== room.roomId) {
+            if (currentRoom.roomId !== room.roomId) {
                 for (const neighbor of this.getNeighbors(currentRoom)) {
                     // Verifique se a aresta entre a sala atual e o vizinho é o corredor passado por parâmetro (corridor).
                     if (!visited.has(neighbor)) {
@@ -304,19 +304,19 @@ class Graph {
     isCorridorWithinDistance(startRoom, targetCorridor, maxDistance) {
         const visited = new Set();
         const queue = [{ room: startRoom, distance: 0 }];
-    
+
         while (queue.length > 0) {
             const { room, distance } = queue.shift();
-    
+
             if (distance <= maxDistance) {
                 visited.add(room);
-    
+
                 // Buscar os corredores vizinhos a partir da sala
                 const neighboringCorridors = this.getCorridorsFromRoom(room);
-    
+
                 // Adicionar a sala do outro lado do corredor à fila
                 for (const corridor of neighboringCorridors) {
-                    if(corridor === targetCorridor){
+                    if (corridor === targetCorridor) {
                         return true
                     }
                     const otherRoomId = (corridor.fromRoom === room.roomId) ? corridor.toRoom : corridor.fromRoom;
@@ -327,7 +327,7 @@ class Graph {
                 }
             }
         }
-    
+
         return false; // O corredor alvo não foi encontrado dentro da distância especificada
     }
 
@@ -352,6 +352,34 @@ class Graph {
         }
 
         return null; // Não há caminho entre as salas
+    }
+
+    findMinimumPathFromRoomToEdge(startRoom, targetEdge) {
+        const visited = new Set();
+        const queue = [{ room: startRoom, edges: [] }];
+
+        while (queue.length > 0) {
+            const { room, edges } = queue.shift();
+
+            visited.add(room);
+
+            for (const neighborEdge of this.getCorridorsFromRoom(room)) {
+                if (!visited.has(neighborEdge)) {
+                    const otherRoomId = (neighborEdge.fromRoom === room.roomId) ? neighborEdge.toRoom : neighborEdge.fromRoom;
+                    const otherRoom = this.getNodeById(otherRoomId);
+
+                    const newEdges = [...edges, neighborEdge];
+
+                    if (neighborEdge === targetEdge) {
+                        return newEdges; // Encontramos o edge de destino
+                    }
+
+                    queue.push({ room: otherRoom, edges: newEdges });
+                }
+            }
+        }
+
+        return null; // Caminho mínimo não encontrado
     }
 
 }
