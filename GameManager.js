@@ -89,10 +89,59 @@ GameManager.prototype.criarEstagios = function () {
         gerenciador.tema.play();
 
         var idx = cena1.estagio.eventos.indexOf(this);
-        cena1.estagio.eventos.splice(idx);
+        cena1.estagio.eventos.splice(idx, 1);
 
     }
 
+    eventoLista.push(evento1);
+    this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
+
+    //estagio 20
+
+    mapa = new Grid({
+        COLUMNS: 12, LINES: 10, assets: assetsMng, m:
+            [
+                [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+                [6, 6, 6, 0, 0, 0, 0, 0, 0, 6, 6, 6],
+                [6, 6, 0, 0, 6, 0, 0, 6, 0, 0, 6, 6],
+                [6, 0, 0, 6, 5.1, 5.4, 5.4, 5.7, 6, 0, 0, 6],
+                [6, 0, 0, 0, 5.2, 5.5, 5.5, 5.8, 0, 0, 0, 6],
+                [6, 0, 0, 0, 5.2, 5.5, 5.5, 5.8, 0, 0, 0, 6],
+                [6, 0, 0, 6, 5.3, 5.6, 5.6, 5.9, 6, 0, 0, 6],
+                [6, 6, 0, 0, 6, 3.5, 3, 6, 0, 0, 6, 6],
+                [6, 6, 6, 0, 0, 3.5, 3, 0, 0, 6, 6, 6],
+                [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+            ]
+    });
+    spriteLista = [];
+    eventoLista = [];
+
+    //spriteLista.push(this.criarTeleporte(5.2,0.2,6,8.9,2));
+    spriteLista.push(this.criarInimigo("bruxa", 5.5, 4.5));
+
+    evento2 = function () {
+        if (cena1.spritesE.length == 0) {
+            cena1.dialogo = "";
+            gerenciador.tema.src = "assets/final.ogg";
+            gerenciador.tema.loop = true;
+            gerenciador.tema.play();
+            cena1.dialogo = "Parabéns, você venceu o jogo. Aperte F5 para reiniciar";
+            var idx = cena1.estagio.eventos.indexOf(this);
+            cena1.estagio.eventos.splice(idx, 1);
+        }
+
+
+    }
+    evento1 = function () {
+        gerenciador.tema.src = "assets/boss.mp3";
+        gerenciador.tema.loop = true;
+        gerenciador.tema.play();
+        cena1.dialogo = "Você chegou ao fim da masmorra! Derrote a bruxa!";
+        var idx = cena1.estagio.eventos.indexOf(this);
+        cena1.estagio.eventos.splice(idx, 1);
+    }
+
+    eventoLista.push(evento2);
     eventoLista.push(evento1);
     this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
 }
@@ -158,10 +207,25 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
                 direcao: 0, imagem: "monster", comportar: atirarRochas, props: { tipo: "npc" }
             });
             break;
+        case "bruxa":
+        case 10:
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 1, imgY: 1, vx: 0, vy: 0, vidas: 18,
+                direcao: 0, imagem: "bruxa", globalCD: 2, fireCount: 0, mod: 0, comportar: bruxaria, baseCD: 2, props: { tipo: "npc" }
+            });
+            break;
     }
     return inimigo;
 }
 
+//criador de teleporte
+GameManager.prototype.criarTeleporte = function (posX, posY, telX, telY, idxMapa) {
+    var teleporte = new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 40, h: 40, vm: 0, direcao: 0, imgX: 2, imgY: 0, tX: telX * 32, tY: telY * 32,
+        imagem: "crystal", props: { tipo: "teleporte", idx: idxMapa }
+    });
+    return teleporte;
+}
 
 //cria estagios
 GameManager.prototype.fabricaDeEstagios = function (map, spriteLista, eventoLista) {
@@ -230,7 +294,8 @@ GameManager.prototype.criarChave = function (posX, posY, keyId) {
         x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 32, vm: 0, imgX: 0, imgY: 0, keyId: keyId,
         imagem: "key_" + keyId, desenhar: desenharChave, props: {
             tipo: "objeto", subtipo: "colecionavel",
-            mensagem: 'Adquirida Chave ' + KeyColorEnum[keyId]
+            mensagem: 'Adquirida Chave ' + KeyColorEnum[keyId],
+            droppable: true
         }
     });
 }
@@ -248,7 +313,8 @@ GameManager.prototype.criarBotaAntiLava = function (posX, posY) {
         x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 16, vm: 0, imgX: 17, imgY: 0,
         imagem: "gear", desenhar: desenharColecionavel, props: {
             tipo: "objeto", subtipo: "colecionavel", event: "lava",
-            mensagem: 'Adquirida Bota Antilava'
+            mensagem: 'Adquirida Bota Antilava',
+            droppable: true
         }
     });
 }

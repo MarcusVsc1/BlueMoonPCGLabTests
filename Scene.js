@@ -7,6 +7,7 @@ function Scene(params) {
         spritesT: [],
         spritesTE: [],
         spritesPoder: [],
+        spritesTP: [],
         spritesXP: [],
         spritesO: [],
         spritesXSoko: [],
@@ -79,6 +80,11 @@ Scene.prototype.adicionar = function (sprite) {
         this.spritesTE.push(sprite);
     }
 
+    if (sprite.props.tipo == "teleporte") {
+        console.log("Adicionando teleporte");
+        this.spritesTP.push(sprite);
+    }
+
     sprite.scene = this;
 };
 
@@ -104,9 +110,9 @@ Scene.prototype.desenhar = function () {
     for (var i = 0; i < this.spritesE.length; i++) {
         if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
     }
-    //if (this.pc.direcao == 0) {
-    if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
-    //}
+    if (this.pc.direcao == 0) {
+        if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
+    }
 
     for (var i = 0; i < this.spritesXP.length; i++) {
         this.spritesXP[i].desenhar(this.ctx);
@@ -121,11 +127,13 @@ Scene.prototype.desenhar = function () {
         this.spritesTE[i].desenhar(this.ctx);
     }
 
+    for (var i = 0; i < this.spritesTP.length; i++) {
+        this.spritesTP[i].desenhar(this.ctx);
+    }
 
-
-    /*if (this.pc.direcao != 0) {
-        if (this.pc.desenhar) { }
-    }*/
+    if (this.pc.direcao != 0) {
+        if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
+    }
     this.pc.desenhar(this.ctx)
 
     for (var i = 0; i < this.spritesO.length; i++) {
@@ -157,6 +165,9 @@ Scene.prototype.mover = function (dt) {
     for (var i = 0; i < this.spritesPoder.length; i++) {
         this.spritesPoder[i].mover(dt);
     }
+    for (var i = 0; i < this.spritesTP.length; i++) {
+        this.spritesTP[i].mover(dt);
+    }
     for (var i = 0; i < this.spritesTE.length; i++) {
         this.spritesTE[i].mover(dt);
     }
@@ -181,6 +192,11 @@ Scene.prototype.comportar = function () {
     for (var i = 0; i < this.spritesSpike.length; i++) {
         if (this.spritesSpike[i].comportar) {
             this.spritesSpike[i].comportar();
+        }
+    }
+    for (var i = 0; i < this.spritesTP.length; i++) {
+        if (this.spritesTP[i].comportar) {
+            this.spritesTP[i].comportar();
         }
     }
     for (var i = 0; i < this.spritesE.length; i++) {
@@ -272,7 +288,7 @@ Scene.prototype.checaColisao = function () {
                                 if (item.timer <= 0) {
                                     cena1.adicionar(item)
                                     var idx = cena1.estagio.eventos.indexOf(this);
-                                    cena1.estagio.eventos.splice(idx);
+                                    cena1.estagio.eventos.splice(idx, 1);
                                 }
                             }
                             this.estagio.eventos.push(() => evento(item))
@@ -357,6 +373,7 @@ Scene.prototype.checaColisao = function () {
         }
     }
 
+    //colisão com espinho
     for (var k = 0; k < this.spritesSpike.length; k++) {
         if (this.spritesSpike[k].colidiuCom(this.pc) && this.spritesSpike[k].toggled) {
             if (this.pc.imune <= 0) {
@@ -365,6 +382,28 @@ Scene.prototype.checaColisao = function () {
                 this.pc.atingido = 0.3;
                 this.assets.play("damage");
             }
+        }
+    }
+
+    //colisao com teleporte
+    for (var i = 0; i < this.spritesTP.length; i++) {
+        if (this.pc.colidiuCom(this.spritesTP[i])) {
+            this.stageIndex = this.spritesTP[i].props.idx;
+            this.pc.x = this.spritesTP[i].tX;
+            this.pc.y = this.spritesTP[i].tY;
+            this.spritesTP = [];
+            this.spritesE = [];
+            this.spritesT = [];
+            this.spritesO = [];
+            this.spritesD = [];
+            this.spritesTE = [];
+            this.spritesEV = [];
+            this.spritesXP = [];
+            this.spritesPoder = [];
+            this.spritesSpike = [];
+            this.sokobans = [];
+            this.spriteCounter = 0;
+
         }
     }
 
@@ -410,6 +449,7 @@ Scene.prototype.checaColisao = function () {
     }
     if (this.pc.vidas == 0 && this.pc.atingido <= 0) {
         this.pc.mana = 0;
+        this.spritesTP = [];
         this.spritesE = [];
         this.spritesT = [];
         this.spritesO = [];
@@ -520,16 +560,16 @@ Scene.prototype.desenharHUD = function () {
             20, 17
         );
         posCoracao = posCoracao + 20;
-    }/*
+    }
     //desenha a mana
-    posCoracao = 275;
+    posCoracao = 90;
     for(var i = 0; i < this.pc.mana; i++){
         ctx.drawImage(this.assets.img("mana"),
-            posCoracao,this.h+86,
+            posCoracao,this.h - 33,
             16,13
             );
         posCoracao = posCoracao + 16;
-    }*/
+    }
 
     //desenha a caixa de dialogo
     var imgX = 2;

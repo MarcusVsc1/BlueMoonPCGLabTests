@@ -63,6 +63,12 @@ Grid.prototype.desenhar = function (ctx, scene) {
                     positionY = 2;
                     positionX = 4;
                     break;
+                case 3.5:
+                    //escada de pedra: esquerda
+                    y = 0;
+                    x = 6;
+                    positionY = 2;
+                    break;
                 case 4:
                     //cascalho laranja e verde
                     y = 0;
