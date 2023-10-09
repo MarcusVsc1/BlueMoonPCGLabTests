@@ -28,5 +28,12 @@ class UtilityMethods {
         }
     }
 
+    static calcularAngulo(x1, y1, x2, y2) {
+        const angleRadians = Math.atan2(y2 - y1, x2 - x1);
+        let angleDegrees = angleRadians * 180 / Math.PI;
+        angleDegrees = (angleDegrees < 0) ? angleDegrees + 360 : angleDegrees;
+        return angleDegrees;
+    }
+
 
 }
