@@ -1,5 +1,7 @@
 class MazeAgent {
     constructor() {
+        this.defaultTag = "MazeAgent"
+
         this.frontierCells = []
         this.levelMapper = new Map()
         this.levelMapper.set(1, function (room, collectible) {

@@ -1,11 +1,13 @@
 class FireballTrapAgent {
+    constructor() {
+        this.defaultTag = "FireballTrapAgent"
+    }
 
     gerarAgenteAuxiliar(room, collectible, level) {
         var cell = this.encontrarCelulaInicial(room)
         collectible.fireBallInicial = gerenciador.criarFireball(cell.x, cell.y, level)
         collectible.onGet = this.onGet
         this.insertCollectible(room, collectible)
-
     }
 
     encontrarCelulaInicial(room) {

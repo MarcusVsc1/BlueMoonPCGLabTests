@@ -1,4 +1,7 @@
 class SokobanAgent {
+    constructor(){
+        this.defaultTag = "SokobanAgent"
+    }
 
     gerarAgenteAuxiliar(room, collectible) {
         this.posicionarCollectible(room, collectible)

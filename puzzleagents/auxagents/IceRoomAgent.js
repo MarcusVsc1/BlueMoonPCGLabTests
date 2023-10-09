@@ -1,5 +1,7 @@
 class IceRoomAgent {
     constructor() {
+        this.defaultTag = "IceRoomAgent"
+    
         this.enemyFactory = new EnemyFactory()
         this.levelMapper = new Map()
         this.levelMapper.set(1, function (room, collectible, level) {
