@@ -9,6 +9,7 @@ class Room {
         this.unavailableCells = [];
         this.terminalCells = []
         this.tag = tag
+        this.restricoes = []
     }
 
     addTerminalCell(cell) {

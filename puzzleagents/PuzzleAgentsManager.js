@@ -3,22 +3,22 @@ class PuzzleAgentsManager {
 
         this.mapGraph = mapGraph,
             this.initialRoom = null,
-            this.finalRoom = null,
+            //this.finalRoom = null,
             this.mainAgents = new Map([
-                ['LavaRoomAgent', { agent: new LavaRoomAgent(), chance: 1 }],
-                ['LeverAgent', { agent: new LeverAgent(), chance: 1 }],
-                //['CombatRoom', { agent: new CombatRoom(), chance: 1 }],
-                //['Hub', { agent: new Hub(), chance: 0.5 }],
-                ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1 }]
+                ['LavaRoomAgent', { agent: new LavaRoomAgent(), chance: 1, factor: 0.5 }],
+                ['LeverAgent', { agent: new LeverAgent(), chance: 0.8, factor: 0.25 }],
+                ['CombatRoom', { agent: new CombatRoom(), chance: 1, factor: 0.5 }],
+                ['Hub', { agent: new Hub(), chance: 0.5, factor: 0.5 }],
+                ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1, factor: 0.5 }]
             ]),
 
             this.auxAgents = new Map([
-                ['FireballTrapAgent', { agent: new FireballTrapAgent(), chance: 1 }],
-                ['IceRoomAgent', { agent: new IceRoomAgent(), chance: 1 }],
-                ['MazeAgent', { agent: new MazeAgent(), chance: 1 }],
-                ['SokobanAgent', { agent: new SokobanAgent(), chance: 1 }],
-                ['SpikeAgent', { agent: new SpikeAgent(), chance: 1 }],
-                ['SwitchAgent', { agent: new SwitchAgent(), chance: 1 }]
+                ['FireballTrapAgent', { agent: new FireballTrapAgent(), chance: 1, factor: 0.5 }],
+                ['IceRoomAgent', { agent: new IceRoomAgent(), chance: 1, factor: 0.5 }],
+                ['MazeAgent', { agent: new MazeAgent(), chance: 1, factor: 0.5 }],
+                ['SokobanAgent', { agent: new SokobanAgent(), chance: 1, factor: 0.5 }],
+                ['SpikeAgent', { agent: new SpikeAgent(), chance: 1, factor: 0.5 }],
+                ['SwitchAgent', { agent: new SwitchAgent(), chance: 1, factor: 0.5 }]
             ]);
 
         this.populatePuzzles()
@@ -42,27 +42,8 @@ class PuzzleAgentsManager {
         loop para popular os puzzles no grafo de mapa
         */
 
-        var roomIdx = 0
-        while (roomIdx < sortedRooms.length) {
-            var room = sortedRooms[roomIdx]
-            if (room.tag != null) {
-                var availableAgents = this.verificarAgentesDisponiveis(room)
-                while (availableAgents.size > 0) {
-                    const agentKey = this.selecionarAgente(availableAgents)
-                    var agent = this.mainAgents.get(agentKey).agent
-                    if (!agent.gerarTag(this.mapGraph, room, this.auxAgents)) {
-                        availableAgents.delete(agentKey)
-                    } else {
-                        var newAgent = this.mainAgents.get(agentKey)
-                        newAgent.chance /= 2
-                        this.mainAgents.set(agentKey, newAgent)
-                        break
-                    }
-
-                }
-            }
-            roomIdx++
-        }
+        this.criarTags(sortedRooms);
+        var orderedRooms = this.ordenarPorNivel(this.mapGraph)
 
         console.timeEnd("puzzles")
 
@@ -89,25 +70,45 @@ class PuzzleAgentsManager {
         lr.gerarTag(this.mapGraph, this.puzzleGraph)
         */
         var tags = this.mapGraph.nodes.map(node => { return { room: node.roomId, tag: node.tag.subTipo } })
-        console.log(tags)
+        console.log(orderedRooms.map(room => room.roomId))
     }
 
     initiate() {
         this.initialRoom = this.mapGraph.nodes.filter(node => node.terminalCells.length <= 2)[0]
-        this.finalRoom = this.mapGraph.findFarthestRoomFromStart(this.initialRoom)
-        console.log("Final room: " + this.finalRoom.roomId)
+      //  this.finalRoom = this.mapGraph.findFarthestRoomFromStart(this.initialRoom)
+        //console.log("Final room: " + this.finalRoom.roomId)
         var posicao = calcularPosicaoMedia(this.initialRoom.cells)
 
         cena1.pc.x = posicao.x * 32
         cena1.pc.y = posicao.y * 32
     }
 
-    selecionarAgente(agents) {
-        return UtilityMethods.lottery(agents)
+    criarTags(sortedRooms) {
+        var roomIdx = 0;
+        while (roomIdx < sortedRooms.length) {
+            var room = sortedRooms[roomIdx];
+            if (room.tag != null) {
+                var availableAgents = this.verificarAgentesDisponiveis(room);
+                while (availableAgents.size > 0) {
+                    const agentKey = this.selecionarAgente(availableAgents);
+                    var agent = this.mainAgents.get(agentKey).agent;
+                    if (!agent.gerarTag(this.mapGraph, room, this.auxAgents)) {
+                        availableAgents.delete(agentKey);
+                    } else {
+                        var newAgent = this.mainAgents.get(agentKey);
+                        newAgent.chance *= newAgent.factor;
+                        this.mainAgents.set(agentKey, newAgent);
+                        break;
+                    }
+
+                }
+            }
+            roomIdx++;
+        }
     }
 
-    calcularNivel(distancia, total) {
-        return Math.ceil((distancia / total) * 4);
+    selecionarAgente(agents) {
+        return UtilityMethods.lottery(agents)
     }
 
     verificarAgentesDisponiveis(room) {
@@ -129,4 +130,81 @@ class PuzzleAgentsManager {
 
         return filteredMainAgents;
     }
+
+    calcularNivel(distancia, total) {
+        return Math.ceil((distancia / total) * 4);
+    }
+
+    /*
+        este método ordena a sala de acordo com a progressão dos puzzles 
+        (ex: uma sala que depende de uma chave pra entrar só vai entrar pra ordenação depois de encontrada a chave)
+    */
+    ordenarPorNivel(mapGraph) {
+        var visitados = []
+        var fila = [this.initialRoom]
+        var colecionaveis = []
+        var restricoes = []
+        while (fila.length > 0) {
+            var roomAtual = fila.shift()
+            if (roomAtual.restricoes.length > 0) {
+                restricao = { room: roomAtual, restricoes: [... roomAtual.restricoes] }
+                restricoes.push(restricao)
+
+                for (var collectible of colecionaveis) {
+                    var agent = this.mainAgents.get(collectible.subTipo).agent
+                    agent.verificarRestricoes(collectible, restricao)
+                }
+                if(restricao.restricoes.length == 0) {
+                    var idx = restricoes.indexOf(restricao)
+                    restricoes.splice(idx, 1)
+                }
+
+            } 
+            var restricao = restricoes.find(restricao => { return restricao.room == roomAtual })
+            if(restricao == null) {
+                if (roomAtual.tag.tipo == "colecionável") {
+                    colecionaveis.push(roomAtual.tag)
+                    this.verificarDependenciaRestricao(roomAtual.tag, restricoes, fila)
+                }
+
+                var unvisitedCorridors = mapGraph.getCorridorsFromRoom(roomAtual)
+                    .filter(edge => { return !visitados.includes(mapGraph.getOtherRoomInCorridor(edge, roomAtual)) })
+
+                for (const corridor of unvisitedCorridors) {
+                    var neighbor = mapGraph.getOtherRoomInCorridor(corridor, roomAtual)
+                    if (corridor.restricoes.length > 0) {
+                        var restricao = { room: neighbor, restricoes: [...corridor.restricoes] }
+                        for (var collectible of colecionaveis) {
+                            var agent = this.mainAgents.get(collectible.subTipo).agent
+                            agent.verificarRestricoes(collectible, restricao)
+                        }
+                        if (restricao.restricoes.length == 0) {
+                            fila.push(neighbor)
+                        } else {
+                            restricoes.push(restricao)
+                        }
+                    } else {
+                        fila.push(neighbor)
+                    }
+                }
+                visitados.push(roomAtual)
+            }
+        }
+        return visitados
+    }
+
+    verificarDependenciaRestricao(collectible, restricoes, fila) {
+        var agent = this.mainAgents.get(collectible.subTipo).agent
+        for (var restricao of restricoes) {
+            agent.verificarRestricoes(collectible, restricao)
+        }
+        for(var restricao of restricoes) {
+            if (restricao.restricoes.length == 0) {
+                fila.push(restricao.room)
+                var idx = restricoes.indexOf(restricao)
+                restricoes.splice(idx, 1)
+            }
+        }
+    }
+
 }

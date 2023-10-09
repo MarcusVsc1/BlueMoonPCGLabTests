@@ -2,6 +2,7 @@ class LavaRoomAgent {
     constructor() {
         this.hasBoots = false
         this.defaultTag = { tipo: "colecionável", subTipo: "LavaRoomAgent" }
+        this.restricao = { tipo: "LavaRoomAgent" }
     }
 
     gerarTag(mapGraph, room) {
@@ -11,13 +12,12 @@ class LavaRoomAgent {
             mapGraph.getNeighbors(room).length == 1 || Object.keys(room.tag).length > 0) {
                 return false
             }
-            console.log("Inserindo mais uma sala: "+room.roomId)
             lavaRoom = room
 
         } else {
-            var lastTag = room.tag
+            var lastTag = JSON.parse(JSON.stringify(room.tag))
             var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]
-            room.tag = this.defaultTag  
+            room.tag = JSON.parse(JSON.stringify(this.defaultTag  ))
             var collectible = mapGraph.nodes.filter(node => node.tag.tipo === "colecionável")
             var validRooms = mapGraph.nodes
             .filter(node => {return !mapGraph.getNeighbors(node).some(node => {return node.tag.auxiliar === "LavaRoomAgent"})})
@@ -25,7 +25,6 @@ class LavaRoomAgent {
             .filter(node => {return Object.keys(node.tag).length == 0})
             .filter(node => {return mapGraph.getNeighbors(node).length > 1})
             .filter(node => {return mapGraph.findCollectibleRoomsInPathByRoom(startRoom, node).length == collectible.length})
-            console.log("Inserindo primeira sala: "+room.roomId)
             if(validRooms.length == 0){
                 room.tag = lastTag
                 return false
@@ -37,6 +36,7 @@ class LavaRoomAgent {
         }
 
         lavaRoom.tag = { auxiliar: "LavaRoomAgent" }
+        lavaRoom.restricoes.push(JSON.parse(JSON.stringify(this.restricao)))
         this.fillRoomInteriorWithLava(lavaRoom.cells);
         this.createLavaRemoverDevice(lavaRoom)
         return true
@@ -79,7 +79,15 @@ class LavaRoomAgent {
                 gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo = 2;
             }
         }
-        this.event = function () { }
+        this.event = function () {}
+    }
+
+    verificarRestricoes(collectible, restricao) {
+        var r = restricao.restricoes.find(r => {return r.tipo == collectible.subTipo})
+        if(r != null) {
+            var idx = restricao.restricoes.indexOf(r)
+            restricao.restricoes.splice(idx, 1)
+        }
     }
 
 }
