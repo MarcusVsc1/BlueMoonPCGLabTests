@@ -1,4 +1,4 @@
-class MazeAgent {
+class MazeAgent{
     constructor() {
         this.defaultTag = "MazeAgent"
 
@@ -21,6 +21,12 @@ class MazeAgent {
     gerarAgenteAuxiliar(room, collectible, level) {
         this.criarLabirinto(room)
         this.levelMapper.get(level)(room, collectible, level)
+    }
+
+    gerarTagAuxiliar(mapGraph, room) {
+        if(mapGraph.getNeighbors(room).length > 1 || room.cells.length < 36) return false
+        room.tag.auxiliar = this.defaultTag
+        return true
     }
 
     posicionarColecionavel(room, collectible){
@@ -72,7 +78,7 @@ class MazeAgent {
 
     createEnemy(room, collectible, level){
         collectible.enemyFactory = new EnemyFactory()
-        collectible.level = level
+        collectible.level = level - 1
         collectible.startCell = room.terminalCells[0]
         collectible.onGet = this.onGet
         this.posicionarColecionavel(room, collectible)

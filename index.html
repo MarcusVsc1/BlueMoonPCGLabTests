@@ -43,6 +43,7 @@
     <script src="puzzleagents/collectibleagents/LavaRoomAgent.js"></script>
     <script src="puzzleagents/collectibleagents/KeyAndDoorAgent.js"></script>
     <script src="puzzleagents/collectibleagents/LeverAgent.js"></script>
+    <script src="puzzleagents/auxagents/AuxAgent.js"></script>
     <script src="puzzleagents/auxagents/SwitchAgent.js"></script>
     <script src="puzzleagents/auxagents/MazeAgent.js"></script>
     <script src="puzzleagents/auxagents/SokobanAgent.js"></script>
@@ -341,7 +342,7 @@
                     }
                 }
                 neighbors.forEach(fire => cena1.adicionar(gerenciador.criarFireball(fire.x, fire.y, this.level, this.firePlaces)))
-                this.globalCD = 2 - (this.level - 1) * 0.3
+                this.globalCD = 0.3 - (this.level - 1) * 0.05
                 this.toggled = true
             }
 

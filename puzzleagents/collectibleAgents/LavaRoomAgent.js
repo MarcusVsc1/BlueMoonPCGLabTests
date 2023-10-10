@@ -53,7 +53,7 @@ class LavaRoomAgent {
     positionLavaBoots(node) {
         var posicao = this.calcularPosicaoMedia(node.roomHeight, node.roomWidth)
         node.tag.collectible = gerenciador.criarBotaAntiLava(Math.floor(posicao.x / 32) + node.cells[0].x, Math.floor(posicao.y / 32) + node.cells[0].y)
-        cena1.adicionar(gerenciador.criarBotaAntiLava(Math.floor(posicao.x / 32) + node.cells[0].x, Math.floor(posicao.y / 32) + node.cells[0].y))
+        //cena1.adicionar(gerenciador.criarBotaAntiLava(Math.floor(posicao.x / 32) + node.cells[0].x, Math.floor(posicao.y / 32) + node.cells[0].y))
     }
 
     calcularPosicaoMedia(rows, cols) {
@@ -69,6 +69,7 @@ class LavaRoomAgent {
     createLavaRemoverDevice(room) {
         var posicao = this.calcularPosicaoMedia(room.roomHeight, room.roomWidth)
         cena1.adicionar(gerenciador.criarDispositivoAntiLava(posicao.x + room.cells[0].x * 32, posicao.y + (room.cells[0].y + 2) * 32, this.lavaRemoverEvent, room))
+
     }
 
     lavaRemoverEvent() {
@@ -87,6 +88,16 @@ class LavaRoomAgent {
         if(r != null) {
             var idx = restricao.restricoes.indexOf(r)
             restricao.restricoes.splice(idx, 1)
+        }
+    }
+
+    gerarAgenteAuxiliar(room, collectible) {
+        if(collectible){
+            var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
+            collectible.x = position.x
+            collectible.y = position.y
+    
+            cena1.adicionar(collectible)
         }
     }
 

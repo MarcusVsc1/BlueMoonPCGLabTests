@@ -13,4 +13,8 @@ class Hub {
         room.tag = this.defaultTag
         return true
     }
+
+    gerarAgenteAuxiliar(room, collectible, level) {
+        
+    }
 }

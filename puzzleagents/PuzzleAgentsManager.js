@@ -17,7 +17,7 @@ class PuzzleAgentsManager {
                 ['IceRoomAgent', { agent: new IceRoomAgent(), chance: 1, factor: 0.5 }],
                 ['MazeAgent', { agent: new MazeAgent(), chance: 1, factor: 0.5 }],
                 ['SokobanAgent', { agent: new SokobanAgent(), chance: 1, factor: 0.5 }],
-                ['SpikeAgent', { agent: new SpikeAgent(), chance: 1, factor: 0.5 }],
+                //['SpikeAgent', { agent: new SpikeAgent(), chance: 1, factor: 0.5 }],
                 ['SwitchAgent', { agent: new SwitchAgent(), chance: 1, factor: 0.5 }]
             ]);
 
@@ -30,12 +30,12 @@ class PuzzleAgentsManager {
         console.time("puzzles")
         var sortedRooms = this.mapGraph.sortRoomsByDistanceFromStart(this.initialRoom)
             .filter(room => room.roomId != this.initialRoom.roomId &&
-                (this.mapGraph.getNeighbors(room).length < 5 ||
+                (this.mapGraph.getNeighbors(room).length < this.mainAgents.size ||
                     (this.mapGraph.getNeighbors(room).length == this.mainAgents.length && this.mapGraph.hasEdgeBetweenRooms(room, this.initialRoom)) ||
                     (this.mapGraph.getNeighbors(room).length == this.mainAgents.length && this.mapGraph.hasEdgeBetweenRooms(room, this.finalRoom))
                 ))
 
-        this.initialRoom.tag = { "tipo": "inicio" }
+        this.initialRoom.tag = { tipo: "inicio", auxiliar: "ignore" }
         console.log("Room inicial: " + this.initialRoom.roomId)
 
         /*
@@ -45,6 +45,14 @@ class PuzzleAgentsManager {
         this.criarTags(sortedRooms);
         var orderedRooms = this.ordenarPorNivel(this.mapGraph)
 
+        for(var room of orderedRooms){
+            if(room.tag.auxiliar != 'ignore' && room.tag.auxiliar != null){
+                var agent = this.auxAgents.get(room.tag.auxiliar) ?? this.mainAgents.get(room.tag.auxiliar)
+                if(agent) {
+                    agent.agent.gerarAgenteAuxiliar(room, room.tag.collectible,this.calcularNivel(orderedRooms.indexOf(room), orderedRooms.length))
+                }
+            }
+        }
         console.timeEnd("puzzles")
 
         /*
@@ -75,7 +83,7 @@ class PuzzleAgentsManager {
 
     initiate() {
         this.initialRoom = this.mapGraph.nodes.filter(node => node.terminalCells.length <= 2)[0]
-      //  this.finalRoom = this.mapGraph.findFarthestRoomFromStart(this.initialRoom)
+        //  this.finalRoom = this.mapGraph.findFarthestRoomFromStart(this.initialRoom)
         //console.log("Final room: " + this.finalRoom.roomId)
         var posicao = calcularPosicaoMedia(this.initialRoom.cells)
 
@@ -88,7 +96,7 @@ class PuzzleAgentsManager {
         while (roomIdx < sortedRooms.length) {
             var room = sortedRooms[roomIdx];
             if (room.tag != null) {
-                var availableAgents = this.verificarAgentesDisponiveis(room);
+                var availableAgents = this.verificarAgentesDisponiveis(room, 'subTipo', this.mainAgents);
                 while (availableAgents.size > 0) {
                     const agentKey = this.selecionarAgente(availableAgents);
                     var agent = this.mainAgents.get(agentKey).agent;
@@ -98,6 +106,9 @@ class PuzzleAgentsManager {
                         var newAgent = this.mainAgents.get(agentKey);
                         newAgent.chance *= newAgent.factor;
                         this.mainAgents.set(agentKey, newAgent);
+                        if (!room.tag.auxiliar) { 
+                            this.criarTagAuxiliar(room)
+                        }
                         break;
                     }
 
@@ -107,21 +118,38 @@ class PuzzleAgentsManager {
         }
     }
 
+    criarTagAuxiliar(room) {
+        var availableAgents = this.verificarAgentesDisponiveis(room, 'auxiliar', this.auxAgents);
+        while (availableAgents.size > 0) {
+            const agentKey = this.selecionarAgente(availableAgents);
+            var agent = this.auxAgents.get(agentKey).agent;
+            if (!agent.gerarTagAuxiliar(this.mapGraph, room)) {
+                availableAgents.delete(agentKey);
+            } else {
+                var newAgent = this.auxAgents.get(agentKey);
+                newAgent.chance *= newAgent.factor;
+                this.auxAgents.set(agentKey, newAgent);
+                break;
+            }
+
+        }
+    }
+
     selecionarAgente(agents) {
         return UtilityMethods.lottery(agents)
     }
 
-    verificarAgentesDisponiveis(room) {
+    verificarAgentesDisponiveis(room, tipo, agents) {
         const neighbors = this.mapGraph.getNeighbors(room)
-        const jsonString = JSON.stringify([...this.mainAgents]);
-        return this.filterMainAgents(JSON.parse(jsonString), neighbors);
+        const jsonString = JSON.stringify([...agents]);
+        return this.filterMainAgents(JSON.parse(jsonString), neighbors, tipo);
     }
 
-    filterMainAgents(mainAgents, rooms) {
+    filterMainAgents(mainAgents, rooms, type) {
         const subTipos = new Set();
 
         rooms.forEach(room => {
-            subTipos.add(room.tag.subTipo);
+            subTipos.add(room.tag[type]);
         })
 
         const filteredMainAgents = new Map([...mainAgents].filter(([key, value]) => {
@@ -147,21 +175,21 @@ class PuzzleAgentsManager {
         while (fila.length > 0) {
             var roomAtual = fila.shift()
             if (roomAtual.restricoes.length > 0) {
-                restricao = { room: roomAtual, restricoes: [... roomAtual.restricoes] }
+                restricao = { room: roomAtual, restricoes: [...roomAtual.restricoes] }
                 restricoes.push(restricao)
 
                 for (var collectible of colecionaveis) {
                     var agent = this.mainAgents.get(collectible.subTipo).agent
                     agent.verificarRestricoes(collectible, restricao)
                 }
-                if(restricao.restricoes.length == 0) {
+                if (restricao.restricoes.length == 0) {
                     var idx = restricoes.indexOf(restricao)
                     restricoes.splice(idx, 1)
                 }
 
-            } 
+            }
             var restricao = restricoes.find(restricao => { return restricao.room == roomAtual })
-            if(restricao == null) {
+            if (restricao == null) {
                 if (roomAtual.tag.tipo == "colecionável") {
                     colecionaveis.push(roomAtual.tag)
                     this.verificarDependenciaRestricao(roomAtual.tag, restricoes, fila)
@@ -198,7 +226,7 @@ class PuzzleAgentsManager {
         for (var restricao of restricoes) {
             agent.verificarRestricoes(collectible, restricao)
         }
-        for(var restricao of restricoes) {
+        for (var restricao of restricoes) {
             if (restricao.restricoes.length == 0) {
                 fila.push(restricao.room)
                 var idx = restricoes.indexOf(restricao)

@@ -1,5 +1,6 @@
-class FireballTrapAgent {
+class FireballTrapAgent extends AuxAgent {
     constructor() {
+        super()
         this.defaultTag = "FireballTrapAgent"
     }
 

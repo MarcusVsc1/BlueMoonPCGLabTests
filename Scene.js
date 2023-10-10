@@ -146,7 +146,10 @@ Scene.prototype.desenhar = function () {
     }
     desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
     desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
-    preencherComPreto(this.darkRooms)
+    for(const room of this.darkRooms){
+        preencherComPreto(room)
+    }
+   // ctx.restore();
 };
 
 
@@ -253,8 +256,8 @@ Scene.prototype.checaColisao = function () {
         }
         for (var j = 0; j < this.spritesT.length; j++) {
             //remoção do tiro do pc quando sai da tela
-            if (this.spritesT[j].y > this.h - this.spritesT[j].h - 8 || this.spritesT[j].y < 0
-                || this.spritesT[j].x > this.w || this.spritesT[j].x < 0) {
+            if (this.spritesT[j].y > this.map.COLUMNS * 32 - this.spritesT[j].h - 8 + this.cameraX || this.spritesT[j].y < 0
+                || this.spritesT[j].x > this.map.LINES * 32 || this.spritesT[j].x < 0) {
                 this.toRemove.push(this.spritesT[j]);
             }
 
@@ -563,11 +566,11 @@ Scene.prototype.desenharHUD = function () {
     }
     //desenha a mana
     posCoracao = 90;
-    for(var i = 0; i < this.pc.mana; i++){
+    for (var i = 0; i < this.pc.mana; i++) {
         ctx.drawImage(this.assets.img("mana"),
-            posCoracao,this.h - 33,
-            16,13
-            );
+            posCoracao, this.h - 33,
+            16, 13
+        );
         posCoracao = posCoracao + 16;
     }
 

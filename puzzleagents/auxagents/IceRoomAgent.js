@@ -1,5 +1,6 @@
-class IceRoomAgent {
+class IceRoomAgent extends AuxAgent {
     constructor() {
+        super()
         this.defaultTag = "IceRoomAgent"
     
         this.enemyFactory = new EnemyFactory()
@@ -8,7 +9,7 @@ class IceRoomAgent {
             this.insertCollectible(room, collectible)
         }.bind(this))
         this.levelMapper.set(2, function (room, collectible, level) {
-            this.bindCollectingToEnemy(room, collectible, level)
+            this.createEnemies(room, collectible, level)
         }.bind(this))
         this.levelMapper.set(3, function (room, collectible, level) {
             this.createEnemies(room, collectible, level)
@@ -39,15 +40,13 @@ class IceRoomAgent {
         cena1.adicionar(collectible)
     }
 
-    bindCollectibleToEnemy(room, collectible, level) {
-        this.enemyFactory.createEnemyWithDrop(level, room, collectible)
-    }
-
     createEnemies(room, collectible, level) {
-        var niveis = [level, level < 4 ? level - 2: level]
-        niveis = UtilityMethods.fisherYales(niveis)
-        this.enemyFactory.createEnemyWithDrop(niveis[0], room, collectible)
-        this.enemyFactory.createEnemyWithDrop(niveis[1], room)
+        if(collectible.props.droppable){
+            this.enemyFactory.createEnemyWithDrop(level - 1, room, collectible)
+        } else {
+            this.enemyFactory.createEnemyWithDrop(level - 1, room)
+            this.insertCollectible(room, collectible)
+        }
     }
 
 }

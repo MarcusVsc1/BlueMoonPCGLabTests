@@ -1,5 +1,8 @@
-class SpikeAgent {
+class SpikeAgent extends AuxAgent {
     constructor() {
+        super()
+        this.defaultTag = "SpikeAgent"
+        
         this.enemyFactory = new EnemyFactory()
         this.levelMapper = new Map()
         this.levelMapper.set(1, function (room, level) {
@@ -98,10 +101,9 @@ class SpikeAgent {
         collectible.x = position.x
         collectible.y = position.y
         cena1.adicionar(collectible)
-
-        for (var i = 2; i <= level; i = i * 2) {
-            this.enemyFactory.createEnemyWithDrop(i, room)
-        }
+        
+        if(level > 1){this.enemyFactory.createEnemyWithDrop(i - 1, room)}
+        
 
     }
 }

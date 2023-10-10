@@ -8,6 +8,12 @@ class SokobanAgent {
         this.gerarSokoban(room, collectible)
     }
 
+    gerarTagAuxiliar(mapGraph, room) {
+        if(mapGraph.getNeighbors(room).length > 1 || room.cells.length > 70) return false
+        room.tag.auxiliar = this.defaultTag
+        return true
+    }
+
     posicionarCollectible(room, collectible){
         var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
         collectible.x = position.x

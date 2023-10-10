@@ -21,7 +21,7 @@ function desenhaTiro() {
     ctx.save();
     ctx.translate(this.x, this.y);
     var F = Math.floor(this.frame);
-    if(this.toggled) {ctx.globalAlpha = 0.5}
+    if (this.toggled) { ctx.globalAlpha = 0.5 }
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
         144 * this.imgX + (F % 3) * 48,
@@ -193,41 +193,38 @@ function desenharCelulas(cells, fillStyle) {
     });
 }
 
-function preencherComPreto(rooms) {
+function preencherComPreto(room) {
     ctx.save();
-    for (var room of rooms) {
-        const salaX = room.cells[0].x * 32
-        const salaY = room.cells[0].y * 32
-        const larguraSala = room.roomWidth * 32
-        const alturaSala = room.roomHeight * 32      
+    const salaX = room.cells[0].x * 32
+    const salaY = room.cells[0].y * 32
+    const larguraSala = room.roomWidth * 32
+    const alturaSala = room.roomHeight * 32
 
-        const pcX = pc.x/* posição X do personagem */;
-        const pcY = pc.y/* posição Y do personagem */;
+    const pcX = pc.x/* posição X do personagem */;
+    const pcY = pc.y/* posição Y do personagem */;
 
-        // Raio do buraco circular
-        const raioDoBuraco = 48;
+    // Raio do buraco circular
+    const raioDoBuraco = 48;
 
-        // Posição do buraco em relação ao canto superior esquerdo da sala (considerando a translação)
-        const buracoX = pcX - salaX - raioDoBuraco - cena1.cameraX;
-        const buracoY = pcY - salaY - raioDoBuraco - cena1.cameraY;
+    // Posição do buraco em relação ao canto superior esquerdo da sala (considerando a translação)
+    const buracoX = pcX - salaX - raioDoBuraco - cena1.cameraX;
+    const buracoY = pcY - salaY - raioDoBuraco - cena1.cameraY;
 
-        ctx.translate(salaX, salaY)
+    ctx.translate(salaX, salaY)
 
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala)
-        if(pc.x >= salaX && pc.x <= salaX + larguraSala && pc.y >= salaY && pc.y <= salaY + alturaSala){
-            ctx.arc(buracoX + raioDoBuraco - 2, buracoY + raioDoBuraco - 4, raioDoBuraco, 0, Math.PI * 2);
-        }
-        ctx.clip('evenodd');
-        ctx.closePath();
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-        ctx.fill();
-        
-        ctx.restore();
-
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala)
+    if (pc.x >= salaX && pc.x <= salaX + larguraSala && pc.y >= salaY && pc.y <= salaY + alturaSala) {
+        ctx.arc(buracoX + raioDoBuraco - 2, buracoY + raioDoBuraco - 4, raioDoBuraco, 0, Math.PI * 2);
     }
+    ctx.clip('evenodd');
+    ctx.closePath();
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    ctx.fill();
+    ctx.restore();
+
 
     ctx.restore();
 
@@ -267,7 +264,7 @@ function desenharCaixa(ctx) {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.drawImage(
-        this.scene.assets.img(this.imagem+this.props.placed),
+        this.scene.assets.img(this.imagem + this.props.placed),
         0,
         0,
         255,
@@ -283,7 +280,7 @@ function desenharCaixa(ctx) {
 
 function desenharEspinho() {
     ctx.save();
-    ctx.translate(this.x, this.y); 
+    ctx.translate(this.x, this.y);
     ctx.drawImage(
         this.scene.assets.img(this.imagem),
         this.spriteSize * this.imgX,

@@ -1,9 +1,12 @@
-class SwitchAgent {
+class SwitchAgent extends AuxAgent {
 
     static id = 0;
     static switchGroups = []
 
     constructor() {
+        super()
+        this.defaultTag = "SwitchAgent"
+        
         this.enemyFactory = new EnemyFactory()
         this.levelMapper = new Map()
         this.levelMapper.set(1, function (room, collectible) {
@@ -27,7 +30,7 @@ class SwitchAgent {
     createEnemies(room, collectible, level) {
         var nrEnemies = Math.ceil(level / 2)
         for (var i = 0; i < nrEnemies; i++) {
-            this.enemyFactory.createEnemyWithDrop(level, room)
+            this.enemyFactory.createEnemyWithDrop(level - 1 == 0 ? level : level - 1, room)
         }
         this.criarPuzzle(room, collectible)
     }

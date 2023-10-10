@@ -10,6 +10,7 @@ class LeverAgent {
         cena1.map.cells[this.coordenadas[!this.toggled ? 1 : 0].y][this.coordenadas[!this.toggled ? 1 : 0].x].tipo = 4
         cena1.map.cells[this.coordenadas[this.toggled ? 1 : 0].y][this.coordenadas[this.toggled ? 1 : 0].x].tipo = 8
         cena1.assets.play("switchOn");
+        if(this.onGet){this.onGet()}
     }
 
     gerarTag(mapGraph, room, auxAgents) {
@@ -101,7 +102,7 @@ class LeverAgent {
         var leverX = room.cells[0].x + (room.roomWidth - 1) / 2
         var leverY = room.cells[0].y + (room.roomHeight - 1) / 2
         room.tag.collectible = gerenciador.criarAlavanca(leverX, leverY, this.leverEvent, coordenadas)
-        cena1.adicionar(gerenciador.criarAlavanca(leverX, leverY, this.leverEvent, coordenadas));
+        //cena1.adicionar(gerenciador.criarAlavanca(leverX, leverY, this.leverEvent, coordenadas));
 
         this.agentLevel++
         this.defaultTag.id++

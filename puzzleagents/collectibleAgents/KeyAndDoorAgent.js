@@ -33,7 +33,7 @@ class KeyAndDoorAgent {
         var keyX = room.cells[0].y + (room.roomHeight - 1) / 2
         var keyY = room.cells[0].x + (room.roomWidth - 1) / 2
 
-        cena1.adicionar(gerenciador.criarChave(keyY, keyX, this.agentLevel));
+        //cena1.adicionar(gerenciador.criarChave(keyY, keyX, this.agentLevel));
         room.tag.collectible = gerenciador.criarChave(keyY, keyX, this.agentLevel)
 
         gerenciador.estagios[0].mapa.cells[doorY][doorX].tipo = 10
