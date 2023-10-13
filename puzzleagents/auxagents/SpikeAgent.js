@@ -53,7 +53,7 @@ class SpikeAgent extends AuxAgent {
 
     criarSpikesEmCruz(room, level) {
         const celulas = this.celulasEmCruz(room)
-        var timer = 90 - 20 * (level - 1)
+        var timer = 90 - 12 * (level - 1)
         celulas.forEach(cell => cena1.adicionar(gerenciador.criarEspinho(cell.x, cell.y, 0, timer)))
 
         var spikePlay = this.spikeEvent(timer, room)
@@ -62,7 +62,7 @@ class SpikeAgent extends AuxAgent {
 
     criarSpikesPreenchendoSala(room, level) {
         const celulas = room.cells
-        var timer = 180 - 30 * (level - 3)
+        var timer = 240 - 30 * (level - 3)
         for (var cell of room.cells) {
             cena1.adicionar(gerenciador.criarEspinho(cell.x, cell.y, 0, timer))
         }
@@ -102,7 +102,7 @@ class SpikeAgent extends AuxAgent {
         collectible.y = position.y
         cena1.adicionar(collectible)
         
-        if(level > 1){this.enemyFactory.createEnemyWithDrop(i - 1, room)}
+        if(level > 1){this.enemyFactory.createEnemyWithDrop(level - 1, room)}
         
 
     }
