@@ -334,6 +334,9 @@ Scene.prototype.checaColisao = function () {
                 case 'heart':
                     if (this.pc.vidas < 7) { this.pc.vidas++ }
                     break
+                case 'manaHeart':
+                    if (this.pc.mana < 5) { this.pc.mana++ }
+                    break
                 case 'mana':
                     this.pc.mana = 5
                     break

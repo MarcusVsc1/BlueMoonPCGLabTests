@@ -6,6 +6,7 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("bruxa", "assets/bruxa.png");
         assetsMng.loadImage("heart", "assets/heart.png");
         assetsMng.loadImage("heart2", "assets/heart2.png");
+        assetsMng.loadImage("manaHeart", "assets/manaHeart.png");
         assetsMng.loadImage("dad", "assets/dad.png");
         assetsMng.loadImage("people", "assets/people.png");
         assetsMng.loadImage("flame", "assets/flame.png");
