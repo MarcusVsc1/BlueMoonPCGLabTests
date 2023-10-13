@@ -472,6 +472,7 @@ Scene.prototype.checaColisao = function () {
         this.spritesXP = [];
         this.spritesTE = [];
         this.spritesPoder = [];
+        this.spritesSpike = []
         this.darkRooms = []
         this.sokobans = [];
         this.extras = []
