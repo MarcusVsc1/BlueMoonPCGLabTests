@@ -90,8 +90,6 @@ class PuzzleAgentsManager {
 
     initiate() {
         this.initialRoom = this.mapGraph.nodes.filter(node => node.terminalCells.length <= 2)[0]
-        //  this.finalRoom = this.mapGraph.findFarthestRoomFromStart(this.initialRoom)
-        //console.log("Final room: " + this.finalRoom.roomId)
         var posicao = calcularPosicaoMedia(this.initialRoom.cells)
 
         cena1.pc.x = posicao.x * 32
