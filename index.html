@@ -178,7 +178,6 @@
         }
 
         function atirarFireball() {
-            //console.log("foi")
             if (this.globalCD <= 0) {
                 this.scene.adicionar(criarFireball(0, "tiroE", this.direcao, this.x, this.y))
                 this.globalCD = 1.5;
