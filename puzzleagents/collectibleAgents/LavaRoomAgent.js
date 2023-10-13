@@ -4,6 +4,7 @@ class LavaRoomAgent {
         this.defaultTag = { tipo: "colecionável", subTipo: "LavaRoomAgent" }
         this.restricao = { tipo: "LavaRoomAgent" }
         this.commons = new CommonsFactory()
+        this.enemyFactory = new EnemyFactory()
     }
 
     gerarTag(mapGraph, room) {
@@ -33,8 +34,9 @@ class LavaRoomAgent {
             lavaRoom = validRooms[Math.floor(Math.random() * validRooms.length)];
             this.positionLavaBoots(room)
             this.hasBoots = true
-
+            
         }
+        
 
         lavaRoom.tag = { auxiliar: "LavaRoomAgent" }
         lavaRoom.restricoes.push(JSON.parse(JSON.stringify(this.restricao)))
@@ -88,6 +90,12 @@ class LavaRoomAgent {
                 obj.comportar = apagarFogo
             }
         }
+        for(var enemy of cena1.spritesE) {
+            if(enemy.roomId == this.room.roomId){
+                cena1.toRemove.push(enemy)
+                cena1.adicionar(new Animation({ x: enemy.x, y: enemy.y, imagem: "explosion" }));
+            }
+        }
         this.event = function () {}
     }
 
@@ -99,13 +107,16 @@ class LavaRoomAgent {
         }
     }
 
-    gerarAgenteAuxiliar(room, collectible) {
+    gerarAgenteAuxiliar(room, collectible, level) {
         if(collectible){
             var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
             collectible.x = position.x
             collectible.y = position.y
     
             cena1.adicionar(collectible)
+        }
+        for(var i = 1; i < level; i++){
+            this.enemyFactory.createIgnisFatuus(room)
         }
     }
 

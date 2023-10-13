@@ -206,10 +206,15 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
             });
             break;
         case "bruxa":
-        case 10:
             inimigo = new Sprite({
                 x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 1, imgY: 1, vx: 0, vy: 0, vidas: 18,
                 direcao: 0, imagem: "bruxa", globalCD: 2, fireCount: 0, mod: 0, comportar: bruxaria, baseCD: 2, props: { tipo: "npc" }
+            });
+            break;
+        case "ignisFatuus":
+            inimigo = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 0, imgY: 1,
+                imagem: "flame2", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc" }
             });
             break;
     }
@@ -220,7 +225,7 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
 GameManager.prototype.criarTeleporte = function (posX, posY, telX, telY, idxMapa) {
     var teleporte = new Sprite({
         x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 2, imgY: 0, tX: telX * 32, tY: telY * 32,
-        imagem: "crystal", desenhar:desenhaTiro, props: { tipo: "teleporte", idx: idxMapa }
+        imagem: "crystal", desenhar: desenhaTiro, props: { tipo: "teleporte", idx: idxMapa }
     });
     return teleporte;
 }
@@ -288,12 +293,12 @@ GameManager.prototype.criarPoder = function (tipo, posX, posY) {
                 imagem: "heart2", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "heart" }
             });
             break;
-            case 'manaHeart':
-                poder = new Sprite({
-                    x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
-                    imagem: "manaHeart", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "manaHeart" }
-                });
-                break;
+        case 'manaHeart':
+            poder = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
+                imagem: "manaHeart", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "manaHeart" }
+            });
+            break;
     }
     return poder;
 }

@@ -27,4 +27,12 @@ class EnemyFactory {
         cena1.adicionar(enemy)
     }
 
+    createIgnisFatuus(room){
+        var positionX = room.cells[0].x + Math.random() * (room.roomWidth - 1)
+        var positionY = room.cells[0].y + Math.random() * (room.roomHeight - 1)
+        var enemy = gerenciador.criarInimigo("ignisFatuus", positionX, positionY)
+        enemy.roomId = room.roomId
+        cena1.adicionar(enemy)
+    }
+
 }
