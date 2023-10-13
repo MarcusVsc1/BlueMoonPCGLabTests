@@ -38,9 +38,10 @@ function Sprite(params = {}) {
         getCd: 0,
         cameraX: 0,
         cameraY: 0,
-        standardSpd: 300,
+        standardSpd: 135,
         lavaImmunity: false,
-        desaceleracao: 1
+        desaceleracao: 1,
+        opacity: 1
     }
     Object.assign(this, exemplo, params);
 }

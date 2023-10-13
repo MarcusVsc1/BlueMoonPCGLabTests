@@ -21,6 +21,7 @@ function desenhaTiro() {
     ctx.save();
     ctx.translate(this.x, this.y);
     var F = Math.floor(this.frame);
+    ctx.globalAlpha = this.opacity <= 1 && this.opacity >= 0 ? this.opacity : 0
     if (this.toggled) { ctx.globalAlpha = 0.5 }
     ctx.drawImage(
         this.scene.assets.img(this.imagem),

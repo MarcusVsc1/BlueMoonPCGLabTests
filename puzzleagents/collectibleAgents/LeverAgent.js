@@ -56,23 +56,19 @@ class LeverAgent {
                 const notContainsSelectedInPathToY = !pathToCorridorY.includes(selectedCorridor);
                 const doesNotHaveLeverAgentTag = !corridor.tags.some(tag => tag.subTipo === 'LeverAgent');
                 return isNotInPathToSelected && notContainsSelectedInPathToY && doesNotHaveLeverAgentTag;
-            })/*
+            })
             .filter(corridor => {
                 var newTag = JSON.parse(JSON.stringify(this.defaultTag)) 
                 newTag.holeNumber = 2
                 corridor.tags.push(newTag)
 
-                var alavancas = mapGraph.nodes
-                    .filter(node => node.tag.subTipo === "LeverAgent")
-                    .map(node => { return node.tag })
-
-                var cycle = mapGraph.verificaRestricoesCirculares(alavancas)
+                var deadlock = mapGraph.hasLeverDeadlock()
 
                 var idx = corridor.tags.indexOf(newTag)
                 corridor.tags.splice(idx, 1)
 
-                return !cycle
-            });*/
+                return !deadlock
+            });
 
         if (validCorridors.length == 0) {
             gerenciador.estagios[0].mapa.cells[y1][x1].tipo = 4

@@ -95,7 +95,6 @@ class MazeAgent{
     criarLabirinto(room) {
         this.frontierCells = []
 
-        console.log("Id da sala " + room.roomId)
         darkRoom(room.roomId)
 
         this.roomTotalCells = room.roomHeight * room.roomWidth

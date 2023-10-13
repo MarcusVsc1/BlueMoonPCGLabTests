@@ -219,8 +219,8 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
 //criador de teleporte
 GameManager.prototype.criarTeleporte = function (posX, posY, telX, telY, idxMapa) {
     var teleporte = new Sprite({
-        x: posX * 32 + 16, y: posY * 32 + 16, w: 40, h: 40, vm: 0, direcao: 0, imgX: 2, imgY: 0, tX: telX * 32, tY: telY * 32,
-        imagem: "crystal", props: { tipo: "teleporte", idx: idxMapa }
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 2, imgY: 0, tX: telX * 32, tY: telY * 32,
+        imagem: "crystal", desenhar:desenhaTiro, props: { tipo: "teleporte", idx: idxMapa }
     });
     return teleporte;
 }
@@ -279,9 +279,15 @@ GameManager.prototype.criarPoder = function (tipo, posX, posY) {
         case 'heart':
             poder = new Sprite({
                 x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
-                imagem: "heart2", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "heart" }
+                imagem: "heart2", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "manaHeart" }
             });
             break;
+            case 'manaHeart':
+                poder = new Sprite({
+                    x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
+                    imagem: "manaHeart", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "heart" }
+                });
+                break;
     }
     return poder;
 }

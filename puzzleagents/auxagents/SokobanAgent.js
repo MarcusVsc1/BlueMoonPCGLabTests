@@ -1,6 +1,7 @@
 class SokobanAgent {
     constructor(){
         this.defaultTag = "SokobanAgent"
+        this.defaultSearchTime = 2
     }
 
     gerarAgenteAuxiliar(room, collectible) {
@@ -40,7 +41,7 @@ class SokobanAgent {
         // From initial state, take turns to play game until finished
         console.time("total mcts")
         while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
-            winner = mcts.runSearch(state, 0.5)
+            winner = mcts.runSearch(state, this.defaultSearchTime)
             tentativas++
             if (tentativas == 20) {
                 mcts = new MonteCarlo(game)

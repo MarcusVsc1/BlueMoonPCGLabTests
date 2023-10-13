@@ -33,6 +33,7 @@
     <script src="utils/AssetsInitializer.js"></script>
     <script src="utils/EnemyFactory.js"></script>
     <script src="utils/UtilityMethods.js"></script>
+    <script src="utils/CommonsFactory.js"></script>
     <script src="enum/KeyColorEnum.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
     <script src="model/Game.js"></script>
@@ -60,8 +61,8 @@
     <script>
 
         var canvas = document.querySelector("canvas");
-        canvas.width = 1080;
-        canvas.height = 860;
+        canvas.width = 860;
+        canvas.height = 640;
         var ctx = canvas.getContext("2d");
         var teclas = {
             esquerda: 0,
@@ -131,7 +132,7 @@
                             var tiro = new Sprite({
                                 x: this.x, y: this.y,
                                 imagem: "flame", direcao: this.direcao,
-                                vm: 350, w: 12, h: 12, imgX: 0, imgY: 1, imune: 0,
+                                vm: 220, w: 12, h: 12, imgX: 0, imgY: 1, imune: 0,
                                 props: { tipo: "tiro", modelo: "fireball" }, desenhar: desenhaTiro, mover: moverTiro,
                             });
                             this.scene.adicionar(tiro);
@@ -316,6 +317,14 @@
             }
         }
 
+        function apagarFogo(){
+            if(this.opacity > 0){
+                this.opacity -= 0.08
+            } else {
+                cena1.toRemove.push(this)
+            }
+        }
+
         function multiplicarFogo() {
             if (this.globalCD < 0 && this.toggled) {
                 cena1.toRemove.push(this)
@@ -355,7 +364,7 @@
                 this.scene.assets.play("darkness");
                 cena1.adicionar(new Sprite({
                     x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 1, imgY: 1,
-                    imagem: "monster", comportar: persegue(pc), props: { tipo: "npc" }
+                    imagem: "monster", comportar: persegue(pc), props: { tipo: "npc", summoned: true }
                 }))
             }
         }
@@ -412,7 +421,7 @@
                     this.scene.assets.play("darkness");
                     cena1.adicionar(new Sprite({
                         x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 2, imgY: 1,
-                        imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc" }
+                        imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc", summoned: true }
                     }))
                     this.globalCD = 0.5 + Math.random() * 1.2;
                 }

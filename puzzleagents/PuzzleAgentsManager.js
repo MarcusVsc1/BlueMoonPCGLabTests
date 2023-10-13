@@ -3,10 +3,9 @@ class PuzzleAgentsManager {
 
         this.mapGraph = mapGraph,
             this.initialRoom = null,
-            //this.finalRoom = null,
             this.mainAgents = new Map([
                 ['LavaRoomAgent', { agent: new LavaRoomAgent(), chance: 1, factor: 0.5 }],
-                ['LeverAgent', { agent: new LeverAgent(), chance: 0.8, factor: 0.25 }],
+                ['LeverAgent', { agent: new LeverAgent(), chance: 0.5, factor: 0.001 }],
                 ['CombatRoom', { agent: new CombatRoom(), chance: 1, factor: 0.5 }],
                 ['Hub', { agent: new Hub(), chance: 0.5, factor: 0.5 }],
                 ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1, factor: 0.5 }]
@@ -20,7 +19,7 @@ class PuzzleAgentsManager {
                 //['SpikeAgent', { agent: new SpikeAgent(), chance: 1, factor: 0.5 }],
                 ['SwitchAgent', { agent: new SwitchAgent(), chance: 1, factor: 0.5 }]
             ]);
-
+        this.commons = new CommonsFactory();
         this.populatePuzzles()
     }
 
@@ -53,6 +52,14 @@ class PuzzleAgentsManager {
                 }
             }
         }
+
+        var undefinedAuxOrederedRooms = orderedRooms.filter(room => {return room.tag.auxiliar == null})
+        this.commons.posicionarTeleporte(2, undefinedAuxOrederedRooms[undefinedAuxOrederedRooms.length - 1],6,8.9)
+        for(var i = undefinedAuxOrederedRooms.length - 2; i >= 0; i --) {
+            var room = undefinedAuxOrederedRooms[i]
+            this.commons.posicionarPoderes(room,this.calcularNivel(orderedRooms.indexOf(room), orderedRooms.length))
+        }
+
         console.timeEnd("puzzles")
 
         /*

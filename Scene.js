@@ -10,7 +10,6 @@ function Scene(params) {
         spritesTP: [],
         spritesXP: [],
         spritesO: [],
-        spritesXSoko: [],
         toRemove: [],
         ctx: null,
         w: 1600,
@@ -72,16 +71,11 @@ Scene.prototype.adicionar = function (sprite) {
         this.spritesXP.push(sprite);
     }
 
-    if (sprite.props.tipo == "goal") {
-        this.spritesXSoko.push(sprite);
-    }
-
     if (sprite.props.tipo == "tiroE" || sprite.props.tipo == "tiroQ") {
         this.spritesTE.push(sprite);
     }
 
     if (sprite.props.tipo == "teleporte") {
-        console.log("Adicionando teleporte");
         this.spritesTP.push(sprite);
     }
 
@@ -150,6 +144,7 @@ Scene.prototype.desenhar = function () {
         preencherComPreto(room)
     }
    // ctx.restore();
+   this.updateCameraPosition();
 };
 
 
@@ -244,6 +239,19 @@ Scene.prototype.limpar = function () {
 
 //checa colisao entre sprites
 Scene.prototype.checaColisao = function () {
+    for (var j = 0; j < this.spritesT.length; j++){
+        //remoção do tiro do pc quando sai da tela
+        var x = Math.floor(this.spritesT[j].x /32)
+        var y = Math.floor(this.spritesT[j].y /32)
+        if (this.spritesT[j].y > this.map.LINES * 32 - this.spritesT[j].h - 8 + this.cameraX || this.spritesT[j].y < 0
+            || this.spritesT[j].x > this.map.COLUMNS * 32 || this.spritesT[j].x < 0) {
+            this.toRemove.push(this.spritesT[j]);
+        } else if (this.map.cells[x][y].tipo == 9 ){
+            this.spritesT[j].comportar = apagarFogo
+        }
+        
+        
+    }
     for (var i = 0; i < this.spritesE.length; i++) {
         //colisao inimigo com pc
         if (this.spritesE[i].colidiuCom(this.pc)) {
@@ -255,11 +263,7 @@ Scene.prototype.checaColisao = function () {
             }
         }
         for (var j = 0; j < this.spritesT.length; j++) {
-            //remoção do tiro do pc quando sai da tela
-            if (this.spritesT[j].y > this.map.COLUMNS * 32 - this.spritesT[j].h - 8 + this.cameraX || this.spritesT[j].y < 0
-                || this.spritesT[j].x > this.map.LINES * 32 || this.spritesT[j].x < 0) {
-                this.toRemove.push(this.spritesT[j]);
-            }
+            
 
             //colisao tiro aliado com inimigo
             if (this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0) {
@@ -283,7 +287,7 @@ Scene.prototype.checaColisao = function () {
                         this.adicionar(this.spritesE[i].drop)
                     } else {
                         var chance = Math.random()
-                        if (chance < 0.18) {
+                        if (chance < 0.18 && !this.spritesE[i].props.summoned) {
                             var item = gerenciador.criarPoder('heart', this.spritesE[i].x / 32, this.spritesE[i].y / 32)
                             item.timer = 60
                             var evento = function (item) {
@@ -306,6 +310,10 @@ Scene.prototype.checaColisao = function () {
 
     //colisao tiro inimigo com pc
     for (var i = 0; i < this.spritesTE.length; i++) {
+        if (this.spritesTE[i].y > this.map.LINES * 32 - this.spritesTE[i].h - 8 + this.cameraX || this.spritesTE[i].y < 0
+            || this.spritesTE[i].x > this.map.COLUMNS * 32 || this.spritesTE[i].x < 0) {
+            this.toRemove.push(this.spritesTE[i]);
+        }
         if (this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE") {
             if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
@@ -404,6 +412,7 @@ Scene.prototype.checaColisao = function () {
             this.spritesXP = [];
             this.spritesPoder = [];
             this.spritesSpike = [];
+            this.darkRooms = []
             this.sokobans = [];
             this.spriteCounter = 0;
 
@@ -437,7 +446,7 @@ Scene.prototype.checaColisao = function () {
     for (var sokoban of this.sokobans) {
         for (var box of sokoban.boxes) {
             for (var spriteT of this.spritesT) {
-                if (spriteT.colidiuCom(box) && box.swCD <= 0) {
+                if (spriteT.colidiuCom(box) && box.swCD <= 0 && spriteT.props.modelo == "espada") {
                     box.swCD = 0.4
                     moverCaixa(box, pc)
                 }
@@ -460,6 +469,10 @@ Scene.prototype.checaColisao = function () {
         this.spritesXP = [];
         this.spritesTE = [];
         this.spritesPoder = [];
+        this.darkRooms = []
+        this.sokobans = [];
+        this.extras = []
+        this.paintCorridor = []
         this.spriteCounter = 0;
         this.stageIndex = 1;
         this.pc.x = 1

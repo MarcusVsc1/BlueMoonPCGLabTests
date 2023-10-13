@@ -7,6 +7,7 @@ class MonteCarlo {
         this.nodes = new Map() // map: State.hash() => MonteCarloNode
         this.best = null
         this.bestScore = 0
+        this.transpositionTable = {};
     }
 
     /** If given state does not exist, create dangling node. */
@@ -74,20 +75,33 @@ class MonteCarlo {
 
     /** Phase 3, Simulation: Play game to terminal state, return winner */
     simulate(node) {
-        let state = node.state
-
-        while (!state.finish) {
-            let plays = this.game.legalPlays(state)
-            let play = plays[Math.floor(Math.random() * plays.length)]
-            state = this.game.nextState(state, play)
+        const stateHash = node.state.hash();
+    
+        // Check if the state has been visited before
+        if (this.transpositionTable[stateHash]) {
+            return this.transpositionTable[stateHash].score;
         }
+    
+        let state = node.state;
+    
+        while (!state.finish) {
+            let plays = this.game.legalPlays(state);
+            let play = plays[Math.floor(Math.random() * plays.length)];
+            state = this.game.nextState(state, play);
+        }
+    
         if (state.score > this.bestScore &&
             Game.countCells(state.board, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") >= 2) {
-            this.bestScore = state.score
-            this.best = state
+            this.bestScore = state.score;
+            this.best = state;
         }
-        return state.score
+    
+        // Store the result in the transposition table
+        this.transpositionTable[stateHash] = { score: state.score };
+    
+        return state.score;
     }
+    
 
     /** Phase 4, Backpropagation: Update ancestor statistics */
     backpropagate(node, score) {

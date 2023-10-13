@@ -3,5 +3,7 @@ const KeyColorEnum = {
     1: 'Roxa',
     2: 'Verde',
     3: 'Vermelha',
-    4: 'Azul'
+    4: 'Azul',
+    5: 'Cinza',
+    6: 'Dourada'
 }

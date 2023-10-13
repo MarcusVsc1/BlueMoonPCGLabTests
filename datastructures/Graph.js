@@ -84,7 +84,7 @@ class Graph {
         } else if (corridor.toRoom === room.roomId) {
             return this.getNodeById(corridor.fromRoom);
         }
-        return null; 
+        return null;
     }
 
     getNodeById(id) {
@@ -397,78 +397,53 @@ class Graph {
         return null; // Caminho mínimo não encontrado
     }
 
-    verificaRestricoesCirculares(alavancas) {
-        const numBuracos = 2;
-        const grafoAlavancas = new Map();
-
-        // Passo 1: Criar o grafo direcionado das alavancas
-        for (const alavanca of alavancas) {
-            grafoAlavancas.set(alavanca.id, new Array(numBuracos).fill([]));
-        }
-
-        // Passo 2: Verificar quais alavancas são alcançáveis com cada buraco
-        for (let buraco = 1; buraco <= numBuracos; buraco++) {
-            for (const alavanca of alavancas) {
-                const edge = this.adjacencyList.find(edge =>
-                    edge.tags.some(tag => tag.id === alavanca.id) &&
-                    edge.holeNumber === buraco
-                );
-                const room = this.nodes.find(room => { return room.tag === alavanca });
-                const alcançaveis = alavancas
-                    .filter(outraAlavanca => outraAlavanca.id !== alavanca.id)
-                    .filter(outraAlavanca =>
-                        this.findCollectibleRoomsInPathByCorridor(room, edge)
-                            .some(sala => sala.tag.id === outraAlavanca.id)
-                    )
-                    .map(outraAlavanca => outraAlavanca.id);
-
-                grafoAlavancas.get(alavanca.id)[buraco - 1] = alcançaveis;
-            }
-        }
-
-        // Passo 3: Criar as arestas direcionadas no grafo
-        for (const alavanca of alavancas) {
-            for (let buraco = 1; buraco <= numBuracos; buraco++) {
-                for (const outraAlavanca of alavancas) {
-                    if (outraAlavanca.id !== alavanca.id && !grafoAlavancas.get(alavanca.id)[buraco - 1].includes(outraAlavanca.id)) {
-                        // Se a alavanca não for alcançável a partir deste buraco, crie uma aresta direcionada
-                        grafoAlavancas.get(alavanca.id)[buraco - 1].push(outraAlavanca.id);
-                    }
+    hasLeverDeadlock() {
+        var startRoom = this.nodes.filter(node => node.tag.tipo === "inicio")[0].roomId
+        var tamanho = this.nodes.filter(node => node.tag.subTipo === "LeverAgent").length
+        var visitedStates = []
+        var visitedRooms = new Set()
+        var state = { roomId: startRoom, leversState: new Array(tamanho).fill(1) }
+        visitedStates.push(state)
+        var queue = [state]
+        while (queue.length > 0) {
+            var actualState = queue.shift()
+            var stateVisitedRooms = []
+            var stateLeverRoomIds = []
+            var stateQueue = [actualState.roomId]
+            while(stateQueue.length > 0) {
+                var actualRoom = this.getNodeById(stateQueue.shift())
+                visitedRooms.add(actualRoom.roomId)
+                stateVisitedRooms.push(actualRoom.roomId)
+                var edges = this.getCorridorsFromRoom(actualRoom)
+                if(actualRoom.tag.subTipo == "LeverAgent") {
+                    stateLeverRoomIds.push(actualRoom.roomId)
                 }
-            }
-        }
-
-        // Passo 4: Verificar se há ciclos no grafo para cada buraco
-        for (let buraco = 1; buraco <= numBuracos; buraco++) {
-            const visitados = new Set();
-            const pilhaRecursao = new Set();
-
-            function temCiclo(alavancaId) {
-                if (!visitados.has(alavancaId)) {
-                    visitados.add(alavancaId);
-                    pilhaRecursao.add(alavancaId);
-
-                    for (const vizinhoId of grafoAlavancas.get(alavancaId)[buraco - 1]) {
-                        if (!visitados.has(vizinhoId) && temCiclo(vizinhoId)) {
-                            return true;
-                        } else if (pilhaRecursao.has(vizinhoId)) {
-                            return true;
+                for(const edge of edges) {
+                    var tag = edge.tags.find(tag => {return tag.subTipo == "LeverAgent"})
+                    if(tag == null || actualState.leversState[tag.id] != tag.holeNumber) {
+                        var otherRoom = this.getOtherRoomInCorridor(edge, actualRoom)
+                        if(!stateVisitedRooms.includes(otherRoom.roomId)){
+                            stateQueue.push(otherRoom.roomId)
                         }
                     }
                 }
-
-                pilhaRecursao.delete(alavancaId);
-                return false;
             }
-
-            for (const alavancaId of grafoAlavancas.keys()) {
-                if (temCiclo(alavancaId)) {
-                    return true; // Há um ciclo no grafo para este buraco, indica restrição circular
+            for(var leverRoomId of stateLeverRoomIds) {
+                var newLeverState = JSON.parse(JSON.stringify(actualState.leversState))
+                var tag = this.getNodeById(leverRoomId).tag
+                newLeverState[tag.id] = newLeverState[tag.id] == 1 ? 2 : 1
+                if(!queue.some(state => {return UtilityMethods.arraysEqual(newLeverState, state.leversState)}) &&
+                !visitedStates.some(visited => {return UtilityMethods.arraysEqual(newLeverState, visited.leversState)})) {
+                    queue.push({ roomId: leverRoomId, leversState: newLeverState })
                 }
             }
+            visitedStates.push(actualState)
         }
-
-        return false; // Não há ciclos, sem restrições circulares para nenhum buraco
+        var deadlock = visitedRooms.size !== this.nodes.length
+        if(deadlock) {
+            console.log("Tem deadlock")
+        }
+        return deadlock
     }
 
 
