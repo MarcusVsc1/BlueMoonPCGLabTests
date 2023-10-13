@@ -15,7 +15,7 @@ class IceRoomAgent extends AuxAgent {
             this.createEnemies(room, collectible, level)
         }.bind(this))
         this.levelMapper.set(4, function (room, collectible, level) {
-            this.createEnemies(room, collectible, level)
+            this.createSpikes(room, collectible, level)
         }.bind(this))
     }
 
@@ -47,6 +47,20 @@ class IceRoomAgent extends AuxAgent {
             this.enemyFactory.createEnemyWithDrop(level - 1, room)
             this.insertCollectible(room, collectible)
         }
+    }
+
+    createSpikes(room, collectible, level) {
+        var cell = room.cells[0]
+        var spike1 = gerenciador.criarEspinho(cell.x + 1, cell.y + 1, 0, 0)
+        cena1.adicionar(spike1)
+        var spike2 = gerenciador.criarEspinho(cell.x + 1, cell.y + room.roomHeight - 2, 0, 0)
+        cena1.adicionar(spike2)
+        var spike3 = gerenciador.criarEspinho(cell.x + room.roomWidth - 2, cell.y + 1, 0, 0)
+        cena1.adicionar(spike3)
+        var spike4 = gerenciador.criarEspinho(cell.x + room.roomWidth - 2, cell.y + room.roomHeight - 2, 0, 0)
+        cena1.adicionar(spike4)
+        
+        this.createEnemies(room, collectible, level)
     }
 
 }
