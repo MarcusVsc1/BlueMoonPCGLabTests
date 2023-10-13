@@ -243,8 +243,8 @@ Scene.prototype.checaColisao = function () {
         //remoção do tiro do pc quando sai da tela
         var x = Math.floor(this.spritesT[j].x /32)
         var y = Math.floor(this.spritesT[j].y /32)
-        if (this.spritesT[j].y > this.map.LINES * 32 - this.spritesT[j].h - 8 + this.cameraX || this.spritesT[j].y < 0
-            || this.spritesT[j].x > this.map.COLUMNS * 32 || this.spritesT[j].x < 0) {
+        if ((this.spritesT[j].y > this.map.LINES * 32 - this.spritesT[j].h - 8 + this.cameraX || this.spritesT[j].y < 0
+            || this.spritesT[j].x > this.map.COLUMNS * 32 || this.spritesT[j].x < 0) || this.map.cells[x][y].tipo == 10 ) {
             this.toRemove.push(this.spritesT[j]);
         } else if (this.map.cells[x][y].tipo == 9 ){
             this.spritesT[j].comportar = apagarFogo
