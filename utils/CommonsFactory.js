@@ -40,4 +40,14 @@ class CommonsFactory {
         var y = sala.cells[0].y + (sala.roomHeight - 1) / 2
         cena1.adicionar(gerenciador.criarTeleporte(x, y, novoX, novoY, indice))
     }
+
+    posicionarBiribinha(room) {
+
+        var positionX = room.cells[0].x + Math.random() * (room.roomWidth - 1)
+        var positionY = room.cells[0].y + Math.random() * (room.roomHeight - 1)
+
+        var biribinha = gerenciador.criarObjeto("biribinha", positionX, positionY)
+        biribinha.roomId = room.roomId
+        cena1.adicionar(biribinha)
+    }
 }

@@ -3,6 +3,7 @@ class LavaRoomAgent {
         this.hasBoots = false
         this.defaultTag = { tipo: "colecionável", subTipo: "LavaRoomAgent" }
         this.restricao = { tipo: "LavaRoomAgent" }
+        this.commons = new CommonsFactory()
     }
 
     gerarTag(mapGraph, room) {
@@ -37,6 +38,8 @@ class LavaRoomAgent {
 
         lavaRoom.tag = { auxiliar: "LavaRoomAgent" }
         lavaRoom.restricoes.push(JSON.parse(JSON.stringify(this.restricao)))
+        this.commons.posicionarBiribinha(lavaRoom)
+        this.commons.posicionarBiribinha(lavaRoom)
         this.fillRoomInteriorWithLava(lavaRoom.cells);
         this.createLavaRemoverDevice(lavaRoom)
         return true
@@ -78,6 +81,11 @@ class LavaRoomAgent {
         for (const cell of this.room.cells) {
             if (gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo != 6) {// Lava tile
                 gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo = 2;
+            }
+        }
+        for(var obj of cena1.spritesO) {
+            if(obj.roomId == this.room.roomId){
+                obj.comportar = apagarFogo
             }
         }
         this.event = function () {}

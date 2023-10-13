@@ -76,7 +76,7 @@ GameManager.prototype.criarEstagios = function () {
     spriteLista = [];
     eventoLista = [];
 
-    spriteLista.push(this.criarObjeto(3, 5.5, 4.5, 1));
+    spriteLista.push(this.criarObjeto("derrota", 5.5, 4.5, 1));
 
     evento1 = function () {
         pc.comportar = function () { };
@@ -239,21 +239,27 @@ GameManager.prototype.fabricaDeEstagios = function (map, spriteLista, eventoList
 }
 
 //cria objetos
-GameManager.prototype.criarObjeto = function (numero, posX, posY, direct) {
+GameManager.prototype.criarObjeto = function (tipo, posX, posY, direct) {
     var objeto;
-    switch (numero) {
+    switch (tipo) {
         //gargula
-        case 0:
+        case "gargula":
             objeto = new Sprite({
                 x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: direct, imgX: 0, imgY: 0,
                 imagem: "gargoyle", mover: moverObjeto, props: { tipo: "objeto" }
             });
             break;
         //lyra caida
-        case 3:
+        case "derrota":
             objeto = new Sprite({
                 x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 1, imgX: 2, imgY: 1,
                 imagem: "expressoes", mover: moverObjeto, props: { tipo: "objeto" }
+            });
+            break;
+        case "biribinha":
+            objeto = new Sprite({
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 3, imgY: 0,
+                imagem: "gargoyle", desenhar: desenhaTiro, props: { tipo: "objeto" }
             });
             break;
     }
