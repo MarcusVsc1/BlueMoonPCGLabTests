@@ -279,13 +279,13 @@ GameManager.prototype.criarPoder = function (tipo, posX, posY) {
         case 'heart':
             poder = new Sprite({
                 x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
-                imagem: "heart2", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "manaHeart" }
+                imagem: "heart2", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "heart" }
             });
             break;
             case 'manaHeart':
                 poder = new Sprite({
                     x: posX * 32 + 16, y: posY * 32 + 16, w: 36, h: 36, vm: 0, direcao: 0, imgX: 0, imgY: 0,
-                    imagem: "manaHeart", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "heart" }
+                    imagem: "manaHeart", swCD: 2, spriteSize: 32, desenhar: desenharColecionavel, props: { tipo: "poder", modelo: "manaHeart" }
                 });
                 break;
     }
