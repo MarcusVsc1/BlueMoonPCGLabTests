@@ -48,7 +48,7 @@ class PuzzleAgentsManager {
             if(room.tag.auxiliar != 'ignore' && room.tag.auxiliar != null){
                 var agent = this.auxAgents.get(room.tag.auxiliar) ?? this.mainAgents.get(room.tag.auxiliar)
                 if(agent) {
-                    agent.agent.gerarAgenteAuxiliar(room, room.tag.collectible,this.calcularNivel(orderedRooms.indexOf(room), orderedRooms.length))
+                    agent.agent.gerarAgenteAuxiliar(room, room.tag.collectible,this.calcularNivel(orderedRooms.indexOf(room), orderedRooms.length - 2))
                 }
             }
         }
