@@ -57,7 +57,7 @@ class SpikeAgent extends AuxAgent {
         celulas.forEach(cell => cena1.adicionar(gerenciador.criarEspinho(cell.x, cell.y, 0, timer)))
 
         var spikePlay = this.spikeEvent(timer, room)
-        cena1.estagio.eventos.push(spikePlay)
+        gerenciador.estagios[0].eventos.push(spikePlay)
     }
 
     criarSpikesPreenchendoSala(room, level) {
@@ -68,7 +68,7 @@ class SpikeAgent extends AuxAgent {
         }
 
         var spikePlay = this.spikeEvent(timer, room)
-        cena1.estagio.eventos.push(spikePlay)
+        gerenciador.estagios[0].eventos.push(spikePlay)
     }
 
     spikeEvent(timer, room) {

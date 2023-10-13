@@ -16,7 +16,7 @@ class PuzzleAgentsManager {
                 ['IceRoomAgent', { agent: new IceRoomAgent(), chance: 1, factor: 0.5 }],
                 ['MazeAgent', { agent: new MazeAgent(), chance: 1, factor: 0.5 }],
                 ['SokobanAgent', { agent: new SokobanAgent(), chance: 1, factor: 0.5 }],
-                //['SpikeAgent', { agent: new SpikeAgent(), chance: 1, factor: 0.5 }],
+                ['SpikeAgent', { agent: new SpikeAgent(), chance: 1, factor: 0.5 }],
                 ['SwitchAgent', { agent: new SwitchAgent(), chance: 1, factor: 0.5 }]
             ]);
         this.commons = new CommonsFactory();
