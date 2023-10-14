@@ -4,7 +4,7 @@ variaveis globais:
 */
 function GameManager(pc) {
     this.pc = pc;
-    this.dungeonGenerator = new DungeonGenerator();
+    this.dungeonGenerator = null
     this.estagios = [];
     this.criarEstagios();
     this.tema = new Audio();
@@ -31,30 +31,74 @@ mapa = new Grid({COLUMNS:12, LINES:10, assets: assetsMng, m:
 GameManager.prototype.criarEstagios = function () {
     var spriteLista = [];
     var eventoLista = [];
-    //estagio 1
-    var contador = 0;
-    console.time('createMap');
-
-    var dungeonCriada = this.dungeonGenerator.createMap();
-    while (!this.dungeonGenerator.sucesso) {
-        console.log("Erro na criação do mapa")
-        contador++
-        Room.id = 0
-        this.dungeonGenerator.graph = new Graph();
-        var dungeonCriada = this.dungeonGenerator.createMap();
-        console.log("Quantidade de vezes que a dungeon foi refeita: " + contador)
-    }
-
-
-    console.timeEnd('createMap');
+    //estagio mockup
 
     mapa = new Grid({
-        COLUMNS: this.dungeonGenerator.MAP_SIZE, LINES: this.dungeonGenerator.MAP_SIZE,
-        assets: assetsMng, m: dungeonCriada
+        COLUMNS: 110,
+        LINES: 110,
+        assets: assetsMng,
+        m: Array.from({ length: 110 }, () => Array(110).fill(9)),
     });
-    console.log("Kruskal com sucesso")
-    var estagio = this.fabricaDeEstagios(mapa, spriteLista, eventoLista)
-    this.estagios.push(estagio);
+
+    this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
+
+    //fase inicial
+    mapa = new Grid({
+        COLUMNS: 13, LINES: 10, assets: assetsMng, m:
+            [
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 9],
+                [9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
+            ]
+    });
+
+    var evento = function (numero) {
+        return function () {
+            gerenciador.criarNovaDungeon(numero);
+            playTheme(numero + 1 == 4 ? 3 : numero + 1);
+        };
+    };
+
+    var eventoInicial = function () {
+        if (!this.preencheu) {
+            var fillStyle = 'rgba(255, 255, 255, 1'
+            var font = "15px Tahoma";
+            var text = '6 Salas'
+            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 55, y: 103 })
+            var text = '16 Salas'
+            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 307, y: 103 })
+            var text = '12 Salas'
+            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 52, y: 262 })
+            var text = '20 Salas'
+            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 307, y: 262 })
+
+            fillStyle = `rgba(255, 255, 255, 1)`;
+            font = "50px Medieval";
+            text = 'Blue Moon'
+            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 110, y: 360 })
+            font = "30px Medieval";
+            text = 'Roguelike'
+            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 155, y: 390 })
+        }
+        cena1.dialogo = "Selecione um portal. Controles: Direcionais WASD, K: Espada, J: Magia."
+        this.preencheu = true
+    }
+
+    spriteLista.push(this.criarTeleporte(2, 2, 2, 2, 0, evento(0)));
+    spriteLista.push(this.criarTeleporte(2, 7, 2, 2, 0, evento(1)));
+    spriteLista.push(this.criarTeleporte(10, 2, 2, 2, 0, evento(2)));
+    spriteLista.push(this.criarTeleporte(10, 7, 2, 2, 0, evento(3)));
+
+    eventoLista.push(eventoInicial)
+
+    this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
 
     // tela de game over
 
@@ -94,7 +138,7 @@ GameManager.prototype.criarEstagios = function () {
     eventoLista.push(evento1);
     this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
 
-    //estagio 20
+    //chefe
 
     mapa = new Grid({
         COLUMNS: 12, LINES: 10, assets: assetsMng, m:
@@ -142,6 +186,55 @@ GameManager.prototype.criarEstagios = function () {
     eventoLista.push(evento2);
     eventoLista.push(evento1);
     this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
+
+
+}
+
+GameManager.prototype.criarNovaDungeon = function (opcao) {
+    var novaDungeon
+    switch (opcao) {
+        case 0:
+            novaDungeon = { NUM_ROOMS: 6, MAP_SIZE: 45 }
+            break;
+        case 1:
+            novaDungeon = { NUM_ROOMS: 12, MAP_SIZE: 55 }
+            break;
+        case 2:
+            novaDungeon = { NUM_ROOMS: 16, MAP_SIZE: 65 }
+            break;
+        case 3:
+            novaDungeon = { NUM_ROOMS: 20, MAP_SIZE: 70 }
+            break;
+    }
+
+    var spriteLista = [];
+    var eventoLista = [];
+
+    var contador = 0;
+    console.time('createMap');
+    this.dungeonGenerator = new DungeonGenerator(novaDungeon.MAP_SIZE, novaDungeon.NUM_ROOMS);
+    var dungeonCriada = this.dungeonGenerator.createMap();
+    while (!this.dungeonGenerator.sucesso) {
+        console.log("Erro na criação do mapa")
+        contador++
+        Room.id = 0
+        this.dungeonGenerator.graph = new Graph();
+        var dungeonCriada = this.dungeonGenerator.createMap();
+        console.log("Quantidade de vezes que a dungeon foi refeita: " + contador)
+    }
+
+    console.timeEnd('createMap');
+
+    mapa = new Grid({
+        COLUMNS: this.dungeonGenerator.MAP_SIZE, LINES: this.dungeonGenerator.MAP_SIZE,
+        assets: assetsMng, m: dungeonCriada
+    });
+    console.log("Kruskal com sucesso")
+    var estagio = this.fabricaDeEstagios(mapa, spriteLista, eventoLista)
+    this.estagios[0] = estagio
+
+    new PuzzleAgentsManager(this.dungeonGenerator.graph)
+
 }
 
 //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
@@ -222,10 +315,10 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
 }
 
 //criador de teleporte
-GameManager.prototype.criarTeleporte = function (posX, posY, telX, telY, idxMapa) {
+GameManager.prototype.criarTeleporte = function (posX, posY, telX, telY, idxMapa, evento) {
     var teleporte = new Sprite({
         x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 2, imgY: 0, tX: telX * 32, tY: telY * 32,
-        imagem: "crystal", desenhar: desenhaTiro, props: { tipo: "teleporte", idx: idxMapa }
+        imagem: "crystal", desenhar: desenhaTiro, evento: evento, props: { tipo: "teleporte", idx: idxMapa }
     });
     return teleporte;
 }
@@ -241,6 +334,15 @@ GameManager.prototype.fabricaDeEstagios = function (map, spriteLista, eventoList
     estagio.sprites = spriteLista;
     estagio.eventos = eventoLista;
     return estagio;
+}
+
+//criador de eventador
+GameManager.prototype.criarEventador = function (posX, posY, evento) {
+    var teleporte = new Sprite({
+        x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 3, imgY: 1, evento: evento,
+        imagem: "flame", desenhar: desenhaTiro, props: { tipo: "evento" }
+    });
+    return teleporte;
 }
 
 //cria objetos

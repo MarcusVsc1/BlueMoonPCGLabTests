@@ -40,6 +40,13 @@ Grid.prototype.desenhar = function (ctx, scene) {
             var positionX = 0;
             var positionY = 0;
             switch (this.cells[c][l].tipo) {
+                case -1:
+                    //fundo preto de buraco
+                    y = 3;
+                    x = 4;
+                    positionX = 1;
+                    positionY = 3;
+                    break;
                 case 0:
                     //chao
                     y = 1;

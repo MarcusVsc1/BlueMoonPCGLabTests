@@ -7,16 +7,18 @@ function Scene(params) {
         spritesT: [],
         spritesTE: [],
         spritesPoder: [],
+        spritesEV: [],
         spritesTP: [],
         spritesXP: [],
         spritesO: [],
         toRemove: [],
+        sceneMessages:[],
         ctx: null,
         w: 1600,
         h: 1600,
         assets: null,
         map: null,
-        stageIndex: 0,
+        stageIndex: 1,
         estagio: null,
         gamer: null,
         spriteCounter: 0,
@@ -79,6 +81,10 @@ Scene.prototype.adicionar = function (sprite) {
         this.spritesTP.push(sprite);
     }
 
+    if (sprite.props.tipo == "evento") {
+        this.spritesEV.push(sprite);
+    }
+
     sprite.scene = this;
 };
 
@@ -125,6 +131,10 @@ Scene.prototype.desenhar = function () {
         this.spritesTP[i].desenhar(this.ctx);
     }
 
+    for (var i = 0; i < this.spritesEV.length; i++) {
+        this.spritesEV[i].desenhar(this.ctx);
+    }
+
     if (this.pc.direcao != 0) {
         if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
     }
@@ -140,11 +150,11 @@ Scene.prototype.desenhar = function () {
     }
     desenharCelulas(this.extras, 'rgba(0, 0, 255, 0.2)')
     desenharCelulas(this.paintCorridor, 'rgba(125, 0, 125, 0.2)')
-    for(const room of this.darkRooms){
+    for (const room of this.darkRooms) {
         preencherComPreto(room)
     }
-   // ctx.restore();
-   this.updateCameraPosition();
+    // ctx.restore();
+    this.updateCameraPosition();
 };
 
 
@@ -181,6 +191,10 @@ Scene.prototype.mover = function (dt) {
 
     if (this.bruxa != null) {
         this.bruxa.mover(dt);
+    }
+
+    for (var i = 0; i < this.spritesEV.length; i++) {
+        this.spritesEV[i].mover(dt);
     }
 
 };
@@ -239,18 +253,41 @@ Scene.prototype.limpar = function () {
 
 //checa colisao entre sprites
 Scene.prototype.checaColisao = function () {
-    for (var j = 0; j < this.spritesT.length; j++){
+    //não exatamente colisão, mas verifica se a posição do jogador é em lava
+    var playerPositionX = Math.floor(this.pc.x / 32);
+    var playerPositionY = Math.floor(this.pc.y / 32);
+    if (this.map.cells[playerPositionX][playerPositionY].tipo == 5) {
+        if (this.inventoryItem != null && this.inventoryItem.props.event == "lava") {
+            this.pc.lavaImmunity = true;
+        } else {
+            if (this.pc.imune <= 0) {
+                this.pc.vidas--;
+                this.pc.imune = 2;
+                this.pc.atingido = 0.3;
+                this.assets.play("damage");
+            }
+        }
+    } else { this.pc.lavaImmunity = false }
+
+    //verifica se o piso é de gelo
+    if (this.map.cells[playerPositionX][playerPositionY].tipo == 1) {
+        this.pc.desaceleracao = 0.95
+    } else {
+        this.pc.desaceleracao = 1
+    }
+
+    for (var j = 0; j < this.spritesT.length; j++) {
         //remoção do tiro do pc quando sai da tela
-        var x = Math.floor(this.spritesT[j].x /32)
-        var y = Math.floor(this.spritesT[j].y /32)
+        var x = Math.floor(this.spritesT[j].x / 32)
+        var y = Math.floor(this.spritesT[j].y / 32)
         if ((this.spritesT[j].y > this.map.LINES * 32 - this.spritesT[j].h - 8 + this.cameraX || this.spritesT[j].y < 0
-            || this.spritesT[j].x > this.map.COLUMNS * 32 || this.spritesT[j].x < 0) || this.map.cells[x][y].tipo == 10 ) {
+            || this.spritesT[j].x > this.map.COLUMNS * 32 || this.spritesT[j].x < 0) || this.map.cells[x][y].tipo == 10) {
             this.toRemove.push(this.spritesT[j]);
-        } else if (this.map.cells[x][y].tipo == 9 ){
+        } else if (this.map.cells[x][y].tipo == 9) {
             this.spritesT[j].comportar = apagarFogo
         }
-        
-        
+
+
     }
     for (var i = 0; i < this.spritesE.length; i++) {
         //colisao inimigo com pc
@@ -263,7 +300,7 @@ Scene.prototype.checaColisao = function () {
             }
         }
         for (var j = 0; j < this.spritesT.length; j++) {
-            
+
 
             //colisao tiro aliado com inimigo
             if (this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0) {
@@ -405,44 +442,19 @@ Scene.prototype.checaColisao = function () {
             this.stageIndex = this.spritesTP[i].props.idx;
             this.pc.x = this.spritesTP[i].tX;
             this.pc.y = this.spritesTP[i].tY;
-            this.spritesTP = [];
-            this.spritesE = [];
-            this.spritesT = [];
-            this.spritesO = [];
-            this.spritesD = [];
-            this.spritesTE = [];
-            this.spritesEV = [];
-            this.spritesXP = [];
-            this.spritesPoder = [];
-            this.spritesSpike = [];
-            this.darkRooms = []
-            this.sokobans = [];
-            this.spriteCounter = 0;
+            var evento = this.spritesTP[i].evento
+            this.limparCena()
 
+            if (evento) {
+                evento()
+            }
         }
     }
 
-    //não exatamente colisão, mas verifica se a posição do jogador é em lava
-    var playerPositionX = Math.floor(this.pc.x / 32);
-    var playerPositionY = Math.floor(this.pc.y / 32);
-    if (this.map.cells[playerPositionX][playerPositionY].tipo == 5) {
-        if (this.inventoryItem != null && this.inventoryItem.props.event == "lava") {
-            this.pc.lavaImmunity = true;
-        } else {
-            if (this.pc.imune <= 0) {
-                this.pc.vidas--;
-                this.pc.imune = 2;
-                this.pc.atingido = 0.3;
-                this.assets.play("damage");
-            }
+    for (var i = 0; i < this.spritesEV.length; i++) {
+        if (this.pc.colidiuCom(this.spritesEV[i])) {
+            this.spritesEV[i].evento()
         }
-    } else { this.pc.lavaImmunity = false }
-
-    //verifica se o piso é de gelo
-    if (this.map.cells[playerPositionX][playerPositionY].tipo == 1) {
-        this.pc.desaceleracao = 0.95
-    } else {
-        this.pc.desaceleracao = 1
     }
 
     // checa colisão dos sokobans
@@ -465,6 +477,7 @@ Scene.prototype.checaColisao = function () {
     if (this.pc.vidas == 0 && this.pc.atingido <= 0) {
         this.pc.mana = 0;
         this.spritesTP = [];
+        this.sceneMessages = [];
         this.spritesE = [];
         this.spritesT = [];
         this.spritesO = [];
@@ -599,6 +612,7 @@ Scene.prototype.desenharHUD = function () {
     this.desenharCaixaDialogo2(imgX, imgY);
     this.desenharInventory(this.inventoryItem)
     this.desenharDialogo()
+    this.desenharMensagensPersistentes()
 }
 
 Scene.prototype.desenharCaixaDialogo = function (imgX, imgY) {
@@ -814,6 +828,14 @@ Scene.prototype.desenharDialogo = function () {
     }
 }
 
+Scene.prototype.desenharMensagensPersistentes = function () {
+    for(var message of this.sceneMessages) {
+        ctx.font = message.font
+        ctx.fillStyle = message.fillStyle
+        ctx.fillText(message.text, message.x, message.y)
+    }
+}
+
 Scene.prototype.updateCameraPosition = function () {
     // Ajuste a posição da câmera conforme a movimentação do elemento central
     const cameraCenterX = pc.x;
@@ -872,7 +894,22 @@ Scene.prototype.passo = function (dt) {
     }
 }
 
-
+Scene.prototype.limparCena = function () {
+    this.spritesTP = [];
+    this.spritesE = [];
+    this.spritesT = [];
+    this.spritesO = [];
+    this.spritesD = [];
+    this.spritesTE = [];
+    this.spritesEV = [];
+    this.spritesXP = [];
+    this.spritesPoder = [];
+    this.spritesSpike = [];
+    this.darkRooms = []
+    this.sokobans = [];
+    this.sceneMessages = [];
+    this.spriteCounter = 0;
+}
 
 
 

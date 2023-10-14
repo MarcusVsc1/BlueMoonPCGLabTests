@@ -54,7 +54,7 @@ class PuzzleAgentsManager {
         }
 
         var undefinedAuxOrederedRooms = orderedRooms.filter(room => {return room.tag.auxiliar == null})
-        this.commons.posicionarTeleporte(2, undefinedAuxOrederedRooms[undefinedAuxOrederedRooms.length - 1],6,8.9)
+        this.commons.posicionarTeleporte(3, undefinedAuxOrederedRooms[undefinedAuxOrederedRooms.length - 1],6,8.9)
         for(var i = undefinedAuxOrederedRooms.length - 2; i >= 0; i --) {
             var room = undefinedAuxOrederedRooms[i]
             this.commons.posicionarPoderes(room,this.calcularNivel(orderedRooms.indexOf(room), orderedRooms.length))
@@ -84,8 +84,6 @@ class PuzzleAgentsManager {
         var lr = new LavaRoomAgent()
         lr.gerarTag(this.mapGraph, this.puzzleGraph)
         */
-        var tags = this.mapGraph.nodes.map(node => { return { room: node.roomId, tag: node.tag.subTipo } })
-        console.log(orderedRooms.map(room => room.roomId))
     }
 
     initiate() {

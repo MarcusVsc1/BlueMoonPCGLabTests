@@ -440,9 +440,7 @@ class Graph {
             visitedStates.push(actualState)
         }
         var deadlock = visitedRooms.size !== this.nodes.length
-        if(deadlock) {
-            console.log("Tem deadlock")
-        }
+
         return deadlock
     }
 

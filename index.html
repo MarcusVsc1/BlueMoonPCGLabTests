@@ -74,17 +74,13 @@
             resetSokoban: 0
         }
 
-        var pc = new Sprite({ x: canvas.width / 2, y: canvas.height / 2, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, maxVidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
+        var pc = new Sprite({ x: 192, y: 220, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, maxVidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 
         var gerenciador = new GameManager(pc);
 
 
-        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador, });
+        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador });
         cena1.adicionar(pc);
-
-        var puzzleAgents = new PuzzleAgentsManager(
-            gerenciador.dungeonGenerator.graph
-        )
 
         function porTeclasDirecionais(teclas) {
             return function () {

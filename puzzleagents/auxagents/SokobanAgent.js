@@ -23,7 +23,7 @@ class SokobanAgent {
 
     gerarSokoban(room, collectible) {
 
-        console.log("Id da sala " + room.roomId)
+        //console.log("Id da sala " + room.roomId)
 
         this.roomTotalCells = room.roomHeight * room.roomWidth
 
@@ -39,7 +39,7 @@ class SokobanAgent {
         var tentativas = 0
         mcts.best = winner
         // From initial state, take turns to play game until finished
-        console.time("total mcts")
+        //console.time("total mcts")
         while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
             winner = mcts.runSearch(state, this.defaultSearchTime)
             tentativas++
@@ -48,9 +48,9 @@ class SokobanAgent {
                 tentativas = 0
             }
         }
-        console.timeEnd("total mcts")
+        //console.timeEnd("total mcts")
 
-        console.log("Score: " + winner.score)
+        //console.log("Score: " + winner.score)
         var matrizMapeada = this.mapBoardToGameMap(winner)
 
         var boxes = this.placeBoxes(winner, room.cells[0])
