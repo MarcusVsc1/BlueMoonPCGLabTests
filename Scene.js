@@ -491,10 +491,10 @@ Scene.prototype.checaColisao = function () {
         this.extras = []
         this.paintCorridor = []
         this.spriteCounter = 0;
-        this.stageIndex = 1;
+        this.stageIndex = 2;
         this.pc.x = 1
         this.pc.y = 1
-        this.dialogo = "Fim de jogo."
+        this.dialogo = "Fim de jogo. Aperte F5 para reiniciar"
     }
 };
 
