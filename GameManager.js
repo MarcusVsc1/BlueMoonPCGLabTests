@@ -234,6 +234,7 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
     this.estagios[0] = estagio
 
     new PuzzleAgentsManager(this.dungeonGenerator.graph)
+    this.pc.mana = 5
 
 }
 
