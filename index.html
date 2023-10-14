@@ -26,6 +26,7 @@
     <script src="Grid.js"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
+    <script src="InputController.js"></script>
     <script src="datastructures/Graph.js"></script>
     <script src="datastructures/Edge.js"></script>
     <script src="model/Room.js"></script>
@@ -34,6 +35,7 @@
     <script src="utils/EnemyFactory.js"></script>
     <script src="utils/UtilityMethods.js"></script>
     <script src="utils/CommonsFactory.js"></script>
+    <script src="utils/InputSetup.js"></script>
     <script src="enum/KeyColorEnum.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
     <script src="model/Game.js"></script>
@@ -85,29 +87,36 @@
         function porTeclasDirecionais(teclas) {
             return function () {
                 if (this.charStop <= 0) {
-                    if (teclas.esquerda) {
+                    var joy = input.joysticks[0];
+
+                    if(!joy || !joy.connected){input.movimentos["vertical"].valor*= -1}
+
+                    if (input.comandos['esquerda'].valor == 1 || input.movimentos['horizontal'].valor == -1) {
                         this.vx = -this.standardSpd;
                         this.direcao = 1;
                     }
-                    if (teclas.direita) {
+                    if (input.comandos['direita'].valor == 1 || input.movimentos['horizontal'].valor == 1) {
                         this.vx = +this.standardSpd;
                         this.direcao = 2;
                     }
-                    if (teclas.esquerda === teclas.direita) {
+                    if (input.comandos['esquerda'].valor === input.comandos['direita'].valor &&
+                    Math.round(input.movimentos['horizontal'].valor) == 0) {
                         this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0;
                     }
-                    if (teclas.cima) {
+                    if (input.comandos['cima'].valor == 1 || input.movimentos['vertical'].valor == -1) {
                         this.vy = -this.standardSpd;
                         this.direcao = 3;
                     }
-                    if (teclas.baixo) {
+                    if (input.comandos['baixo'].valor == 1 || input.movimentos['vertical'].valor == 1) {
                         this.vy = +this.standardSpd;
                         this.direcao = 0;
                     }
-                    if (teclas.cima === teclas.baixo) {
+                    if (input.comandos['cima'].valor === input.comandos['baixo'].valor &&
+                    Math.round(input.movimentos['vertical'].valor) == 0
+                    ) {
                         this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0;
                     }
-                    if (teclas.espada && this.swCD <= 0 && this.globalCD <= 0) {
+                    if (input.comandos['espada'].valor == 1 && this.swCD <= 0 && this.globalCD <= 0) {
                         var tiro = new Sprite({
                             x: this.x, y: this.y,
                             imagem: "object", direcao: this.direcao,
@@ -120,10 +129,10 @@
                         this.globalCD = 0.2;
                         assetsMng.play("sword");
                     }
-                    if (teclas.resetSokoban) {
+                    if (input.comandos['resetSokoban'].valor == 1) {
                         verificarResetSokoban()
                     }
-                    if (teclas.fireball && this.spCD <= 0 && this.globalCD <= 0) {
+                    if (input.comandos['fireball'].valor == 1 && this.spCD <= 0 && this.globalCD <= 0) {
                         if (this.mana > 0) {
                             var tiro = new Sprite({
                                 x: this.x, y: this.y,
@@ -539,57 +548,6 @@
 
         }
 
-        addEventListener("keydown", function (e) {
-            switch (e.keyCode) {
-                case 74:
-                    teclas.fireball = 1;
-                    break;
-                case 75:
-                    teclas.espada = 1;
-                    break;
-                case 65:
-                    teclas.esquerda = 1;
-                    break;
-                case 87:
-                    teclas.cima = 1;
-                    break;
-                case 68:
-                    teclas.direita = 1;
-                    break;
-                case 83:
-                    teclas.baixo = 1;
-                    break;
-                case 80:
-                    teclas.resetSokoban = 1;
-                    break;
-            }
-        });
-        addEventListener("keyup", function (e) {
-            switch (e.keyCode) {
-                case 74:
-                    teclas.fireball = 0;
-                    break;
-                case 75:
-                    teclas.espada = 0;
-                    break;
-                case 65:
-                    teclas.esquerda = 0;
-                    break;
-                case 87:
-                    teclas.cima = 0;
-                    break;
-                case 68:
-                    teclas.direita = 0;
-                    break;
-                case 83:
-                    teclas.baixo = 0;
-                    break;
-                case 80:
-                    teclas.resetSokoban = 0;
-                    break;
-            }
-        });
-
         var keyPressed = {};
         addEventListener('keydown', function (e) {
 
@@ -607,6 +565,7 @@
                 cena1.passo(dt);
             }
             anterior = t;
+            input.update(); 
             ctx.fillStyle = "black";
             ctx.font = "10px Arial";
             requestAnimationFrame(passo);
