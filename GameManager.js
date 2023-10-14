@@ -87,7 +87,7 @@ GameManager.prototype.criarEstagios = function () {
             text = 'Roguelike'
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 155, y: 390 })
         }
-        cena1.dialogo = "Selecione um portal. Controles: Direcionais WASD, K: Espada, J: Magia."
+        cena1.dialogo = "Controles: Direcionais WASD, K: Espada, J: Magia. P: Reseta sokoban"
         this.preencheu = true
     }
 
