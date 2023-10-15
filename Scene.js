@@ -232,7 +232,7 @@ Scene.prototype.comportar = function () {
         }
     }
 
-    if (this.pc != null && this.pc.comportar) {
+    if (this.pc != null && this.pc.comportar && !this.pc.onTP) {
         this.pc.comportar();
     }
 
@@ -435,7 +435,7 @@ Scene.prototype.checaColisao = function () {
             }
         }
     }
-
+    this.pc.onTP = false
     //colisao com teleporte
     for (var i = 0; i < this.spritesTP.length; i++) {
         if (this.pc.colidiuCom(this.spritesTP[i])) {
@@ -448,6 +448,9 @@ Scene.prototype.checaColisao = function () {
             if (evento) {
                 evento()
             }
+            this.pc.vx = 0
+            this.pc.vy = 0
+            this.pc.onTP = true
         }
     }
 
