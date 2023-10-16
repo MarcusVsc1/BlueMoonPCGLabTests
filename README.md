@@ -14,10 +14,10 @@ Versão adaptada do jogo BlueMoon para o gênero *roguelike*
 *sokoban são os puzzles de empurrar caixas até uma área de destino
 
 **Funciona também com joystick**:
-Direcionais: movimento
-X: Ataque com espada
-□: Atira bola de fogo
-R2: Reseta sala de sokoban
+- Direcionais: movimento
+- X: Ataque com espada
+- □: Atira bola de fogo
+- R2: Reseta sala de sokoban
 
 ![enter image description here](https://p7.hiclipart.com/preview/348/543/811/playstation-3-black-sixaxis-playstation-2-playstation-4-gamepad.jpg)
 
