@@ -16,6 +16,7 @@ class SokobanAgent {
     }
 
     posicionarCollectible(room, collectible){
+        collectible.swCD = 0.6
         var position = { x: (room.cells[0].x + room.roomWidth / 2) * 32, y: (room.cells[0].y + room.roomHeight / 2) * 32 };
         collectible.x = position.x
         collectible.y = position.y
