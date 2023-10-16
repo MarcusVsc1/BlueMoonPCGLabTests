@@ -62,7 +62,7 @@ GameManager.prototype.criarEstagios = function () {
     var evento = function (numero) {
         return function () {
             gerenciador.criarNovaDungeon(numero);
-            playTheme(numero + 1 == 4 ? 3 : numero + 1);
+            playTheme(numero + 1);
         };
     };
 
