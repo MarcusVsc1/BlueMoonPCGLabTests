@@ -13,7 +13,7 @@ class LeverAgent {
         if(this.onGet){this.onGet()}
     }
 
-    gerarTag(mapGraph, room, auxAgents) {
+    gerarTag(mapGraph, room) {
 
         //inicialização da sala
         var lastTag = JSON.parse(JSON.stringify(room.tag))
@@ -104,9 +104,7 @@ class LeverAgent {
         this.defaultTag.id++
         if (lastTag.auxiliar) {
             room.tag.auxiliar = lastTag.auxiliar
-        } else {
-            //selecionarSubAgente(room, auxAgents)
-        }
+        } 
 
         return true
 

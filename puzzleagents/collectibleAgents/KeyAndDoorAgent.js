@@ -43,27 +43,10 @@ class KeyAndDoorAgent {
         this.defaultTag.id++
         if (lastTag.auxiliar) {
             room.tag.auxiliar = lastTag.auxiliar
-        } else {
-
-        }
+        } 
 
         return true
 
-    }
-
-    selecionarSubAgente(auxAgents) {
-
-        const jsonString = JSON.stringify([...auxAgents]);
-        var auxAgentsClone = JSON.parse(jsonString);
-
-        var agent = UtilityMethods.lottery(auxAgentsClone)
-
-        for (const [key, { agent, chance }] of auxAgentsClone) {
-            if (auxAgents.has(key)) {
-                auxAgents.set(key, { agent, chance });
-            }
-        }
-        return agent;
     }
 
     verificarRestricoes(collectible, restricao) {

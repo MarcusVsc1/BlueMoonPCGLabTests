@@ -5,7 +5,7 @@ class PuzzleAgentsManager {
             this.initialRoom = null,
             this.mainAgents = new Map([
                 ['LavaRoomAgent', { agent: new LavaRoomAgent(), chance: 1, factor: 0.5 }],
-                ['LeverAgent', { agent: new LeverAgent(), chance: 0.5, factor: 0.001 }],
+                ['LeverAgent', { agent: new LeverAgent(), chance: 0.5, factor: 0.1 }],
                 ['CombatRoom', { agent: new CombatRoom(), chance: 1, factor: 0.5 }],
                 ['Hub', { agent: new Hub(), chance: 0.5, factor: 0.5 }],
                 ['KeyAndDoorAgent', { agent: new KeyAndDoorAgent(), chance: 1, factor: 0.5 }]
@@ -101,9 +101,9 @@ class PuzzleAgentsManager {
             if (room.tag != null) {
                 var availableAgents = this.verificarAgentesDisponiveis(room, 'subTipo', this.mainAgents);
                 while (availableAgents.size > 0) {
-                    const agentKey = this.selecionarAgente(availableAgents);
+                    const agentKey = this.sortearAgente(availableAgents);
                     var agent = this.mainAgents.get(agentKey).agent;
-                    if (!agent.gerarTag(this.mapGraph, room, this.auxAgents)) {
+                    if (!agent.gerarTag(this.mapGraph, room)) {
                         availableAgents.delete(agentKey);
                     } else {
                         var newAgent = this.mainAgents.get(agentKey);
@@ -124,7 +124,7 @@ class PuzzleAgentsManager {
     criarTagAuxiliar(room) {
         var availableAgents = this.verificarAgentesDisponiveis(room, 'auxiliar', this.auxAgents);
         while (availableAgents.size > 0) {
-            const agentKey = this.selecionarAgente(availableAgents);
+            const agentKey = this.sortearAgente(availableAgents);
             var agent = this.auxAgents.get(agentKey).agent;
             if (!agent.gerarTagAuxiliar(this.mapGraph, room)) {
                 availableAgents.delete(agentKey);
@@ -138,7 +138,7 @@ class PuzzleAgentsManager {
         }
     }
 
-    selecionarAgente(agents) {
+    sortearAgente(agents) {
         return UtilityMethods.lottery(agents)
     }
 
