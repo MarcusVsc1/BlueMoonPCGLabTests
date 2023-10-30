@@ -446,7 +446,7 @@ GameManager.prototype.criarAlavanca = function (posX, posY, evento, coordenadas)
 
 GameManager.prototype.criarInterruptor = function (posX, posY, evento, switchId) {
     return new Sprite({
-        x: posX * 32 + 16, y: posY * 32 + 16, w: 32, h: 32, spriteSize: 48, vm: 0, imgX: 10, imgY: 1, event: evento, switchId: switchId,
+        x: posX * 32 + 12, y: posY * 32 + 12, w: 24, h: 24, spriteSize: 48, vm: 0, imgX: 10, imgY: 1, event: evento, switchId: switchId,
         imagem: "switch", desenhar: desenharAlavanca, toggled: false, props: { tipo: "objeto", subtipo: "alavanca" }
     });
 }
