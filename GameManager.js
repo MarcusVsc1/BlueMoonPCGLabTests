@@ -386,7 +386,7 @@ GameManager.prototype.criarPoder = function (tipo, posX, posY) {
             break;
         case 'mana':
             poder = new Sprite({
-                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 1, imgY: 1,
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, direcao: 0, imgX: 1, imgY: 3,
                 imagem: "crystal", swCD: 0, desenhar: desenhaTiro, props: { tipo: "poder", modelo: "mana" }
             });
             break;
