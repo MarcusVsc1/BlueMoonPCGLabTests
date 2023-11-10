@@ -33,7 +33,7 @@ Abra o arquivo index.html na pasta principal do jogo. O jogo abrirá automaticam
 ## Avaliação do jogo
 
 Agradecemos pelo seu tempo ao testar o BlueMoon Roguelike! Este é um projeto acadêmico que visa criar um jogo roguelike com ênfase em quebra-cabeças.
-Pedimos que preencha o formulário de avaliação a seguir, é muito importante para este trabalho!
+Pedimos que preencha o formulário de avaliação a seguir, é muito importante para este trabalho e é bem rapidinho! :) 
 
 https://forms.gle/vocKj9kQA5pzjQbu6
 
