@@ -2,6 +2,8 @@
 
 Versão adaptada do jogo BlueMoon para o gênero *roguelike*
 
+![enter image description here](https://imgur.com/IEyAGFb)
+
 
 # Controles
 
