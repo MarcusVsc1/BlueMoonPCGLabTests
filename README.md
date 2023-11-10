@@ -30,3 +30,7 @@ Vá até o canto superior direito, clique no botão "<> Code" e depois "Download
 - **Abrindo o jogo**:
 Abra o arquivo index.html na pasta principal do jogo. O jogo abrirá automaticamente.
 
+- **Repetindo o mesmo jogo**:
+É possível repetir o mesmo jogo. Para isso, adicione ao final da url da página "?seed=n", substituindo n pelo número do jogo. Com isso, o jogo será igual ao ser jogado novamente. Por exemplo, se quiser jogar o jogo 3, a url ficaria:
+
+file:///C:/dcc138-2019-3-trb2-MarcusVsc1/index.html?seed=3
