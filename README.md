@@ -30,8 +30,16 @@ Vá até o canto superior direito, clique no botão "<> Code" e depois "Download
 - **Abrindo o jogo**:
 Abra o arquivo index.html na pasta principal do jogo. O jogo abrirá automaticamente.
 
+## Avaliação do jogo
+
+Agradecemos pelo seu tempo ao testar o BlueMoon Roguelike! Este é um projeto acadêmico que visa criar um jogo roguelike com ênfase em quebra-cabeças.
+Pedimos que preencha o formulário de avaliação a seguir, é muito importante para este trabalho!
+
+https://forms.gle/vocKj9kQA5pzjQbu6
+
 ## Repetindo o mesmo jogo
 
 O jogo muda a cada vez que é jogado, porém é possível repetir o mesmo jogo. Para isso, adicione ao final da url da página "?seed=n", substituindo n pelo número do jogo. Com isso, o jogo será igual ao ser jogado novamente. Por exemplo, se quiser jogar o jogo 3, a url ficaria:
 
 file:///C:/dcc138-2019-3-trb2-MarcusVsc1/index.html?seed=3
+
