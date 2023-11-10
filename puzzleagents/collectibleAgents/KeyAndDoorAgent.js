@@ -23,7 +23,7 @@ class KeyAndDoorAgent {
             return false
         }
 
-        var selectedCorridor = validCorridors[Math.floor(Math.random() * validCorridors.length)];
+        var selectedCorridor = validCorridors[Math.floor(random.nextRandFloat() * validCorridors.length)];
         selectedCorridor.tags.push(JSON.parse(JSON.stringify(this.defaultTag)))
         selectedCorridor.restricoes.push({ tipo: "KeyAndDoorAgent", id: this.agentLevel })
 

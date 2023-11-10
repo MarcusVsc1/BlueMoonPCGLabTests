@@ -246,7 +246,7 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
         //morcego
         case "morcego":
             inimigo = new Sprite({
-                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 40 + Math.random() * 25, imgX: 0, imgY: 0,
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 40 + random.nextRandFloat() * 25, imgX: 0, imgY: 0,
                 imagem: "monster", comportar: persegue(this.pc), props: { tipo: "npc" }
             });
             break;
@@ -307,7 +307,7 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
             break;
         case "ignisFatuus":
             inimigo = new Sprite({
-                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 0, imgY: 1,
+                x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 29 + random.nextRandFloat() * 11, imgX: 0, imgY: 1,
                 imagem: "flame2", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc" }
             });
             break;

@@ -323,7 +323,7 @@ Scene.prototype.checaColisao = function () {
                         this.spritesE[i].drop.y = this.spritesE[i].y
                         this.adicionar(this.spritesE[i].drop)
                     } else {
-                        var chance = Math.random()
+                        var chance = random.nextRandFloat()
                         if (chance < 0.18 && !this.spritesE[i].props.summoned) {
                             var item = gerenciador.criarPoder('heart', this.spritesE[i].x / 32, this.spritesE[i].y / 32)
                             item.timer = 60
@@ -913,9 +913,3 @@ Scene.prototype.limparCena = function () {
     this.sceneMessages = [];
     this.spriteCounter = 0;
 }
-
-
-
-
-
-

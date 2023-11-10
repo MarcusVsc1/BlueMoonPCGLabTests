@@ -31,7 +31,7 @@ class LavaRoomAgent {
                 room.tag = lastTag
                 return false
             }
-            lavaRoom = validRooms[Math.floor(Math.random() * validRooms.length)];
+            lavaRoom = validRooms[Math.floor(random.nextRandFloat() * validRooms.length)];
             this.positionLavaBoots(room)
             this.hasBoots = true
             

@@ -2,7 +2,7 @@ class UtilityMethods {
 
     static fisherYales(array) {
         for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(random.nextRandFloat() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
@@ -16,7 +16,7 @@ class UtilityMethods {
         }
 
         // Gera um número aleatório entre 0 e a soma total das chances
-        const randomValue = Math.random() * totalWeight;
+        const randomValue = random.nextRandFloat() * totalWeight;
 
         // Percorre o mapa para encontrar o elemento sorteado
         let accumulatedWeight = 0;

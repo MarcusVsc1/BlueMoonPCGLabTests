@@ -38,14 +38,14 @@ class DungeonGenerator {
         const generatedRooms = [];
 
         for (let i = 0; i < this.NUM_ROOMS; i++) {
-            const roomWidth = Math.floor(Math.random() * (this.MAX_ROOM_SIZE - this.MIN_ROOM_SIZE + 1)) + this.MIN_ROOM_SIZE;
-            const roomHeight = Math.floor(Math.random() * (this.MAX_ROOM_SIZE - this.MIN_ROOM_SIZE + 1)) + this.MIN_ROOM_SIZE;
+            const roomWidth = Math.floor(random.nextRandFloat() * (this.MAX_ROOM_SIZE - this.MIN_ROOM_SIZE + 1)) + this.MIN_ROOM_SIZE;
+            const roomHeight = Math.floor(random.nextRandFloat() * (this.MAX_ROOM_SIZE - this.MIN_ROOM_SIZE + 1)) + this.MIN_ROOM_SIZE;
 
             let x, y;
             var end = Date.now() + this.MAP_SIZE * 5
             do {
-                x = Math.floor(Math.random() * (width - roomWidth - 1)) + 1;
-                y = Math.floor(Math.random() * (height - roomHeight - 1)) + 1;
+                x = Math.floor(random.nextRandFloat() * (width - roomWidth - 1)) + 1;
+                y = Math.floor(random.nextRandFloat() * (height - roomHeight - 1)) + 1;
                 if (Date.now() > end) {
                     this.sucesso = false
                     console.log('Erro ao iniciar as salas')

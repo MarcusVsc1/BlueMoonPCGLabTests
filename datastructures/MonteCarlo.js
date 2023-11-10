@@ -63,7 +63,7 @@ class MonteCarlo {
     /** Phase 2, Expansion: Expand a random unexpanded child node */
     expand(node) {
         let plays = node.unexpandedPlays()
-        let index = Math.floor(Math.random() * plays.length)
+        let index = Math.floor(random.nextRandFloat() * plays.length)
         let play = plays[index]
         let childState = this.game.nextState(node.state, play)
         let childUnexpandedPlays = this.game.legalPlays(childState)
@@ -86,7 +86,7 @@ class MonteCarlo {
     
         while (!state.finish) {
             let plays = this.game.legalPlays(state);
-            let play = plays[Math.floor(Math.random() * plays.length)];
+            let play = plays[Math.floor(random.nextRandFloat() * plays.length)];
             state = this.game.nextState(state, play);
         }
     

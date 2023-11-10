@@ -31,7 +31,7 @@ class LeverAgent {
             return false
         }
 
-        var selectedCorridor = validCorridors[Math.floor(Math.random() * validCorridors.length)];
+        var selectedCorridor = validCorridors[Math.floor(random.nextRandFloat() * validCorridors.length)];
         var newTag = JSON.parse(JSON.stringify(this.defaultTag)) 
         newTag.holeNumber = 1
 
@@ -80,7 +80,7 @@ class LeverAgent {
             return false
         }
 
-        var selectedCorridor2 = validCorridors[Math.floor(Math.random() * validCorridors.length)];
+        var selectedCorridor2 = validCorridors[Math.floor(random.nextRandFloat() * validCorridors.length)];
 
         var newTag = JSON.parse(JSON.stringify(this.defaultTag)) 
         newTag.holeNumber = 2

@@ -43,8 +43,8 @@ class CommonsFactory {
 
     posicionarBiribinha(room) {
 
-        var positionX = room.cells[0].x + Math.random() * (room.roomWidth - 1)
-        var positionY = room.cells[0].y + Math.random() * (room.roomHeight - 1)
+        var positionX = room.cells[0].x + random.nextRandFloat() * (room.roomWidth - 1)
+        var positionY = room.cells[0].y + random.nextRandFloat() * (room.roomHeight - 1)
 
         var biribinha = gerenciador.criarObjeto("biribinha", positionX, positionY)
         biribinha.roomId = room.roomId
