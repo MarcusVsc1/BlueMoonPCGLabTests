@@ -20,11 +20,11 @@ class MonteCarlo {
     }
 
     /** From given state, repeatedly run MCTS to build statistics. */
-    runSearch(state, timeout = 2) {
+    runSearch(state, totalMoves = 1000) {
         this.makeNode(state)
- 
-        let end = Date.now() + timeout * 1000
-        while (Date.now() < end) {
+        let moves = 0
+        let start = Date.now()
+        while (moves < totalMoves) {
             var score = 0
             let node = this.select(state)
             if (!node.prunning) {
@@ -35,7 +35,11 @@ class MonteCarlo {
                 this.backpropagate(node, score)
 
             }
+            moves++
         }
+        console.log("Movimentos:"+moves)
+        var time = Date.now() - start
+        console.log("Tempo: "+time)
         return this.best
     }
 
