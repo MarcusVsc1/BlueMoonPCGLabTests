@@ -80,10 +80,10 @@ GameManager.prototype.criarEstagios = function () {
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 307, y: 262 })
 
             fillStyle = `rgba(255, 255, 255, 1)`;
-            font = "50px Medieval";
+            font = "50px Medieval2";
             text = 'Blue Moon'
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 110, y: 360 })
-            font = "30px Medieval";
+            font = "30px Medieval2";
             text = 'Roguelike'
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 155, y: 390 })
         }
