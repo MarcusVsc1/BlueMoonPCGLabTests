@@ -20,6 +20,7 @@
         }
     </style>
     <script src="Sprite.js"></script>
+    <script src="Params.js"></script>
     <script src="Scene.js"></script>
     <script src="AssetsManager.js"></script>
     <script src="GameManager.js"></script>
@@ -85,6 +86,32 @@
 
         var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador });
         cena1.adicionar(pc);
+        inicializarComParametroDeSala()
+
+        function inicializarComParametroDeSala(){
+            var inicializador = -1
+            
+            rooms = parseInt(rooms, 10)
+            switch(rooms) {
+                case 6: 
+                    rooms = 0
+                    break;
+                case 12:
+                    rooms = 1
+                    break;
+                case 16:
+                    rooms = 2
+                    break;
+                case 20:
+                    rooms = 3
+                    break;             
+            }
+            if(rooms >= 0 && rooms <= 3) {
+                gerenciador.inicializarDungeonAleatoria(rooms)()
+                cena1.stageIndex = 0;
+            }
+
+        }
 
         function porTeclasDirecionais(teclas) {
             return function () {

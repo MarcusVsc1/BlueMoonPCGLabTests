@@ -1,10 +1,10 @@
 // SeedGenerator ===> Utilizado para retornar ao mesmo mapa com apenas o código da seed
 let seedValueURL = location.search;
 
-if (seedValueURL.length != 0) {                   //SEED PASSADA NA URL
+if (seedNumber.length != 0) {                   //SEED PASSADA NA URL
     let aux = "?seed=";
     seedValueURL = seedValueURL.substring(aux.length, seedValueURL.length);
-    seedValueURL = parseInt(seedValueURL.toString(), 10);
+    seedValueURL = parseInt(seedNumber.toString(), 10);
 }
 else {                                           //SEED ALEATÓRIA
     let maxValue = 5000000;

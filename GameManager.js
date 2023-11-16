@@ -91,10 +91,10 @@ GameManager.prototype.criarEstagios = function () {
         this.preencheu = true
     }
 
-    spriteLista.push(this.criarTeleporte(2, 2, 2, 2, 0, evento(0)));
-    spriteLista.push(this.criarTeleporte(2, 7, 2, 2, 0, evento(1)));
-    spriteLista.push(this.criarTeleporte(10, 2, 2, 2, 0, evento(2)));
-    spriteLista.push(this.criarTeleporte(10, 7, 2, 2, 0, evento(3)));
+    spriteLista.push(this.criarTeleporte(2, 2, 2, 2, 0, this.inicializarDungeonAleatoria(0)));
+    spriteLista.push(this.criarTeleporte(2, 7, 2, 2, 0, this.inicializarDungeonAleatoria(1)));
+    spriteLista.push(this.criarTeleporte(10, 2, 2, 2, 0, this.inicializarDungeonAleatoria(2)));
+    spriteLista.push(this.criarTeleporte(10, 7, 2, 2, 0, this.inicializarDungeonAleatoria(3)));
 
     eventoLista.push(eventoInicial)
 
@@ -188,6 +188,13 @@ GameManager.prototype.criarEstagios = function () {
     this.estagios.push(this.fabricaDeEstagios(mapa, spriteLista, eventoLista));
 
 
+}
+
+GameManager.prototype.inicializarDungeonAleatoria = function (numero) {
+    return function () {
+        gerenciador.criarNovaDungeon(numero);
+        playTheme(numero + 1);
+    };
 }
 
 GameManager.prototype.criarNovaDungeon = function (opcao) {
