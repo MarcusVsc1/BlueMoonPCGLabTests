@@ -37,9 +37,9 @@ class MonteCarlo {
             }
             moves++
         }
-        console.log("Movimentos:"+moves)
-        var time = Date.now() - start
-        console.log("Tempo: "+time)
+        //console.log("Movimentos:"+moves)
+        //var time = Date.now() - start
+        //console.log("Tempo: "+time)
         return this.best
     }
 
