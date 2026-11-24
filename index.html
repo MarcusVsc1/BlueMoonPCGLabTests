@@ -22,6 +22,8 @@
             display: block;
         }
     </style>
+    <script src="utils/CollisionSystem.js"></script>
+    <script src="utils/CollisionDebug.js"></script>
     <script src="Sprite.js"></script>
     <script src="Params.js"></script>
     <script src="model/SokobanSolver.js"></script>
@@ -189,19 +191,9 @@
         }
 
         function verificarResetSokoban() {
-            for (var sokoban of cena1.sokobans) {
-                if (isPlayerInsideRoom(sokoban.room)) {
-                    pc.x = sokoban.startCell.y * 32 + sokoban.room.cells[0].x * 32 + 16
-                    pc.y = sokoban.startCell.x * 32 + sokoban.room.cells[0].y * 32 + 16
-                    for (var box of sokoban.boxes) {
-                        gerenciador.estagios[0].mapa.cells[box.posX][box.posY].tipo = 0
-                        box.posX = box.initialX
-                        box.posY = box.initialY
-                        gerenciador.estagios[0].mapa.cells[box.posX][box.posY].tipo = 11
-                        box.x = box.posX * 32 + 16
-                        box.y = box.posY * 32 + 16
-                    }
-                    cena1.dialogo = "Sokoban resetado!"
+            for (const sokoban of cena1.sokobans) {
+                if (isPlayerInsideRoom(sokoban.room) && CollisionSystem.resetPuzzle(sokoban, cena1)) {
+                    cena1.dialogo = "Sokoban resetado!";
                     assetsMng.play("cancel");
                 }
             }
@@ -264,52 +256,16 @@
         }
 
         //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
-        function moverTiro() {
-
-            this.frame += 8 * dt;
-            this.vx, this.vy = 0
-            switch (this.direcao) {
-                case 0:
-                    this.vy = this.vm;
-                    break;
-                case 1:
-                    this.vx = -1 * this.vm;
-                    break;
-                case 2:
-                    this.vx = this.vm;
-                    break;
-                case 3:
-                    this.vy = -1 * this.vm;
-                    break;
-            }
-            this.x = this.x + this.vx * dt;
-            this.y = this.y + this.vy * dt;
+        function moverTiro(step = dt) {
+            this.frame += 8 * step;
+            const dir = CollisionSystem.direction(this.direcao);
+            if (!dir) return;
+            this.vx = dir.x * this.vm;
+            this.vy = dir.y * this.vm;
+            CollisionSystem.moveProjectile(this, step);
         }
-
-        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
-        function moverEspada() {
-            switch (this.direcao) {
-                case 0:
-                    this.y = this.pc.y + 10;
-                    this.x = this.pc.x - 5;
-                    break;
-                case 1:
-                    this.x = this.pc.x - this.w - 10;
-                    this.y = this.pc.y - this.h;
-                    break;
-                case 2:
-                    this.x = this.pc.x + this.w;
-                    this.y = this.pc.y - this.h;
-                    break;
-                case 3:
-                    this.y = this.pc.y - this.h * 2.5;
-                    this.x = this.pc.x - 5;
-                    break;
-            }
-            this.frame = this.frame + 20 * dt;
-            if (Math.floor(this.frame) > 4.2) {
-                this.scene.toRemove.push(this);
-            }
+        function moverEspada(step = dt) {
+            CollisionSystem.sword(this, step);
         }
 
         function moverObjeto() {
@@ -318,28 +274,15 @@
             this.globalCD = this.globalCD - dt;
         }
 
-        function moverRocha() {
-            this.frame += 8 * dt;
-            this.vx, this.vy = 0;
-            this.vm = this.vm + 0.8;
-            switch (this.direcao) {
-                case 0:
-                    this.vy = this.vm;
-                    break;
-                case 1:
-                    this.vx = -1 * this.vm;
-                    break;
-                case 2:
-                    this.vx = this.vm;
-                    break;
-                case 3:
-                    this.vy = -1 * this.vm;
-                    break;
-            }
-            this.x = this.x + this.vx * dt;
-            this.y = this.y + this.vy * dt;
+        function moverRocha(step = dt) {
+            this.frame += 8 * step;
+            this.vm += 48 * step; // 0.8 por frame a 60 Hz
+            const dir = CollisionSystem.direction(this.direcao);
+            if (!dir) return;
+            this.vx = dir.x * this.vm;
+            this.vy = dir.y * this.vm;
+            CollisionSystem.moveProjectile(this, step);
         }
-
         function atirarRochas() {
             if (this.globalCD <= 0) {
                 this.charStop = 0.2;
@@ -479,9 +422,9 @@
             this.frame += 8 * dt;
             this.vx = this.vm * Math.cos(this.a);
             this.vy = this.vm * Math.sin(this.a);
-            this.vm = this.vm + 1.2;
-            this.x = this.x + this.vx * dt;
-            this.y = this.y + this.vy * dt;
+            this.vm += 72 * dt;
+            if (CollisionSystem.projectile(this)) CollisionSystem.moveProjectile(this, dt);
+            else CollisionSystem.move(this, dt);
 
             this.spCD = this.spCD - dt;
             this.swCD = this.swCD - dt;
@@ -510,91 +453,41 @@
 
         //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
         function moverCaixa(caixa, pc) {
-            var newPos
-            var oldPos = gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo
-            switch (pc.direcao) {
-                case 0:
-                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY + 1].tipo
-                    if (newPos == 0) {
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
-                        caixa.posY = caixa.posY + 1
-                        caixa.y = caixa.y + 32
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
-                    }
-                    break;
-                case 1:
-                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX - 1][caixa.posY].tipo
-                    if (newPos != 6 && newPos != 11) {
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
-                        caixa.posX = caixa.posX - 1
-                        caixa.x = caixa.x - 32
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
-                    }
-                    break;
-                case 2:
-                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX + 1][caixa.posY].tipo
-                    if (newPos == 0) {
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
-                        caixa.posX = caixa.posX + 1
-                        caixa.x = caixa.x + 32
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
-                    }
-                    break;
-                case 3:
-                    newPos = gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY - 1].tipo
-                    if (newPos == 0) {
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 0
-                        caixa.posY = caixa.posY - 1
-                        caixa.y = caixa.y - 32
-                        gerenciador.estagios[0].mapa.cells[caixa.posX][caixa.posY].tipo = 11
-                    }
-                    break;
-            }
-
+            return CollisionSystem.pushBox(caixa, pc);
         }
-
-        function comportarSokoban(sokoban) {
-            const allBoxesPlaced = sokoban.boxes.every(box => box.props && box.props.placed);
-            if (allBoxesPlaced) {
-                sokoban.countDown = sokoban.countDown - 0.1
-                if (sokoban.countDown <= 0) {
-                    cena1.adicionar(sokoban.collectible)
-                    var idx = cena1.sokobans.indexOf(sokoban)
-                    cena1.sokobans.splice(idx, 1)
-                    assetsMng.play("magic");
-                    sokoban.room.cells.forEach(cell => {
-                        gerenciador.estagios[0].mapa.cells[cell.x][cell.y].tipo = 0
-                    })
-                }
-            } else {
-                for (var box of sokoban.boxes) {
-                    for (var goal of sokoban.goals) {
-                        if (box.posX == goal.posX && box.posY == goal.posY) {
-                            box.props.placed = true
-                            break
-                        }
-                        box.props.placed = false
-                    }
-                }
-                sokoban.countDown = 0.5
+        function comportarSokoban(sokoban, step = 1/60) {
+            for (const box of sokoban.boxes) {
+                box.props.placed = sokoban.goals.some(goal => box.posX === goal.posX && box.posY === goal.posY);
             }
-
-
+            const all = sokoban.boxes.length >= 2 && sokoban.boxes.length === sokoban.goals.length && sokoban.boxes.every(box => box.props.placed);
+            if (!all) { sokoban.countDown = .5; return; }
+            sokoban.countDown = (sokoban.countDown ?? .5) - step;
+            if (sokoban.countDown > 0) return;
+            const idx = cena1.sokobans.indexOf(sokoban);
+            if (idx < 0) return;
+            cena1.adicionar(sokoban.collectible);
+            cena1.sokobans.splice(idx, 1);
+            assetsMng.play("magic");
+            sokoban.room.cells.forEach(cell => {
+                const tile = CollisionSystem.tile(cena1.map, cell.x, cell.y);
+                if (tile) tile.tipo = 0;
+            });
         }
 
         var keyPressed = {};
-        addEventListener('keydown', function (e) {
-
+        addEventListener('keydown', function(e) {
             keyPressed[e.key + e.location] = true;
-
-            if (keyPressed.Shift1 == true && keyPressed.Control1 == true) {
-                pc.atravessa = 1;
-            }
-
+            if (e.ctrlKey && e.shiftKey) pc.atravessa = 1;
         }, false);
+        addEventListener('keyup', function(e) {
+            delete keyPressed[e.key + e.location];
+            if (!e.ctrlKey || !e.shiftKey) pc.atravessa = 0;
+        }, false);
+        addEventListener('blur', function() { keyPressed = {}; pc.atravessa = 0; });
 
         function passo(t) {
-            dt = (t - anterior) / 1000;
+            // Evita saltos enormes em abas suspensas. O sweep protege mesmo com dt elevado.
+            dt = anterior ? Math.min(Math.max(0, (t - anterior) / 1000), 1/30) : 0;
             if (assetsMng.progresso() === 100) {
                 cena1.passo(dt);
             }

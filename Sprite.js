@@ -44,6 +44,10 @@ function Sprite(params = {}) {
         opacity: 1
     }
     Object.assign(this, exemplo, params);
+    // Dimensoes fisicas e visuais independentes. Valores originais por padrao.
+    this.collisionBox = { w: this.w, h: this.h, ...(params.collisionBox || {}) };
+    this.hurtBox = { w: this.w, h: this.h, ...(params.hurtBox || {}) };
+    this.renderOffset = { x: -this.w - 3.1, y: -this.h - 12, ...(params.renderOffset || {}) };
 }
 Sprite.prototype = new Sprite();
 Sprite.prototype.constructor = Sprite;
@@ -80,8 +84,8 @@ Sprite.prototype.desenhar = function (ctx) {
         192 * picY + d * 48 + 1,
         48,
         48,
-        -this.w - 3.1,
-        -this.h - 12,
+        this.renderOffset.x,
+        this.renderOffset.y,
         30,
         30,
     );
@@ -126,8 +130,8 @@ Sprite.prototype.moverCircular = function (dt) {
     this.vx = this.vm * Math.cos(this.a);
     this.vy = this.vm * Math.sin(this.a);
 
-    this.x = this.x + this.vx * dt;
-    this.y = this.y + this.vy * dt;
+    if (CollisionSystem.projectile(this)) CollisionSystem.moveProjectile(this, dt);
+    else CollisionSystem.move(this, dt);
 
     this.spCD = this.spCD - dt;
     this.swCD = this.swCD - dt;
@@ -148,53 +152,9 @@ Sprite.prototype.moverOrtogonal = function (dt) {
     this.globalCD = this.globalCD - dt;
 }
 Sprite.prototype.aplicaRestricoes = function (dt) {
-
-    var dnx;
-    var dx;
-    dx = this.vx * dt;
-    dnx = dx;
-    dy = this.vy * dt;
-    dny = dy;
-    if (dx > 0 && this.scene.map.cells[this.mc + 1][this.ml].tipo >= 6 && this.atravessa != 1) {
-        dnx = this.scene.map.SIZE * (this.mc + 1) - (this.x + this.w / 2);
-        dx = Math.min(dnx, dx);
-    }
-    if (dx < 0 && this.scene.map.cells[this.mc - 1][this.ml].tipo >= 6 && this.atravessa != 1) {
-        dnx = this.scene.map.SIZE * (this.mc) - (this.x - this.w / 2);
-        dx = Math.max(dnx, dx);
-    }
-    if (dy > 0 && this.scene.map.cells[this.mc][this.ml + 1].tipo >= 6 && this.atravessa != 1) {
-        dny = this.scene.map.SIZE * (this.ml + 1) - (this.y + this.h / 2);
-        dy = Math.min(dny, dy);
-    }
-    if (dy < 0 && this.scene.map.cells[this.mc][this.ml - 1].tipo >= 6 && this.atravessa != 1) {
-        dny = this.scene.map.SIZE * (this.ml) - (this.y - this.h / 2);
-        dy = Math.max(dny, dy);
-    }
-    this.vy = dy / dt;
-    this.x = this.x + dx;
-    this.y = this.y + dy;
-
-    var MAXX = this.scene.map.SIZE * this.scene.map.COLUMNS - this.w / 2;
-    var MAXY = this.scene.map.SIZE * this.scene.map.LINES - this.h / 2;
-
-    if (this.x > MAXX && this.atravessa != 1) this.x = MAXX;
-    if (this.y > MAXY && this.atravessa != 1) {
-        this.y = MAXY;
-        this.vy = 0;
-    }
-    if (this.x - this.w / 2 < 0) this.x = 0 + this.w / 2;
-    if (this.y - this.h / 2 < 0) this.y = 0 + this.h / 2;
-
-}
-
+    CollisionSystem.move(this, dt);
+};
 
 Sprite.prototype.colidiuCom = function (alvo) {
-    if (alvo.x + alvo.w / 2 < this.x - this.w / 2) return false;
-    if (alvo.x - alvo.w / 2 > this.x + this.w / 2) return false;
-
-    if (alvo.y + alvo.h / 2 < this.y - this.h / 2) return false;
-    if (alvo.y - alvo.h / 2 > this.y + this.h / 2) return false;
-
-    return true;
-}
+    return CollisionSystem.intersects(this, alvo);
+};

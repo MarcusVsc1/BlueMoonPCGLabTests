@@ -90,7 +90,6 @@ Scene.prototype.adicionar = function (sprite) {
 
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
 Scene.prototype.desenhar = function () {
-    this.updateCameraPosition();
 
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].desenhar(this.ctx);
@@ -138,8 +137,6 @@ Scene.prototype.desenhar = function () {
     if (this.pc.direcao != 0) {
         if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
     }
-    this.pc.desenhar(this.ctx)
-
     for (var i = 0; i < this.spritesO.length; i++) {
         if (this.spritesO[i].y > this.pc.y && this.spritesO[i].switchId == null) this.spritesO[i].desenhar(this.ctx);
     }
@@ -153,8 +150,7 @@ Scene.prototype.desenhar = function () {
     for (const room of this.darkRooms) {
         preencherComPreto(room)
     }
-    // ctx.restore();
-    this.updateCameraPosition();
+    // A camera e atualizada uma unica vez antes de renderizar.
 };
 
 
@@ -240,10 +236,6 @@ Scene.prototype.comportar = function () {
         this.bruxa.comportar();
     }
 
-    for (var sokoban of this.sokobans) {
-        comportarSokoban(sokoban)
-    }
-
 };
 
 
@@ -252,11 +244,12 @@ Scene.prototype.limpar = function () {
 }
 
 //checa colisao entre sprites
-Scene.prototype.checaColisao = function () {
+Scene.prototype.checaColisao = function (dt = 1/60) {
     //não exatamente colisão, mas verifica se a posição do jogador é em lava
-    var playerPositionX = Math.floor(this.pc.x / 32);
-    var playerPositionY = Math.floor(this.pc.y / 32);
-    if (this.map.cells[playerPositionX][playerPositionY].tipo == 5) {
+    var playerPositionX = Math.floor(this.pc.x / this.map.SIZE);
+    var playerPositionY = Math.floor(this.pc.y / this.map.SIZE);
+    var playerTile = CollisionSystem.tile(this.map, playerPositionX, playerPositionY);
+    if (playerTile?.tipo == 5) {
         if (this.inventoryItem != null && this.inventoryItem.props.event == "lava") {
             this.pc.lavaImmunity = true;
         } else {
@@ -270,25 +263,14 @@ Scene.prototype.checaColisao = function () {
     } else { this.pc.lavaImmunity = false }
 
     //verifica se o piso é de gelo
-    if (this.map.cells[playerPositionX][playerPositionY].tipo == 1) {
+    if (playerTile?.tipo == 1) {
         this.pc.desaceleracao = 0.95
     } else {
         this.pc.desaceleracao = 1
     }
 
-    for (var j = 0; j < this.spritesT.length; j++) {
-        //remoção do tiro do pc quando sai da tela
-        var x = Math.floor(this.spritesT[j].x / 32)
-        var y = Math.floor(this.spritesT[j].y / 32)
-        if ((this.spritesT[j].y > this.map.LINES * 32 || this.spritesT[j].y < 0
-            || this.spritesT[j].x > this.map.COLUMNS * 32 || this.spritesT[j].x < 0) || this.map.cells[x][y].tipo == 10) {
-            this.toRemove.push(this.spritesT[j]);
-        } else if (this.map.cells[x][y].tipo == 9) {
-            this.spritesT[j].comportar = apagarFogo
-        }
-
-
-    }
+    // Projeteis moveis sao limitados na propria movimentacao. A remocao
+    // acontece depois das interacoes para considerar o trajeto ate a parede.
     for (var i = 0; i < this.spritesE.length; i++) {
         //colisao inimigo com pc
         if (this.spritesE[i].colidiuCom(this.pc)) {
@@ -303,8 +285,12 @@ Scene.prototype.checaColisao = function () {
 
 
             //colisao tiro aliado com inimigo
-            if (this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0) {
-                this.spritesT[j].imune == 3;
+            if (!this.toRemove.includes(this.spritesT[j]) && !this.toRemove.includes(this.spritesE[i]) &&
+                this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0 &&
+                !this.spritesT[j]._hitEnemies?.has(this.spritesE[i])) {
+                if (this.spritesT[j].props.modelo === 'espada') {
+                    (this.spritesT[j]._hitEnemies ||= new WeakSet()).add(this.spritesE[i]);
+                } else { this.spritesT[j].imune = 3; }
                 if (this.spritesT[j].props.modelo == "fireball") {
                     this.adicionar(new Animation({ x: this.spritesE[i].x, y: this.spritesE[i].y, imagem: "explosion" }));
                     this.assets.play("explosion");
@@ -347,11 +333,8 @@ Scene.prototype.checaColisao = function () {
 
     //colisao tiro inimigo com pc
     for (var i = 0; i < this.spritesTE.length; i++) {
-        if (this.spritesTE[i].y > this.map.LINES * 32 - this.spritesTE[i].h - 8 + this.cameraX || this.spritesTE[i].y < 0
-            || this.spritesTE[i].x > this.map.COLUMNS * 32 || this.spritesTE[i].x < 0) {
-            this.toRemove.push(this.spritesTE[i]);
-        }
-        if (this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE") {
+        // Limites em coordenadas de mundo verificados por cleanupProjectiles.
+        if (!this.toRemove.includes(this.spritesTE[i]) && this.spritesTE[i].colidiuCom(this.pc) && this.spritesTE[i].props.tipo == "tiroE") {
             if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
                 this.pc.vidas--;
@@ -460,19 +443,12 @@ Scene.prototype.checaColisao = function () {
         }
     }
 
-    // checa colisão dos sokobans
-    for (var sokoban of this.sokobans) {
-        for (var box of sokoban.boxes) {
-            for (var spriteT of this.spritesT) {
-                if (spriteT.colidiuCom(box) && box.swCD <= 0 && spriteT.props.modelo == "espada") {
-                    box.swCD = 0.4
-                    moverCaixa(box, pc)
-                }
-                box.swCD = box.swCD - 0.03
-            }
-        }
+    // Cada espada empurra no maximo uma caixa, e o cooldown independe dos tiros.
+    if (!this.pc.onTP) {
+        CollisionSystem.updateBoxes(this, dt);
+        for (const puzzle of [...this.sokobans]) comportarSokoban(puzzle, dt);
     }
-
+    CollisionSystem.cleanupProjectiles(this);
 
     if (this.pc.vidas == 0 && this.pc.atingido > 0) {
         this.gamer.tema.pause();
@@ -841,16 +817,16 @@ Scene.prototype.desenharMensagensPersistentes = function () {
 
 Scene.prototype.updateCameraPosition = function () {
     // Ajuste a posição da câmera conforme a movimentação do elemento central
-    const cameraCenterX = pc.x;
-    const cameraCenterY = pc.y;
+    const cameraCenterX = this.pc.x;
+    const cameraCenterY = this.pc.y;
 
     // Defina a metade da largura e altura da tela
     const halfScreenWidth = this.w / 2;
     const halfScreenHeight = this.h / 2;
 
     // Calcule os limites do cenário (em termos de tamanho real do mapa)
-    const maxCameraX = (this.mapXY()) - this.w;
-    const maxCameraY = (this.mapXY()) - this.h;
+    const maxCameraX = this.map.COLUMNS * this.map.SIZE - this.w;
+    const maxCameraY = this.map.LINES * this.map.SIZE - this.h;
 
     // Ajuste a posição da câmera para manter o elemento centralizado na tela
     this.cameraX = Math.max(0, Math.min(cameraCenterX - halfScreenWidth, maxCameraX));
@@ -870,14 +846,20 @@ Scene.prototype.passo = function (dt) {
     this.globalCounter++
     if (this.theEnd <= 0) {
         this.gameDefiner();
-        this.limpar();
-        this.desenharMapa();
+        const currentStage = this.stageIndex;
         this.comportar();
         this.mover(dt);
-        this.desenhar();
-        this.checaColisao();
+        this.checaColisao(dt);
         this.removeSprites();
-        this.desenharHUD();
+        // Em uma troca de fase, gameDefiner carregara o novo mapa no proximo frame.
+        if (this.stageIndex === currentStage) {
+            this.updateCameraPosition();
+            this.limpar();
+            this.desenharMapa();
+            this.desenhar();
+            CollisionDebug.draw(this);
+            this.desenharHUD();
+        }
     }
     if (this.theEnd >= 10 && this.theEnd < 60) {
         this.theEnd -= 8 * dt;

@@ -29,8 +29,8 @@ function desenhaTiro() {
         192 * this.imgY + this.direcao * 48 + 1,
         48,
         48,
-        -this.w - 4 - cena1.cameraX,
-        -this.h / 2 - 15 - cena1.cameraY,
+        -16 - this.scene.cameraX,
+        -16 - this.scene.cameraY,
         32,
         32,
     );
@@ -40,40 +40,13 @@ function desenhaTiro() {
 
 //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
 function desenhaEspada() {
+    if (this._collisionExpired || !CollisionSystem.swordPose(this)) return;
     ctx.save();
-    /*ctx.fillStyle = "midnightblue";
-    ctx.fillRect(this.x,this.y,this.w,this.h);
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(this.x,this.y,this.w,this.h);*/
-    var posX = this.x;
-    var posY = this.y;
-    switch (this.direcao) {
-        case 0:
-            posX = posX + 8;
-            posY = posY - 9;
-            break;
-        case 1:
-            posX = posX + 7.7;
-            break;
-        case 3:
-            posY = posY + 5;
-            posX = posX + 2;
-            break;
-    }
-    ctx.translate(posX, posY);
-    var F = Math.floor(this.frame);
-    ctx.drawImage(
-        this.scene.assets.img(this.imagem),
-        144 * this.imgX,
-        192 * this.imgY + this.direcao * 48 - 1,
-        48,
-        48,
-        -this.w - cena1.cameraX,
-        -this.h / 2 - cena1.cameraY,
-        25,
-        25,
-    );
-
+    ctx.translate(this.x - this.scene.cameraX, this.y - this.scene.cameraY);
+    const offset = this.renderOffsetSword || { x: 0, y: 0 };
+    ctx.drawImage(this.scene.assets.img(this.imagem),
+        144 * this.imgX, 192 * this.imgY + this.direcao * 48 - 1, 48, 48,
+        -12.5 + offset.x, -12.5 + offset.y, 25, 25);
     ctx.restore();
 }
 
