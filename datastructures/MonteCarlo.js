@@ -1,144 +1,255 @@
-/** Class representing the Monte Carlo search tree. */
+/** Monte Carlo Tree Search para geração de Sokoban. */
 class MonteCarlo {
-
-    constructor(game, UCB1ExploreParam = 2) {
+    constructor(game, UCB1ExploreParam = 2, options = {}) {
         this.game = game
         this.UCB1ExploreParam = UCB1ExploreParam
-        this.nodes = new Map() // map: State.hash() => MonteCarloNode
+        this.nodes = new Map() // índice diagnóstico por chave canônica + horizonte
+        this.stateNodes = new WeakMap() // consulta por identidade, sem depender do histórico
+        this.roots = new Map() // raízes independentes, por identidade do estado
         this.best = null
-        this.bestScore = 0
-        this.transpositionTable = {};
+        this.bestScore = -Infinity
+        this.candidateLimit = Math.max(1, options.candidateLimit ?? 20)
+        this.candidates = new Map()
+        this.minBoxes = Math.max(2, options.minBoxes || 2)
+        this.maxDepth = options.maxDepth || 1024
+        this.scoreBounds = { min: Infinity, max: -Infinity }
+        // Compartilha apenas estatísticas de estados, não objetos de estado,
+        // pais, ações ou resultados individuais de simulações.
+        this.transpositionTable = new Map()
+        this.maxTranspositions = options.maxTranspositions ?? 4096
+        this.transpositionHits = 0
+        this.transpositionUpdates = 0
     }
 
-    /** If given state does not exist, create dangling node. */
     makeNode(state) {
-        if (!this.nodes.has(state.hash())) {
-            let unexpandedPlays = this.game.legalPlays(state).slice()
-            let node = new MonteCarloNode(null, null, state, unexpandedPlays)
-            this.nodes.set(state.hash(), node)
+        if (!this.roots.has(state)) {
+            const plays = state.finish ? [] : this.game.legalPlays(state)
+            const node = new MonteCarloNode(null, null, state, plays)
+            this.roots.set(state, node)
+            this.indexNode(node)
+        }
+        return this.roots.get(state)
+    }
+
+    stateKey(state, depth) {
+        // Horizontes diferentes podem ter distribuições de recompensa diferentes.
+        // A profundidade crescente também impede ciclos na mesma chave durante
+        // a retropropagação, mesmo quando a configuração física se repete.
+        if (typeof state.canonicalHash !== 'function') return null
+        return `${this.maxDepth - depth}:${state.canonicalHash()}`
+    }
+
+    indexNode(node) {
+        node.transpositionKey = this.stateKey(node.state, node.depth)
+        this.stateNodes.set(node.state, node)
+        const key = node.transpositionKey
+        if (key !== null && !this.nodes.has(key)) {
+            // Índice diagnóstico também limitado; a árvore mantém seus filhos.
+            if (this.nodes.size >= Math.max(1, this.maxTranspositions)) {
+                this.nodes.delete(this.nodes.keys().next().value)
+            }
+            this.nodes.set(key, node)
         }
     }
 
-    /** From given state, repeatedly run MCTS to build statistics. */
-    runSearch(state, totalMoves = 1000) {
-        this.makeNode(state)
-        let moves = 0
-        let start = Date.now()
-        while (moves < totalMoves) {
-            var score = 0
-            let node = this.select(state)
-            if (!node.prunning) {
-                if (node.isLeaf() === false) {
-                    node = this.expand(node)
-                    score = this.simulate(node)
-                }
-                this.backpropagate(node, score)
-
+    sharedStats(node, create = false) {
+        const key = node.transpositionKey
+        if (key == null || this.maxTranspositions <= 0) return null
+        let stats = this.transpositionTable.get(key)
+        if (stats) {
+            // LRU: preserva estados reutilizados recentemente.
+            this.transpositionTable.delete(key)
+            this.transpositionTable.set(key, stats)
+        } else if (create) {
+            if (this.transpositionTable.size >= this.maxTranspositions) {
+                this.transpositionTable.delete(this.transpositionTable.keys().next().value)
             }
-            moves++
+            stats = { n_plays: 0, n_valid: 0, n_wins: 0 }
+            this.transpositionTable.set(key, stats)
         }
-        //console.log("Movimentos:"+moves)
-        //var time = Date.now() - start
-        //console.log("Tempo: "+time)
+        return stats || null
+    }
+
+    getTranspositionStats() {
+        return { size: this.transpositionTable.size, hits: this.transpositionHits,
+            updates: this.transpositionUpdates }
+    }
+
+    /** deadline é um timestamp absoluto (Date.now()). */
+    runSearch(state, totalMoves = 1000, deadline = Infinity) {
+        if (Date.now() >= deadline) return this.best
+        const root = this.makeNode(state)
+        for (let moves = 0; moves < totalMoves && Date.now() < deadline; moves++) {
+            let node = this.select(state, deadline)
+            if (!node) break
+            let score
+            if (node.state.finish) {
+                score = this.evaluateTerminal(node.state)
+            } else if (node.isLeaf() || node.depth >= this.maxDepth) {
+                score = null // ramo sem saída ou além do limite de profundidade
+            } else {
+                if (Date.now() >= deadline) break
+                node = this.expand(node)
+                score = this.simulate(node, deadline)
+            }
+            // undefined: interrupção por tempo, não uma recompensa ruim.
+            if (score === undefined) break
+            this.backpropagate(node, score)
+            if (root.state.finish || root.isLeaf()) break
+        }
         return this.best
     }
 
-    /** Phase 1, Selection: Select until not fully expanded OR leaf */
-    select(state) {
-        let node = this.nodes.get(state.hash())
-        while (node.isFullyExpanded() && !node.isLeaf()) {
-            let plays = node.allPlays()
+    select(state, deadline = Infinity) {
+        let node = this.roots.get(state)
+        while (node.isFullyExpanded() && !node.isLeaf() && !node.state.finish && node.depth < this.maxDepth) {
+            if (Date.now() >= deadline) return null
             let bestPlay
             let bestUCB1 = -Infinity
-            for (let play of plays) {
-                let childUCB1 = node.childNode(play)
-                    .getUCB1(this.UCB1ExploreParam)
-                if (childUCB1 > bestUCB1) {
+            for (const play of node.allPlays()) {
+                const child = node.childNode(play)
+                const shared = this.sharedStats(child)
+                // Visitas da aresta local governam exploração. A média pode
+                // aproveitar amostras adicionais de outros caminhos.
+                const useShared = shared && shared.n_plays > child.n_plays
+                if (useShared) this.transpositionHits++
+                const value = child.getUCB1(this.UCB1ExploreParam, this.scoreBounds,
+                    useShared ? shared : child)
+                if (bestPlay === undefined || value > bestUCB1) {
                     bestPlay = play
-                    bestUCB1 = childUCB1
+                    bestUCB1 = value
                 }
             }
             node = node.childNode(bestPlay)
         }
-
         return node
     }
 
-    /** Phase 2, Expansion: Expand a random unexpanded child node */
     expand(node) {
-        let plays = node.unexpandedPlays()
-        let index = Math.floor(random.nextRandFloat() * plays.length)
-        let play = plays[index]
-        let childState = this.game.nextState(node.state, play)
-        let childUnexpandedPlays = this.game.legalPlays(childState)
-        let childNode = node.expand(play, childState, childUnexpandedPlays)
-        this.nodes.set(childState.hash(), childNode)
-
+        const plays = node.unexpandedPlays()
+        const play = plays[Math.floor(random.nextRandFloat() * plays.length)]
+        const childState = this.game.nextState(node.state, play)
+        const childPlays = childState.finish ? [] : this.game.legalPlays(childState)
+        const childNode = node.expand(play, childState, childPlays)
+        this.indexNode(childNode)
         return childNode
     }
 
-    /** Phase 3, Simulation: Play game to terminal state, return winner */
-    simulate(node) {
-        const stateHash = node.state.hash();
-    
-        // Check if the state has been visited before
-        if (this.transpositionTable[stateHash]) {
-            return this.transpositionTable[stateHash].score;
+    /** Validação estrutural; não substitui um solver de Sokoban. */
+    static isValidCandidate(state, minBoxes = 2) {
+        if (!state || !state.finish || !Number.isFinite(state.score)) return false
+        const { board, snapshot } = state
+        if (!Array.isArray(board) || !Array.isArray(snapshot) || !board.length || board.length !== snapshot.length) return false
+        const width = Array.isArray(board[0]) ? board[0].length : 0
+        if (!width) return false
+        let boxes = 0, goals = 0, different = false
+        for (let i = 0; i < board.length; i++) {
+            if (!Array.isArray(board[i]) || !Array.isArray(snapshot[i]) || board[i].length !== width || snapshot[i].length !== width) return false
+            for (let j = 0; j < width; j++) {
+                const before = snapshot[i][j], after = board[i][j]
+                if (!before || !after || typeof before.tipo !== 'string' || typeof after.tipo !== 'string') return false
+                if ((before.tipo === 'parede') !== (after.tipo === 'parede')) return false
+                const box = before.tipo === 'caixa', goal = after.tipo === 'caixa'
+                if (box) boxes++
+                if (goal) goals++
+                if (box !== goal) different = true
+            }
         }
-    
-        let state = node.state;
-    
-        while (!state.finish) {
-            let plays = this.game.legalPlays(state);
-            let play = plays[Math.floor(random.nextRandFloat() * plays.length)];
-            state = this.game.nextState(state, play);
-        }
-    
-        if (state.score > this.bestScore &&
-            Game.countCells(state.board, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") >= 2) {
-            this.bestScore = state.score;
-            this.best = state;
-        }
-    
-        // Store the result in the transposition table
-        this.transpositionTable[stateHash] = { score: state.score };
-    
-        return state.score;
+        return boxes >= Math.max(2, minBoxes) && boxes === goals && different
     }
-    
 
-    /** Phase 4, Backpropagation: Update ancestor statistics */
+    /** Puzzles jogáveis iguais não ocupam múltiplas vagas no pool. */
+    static candidateKey(state) {
+        const types = board => board.map(row => row.map(c => c.tipo === 'parede' ? '#' : c.tipo === 'caixa' ? '$' : c.tipo === 'jogador' ? '@' : '.').join('')).join('/')
+        const goals = state.board.map(row => row.map(c => c.tipo === 'caixa' ? '$' : '.').join('')).join('/')
+        return types(state.snapshot) + '|' + goals
+    }
+
+    rememberCandidate(state) {
+        const key = MonteCarlo.candidateKey(state)
+        const existing = this.candidates.get(key)
+        if (existing && existing.score >= state.score) return
+        if (!existing && this.candidates.size >= this.candidateLimit) {
+            let worstKey, worstScore = Infinity
+            for (const [k, v] of this.candidates) if (v.score < worstScore) { worstKey = k; worstScore = v.score }
+            if (state.score <= worstScore) return
+            this.candidates.delete(worstKey)
+        }
+        this.candidates.set(key, state)
+    }
+
+    getCandidates() { return [...this.candidates.values()].sort((a,b) => b.score-a.score) }
+
+    evaluateTerminal(state) {
+        if (!MonteCarlo.isValidCandidate(state, this.minBoxes)) return null
+        const score = state.score
+        this.rememberCandidate(state)
+        this.scoreBounds.min = Math.min(this.scoreBounds.min, score)
+        this.scoreBounds.max = Math.max(this.scoreBounds.max, score)
+        if (this.best === null || score > this.bestScore) {
+            this.bestScore = score
+            this.best = state
+        }
+        return score
+    }
+
+    /** null = candidato inválido; undefined = simulação interrompida por tempo. */
+    simulate(node, deadline = Infinity) {
+        let state = node.state
+        let depth = node.depth
+        while (!state.finish) {
+            if (Date.now() >= deadline) return undefined
+            if (depth >= this.maxDepth) return null
+            const plays = this.game.legalPlays(state)
+            if (!plays.length) return null
+            const play = typeof this.game.chooseRolloutPlay === 'function'
+                ? this.game.chooseRolloutPlay(state, plays)
+                : plays[Math.floor(random.nextRandFloat() * plays.length)]
+            state = this.game.nextState(state, play)
+            depth++
+        }
+        return this.evaluateTerminal(state)
+    }
+
     backpropagate(node, score) {
-
+        const valid = Number.isFinite(score)
+        const updated = new Set()
         while (node !== null) {
+            const shared = this.sharedStats(node, true)
+            if (shared && !updated.has(node.transpositionKey)) {
+                updated.add(node.transpositionKey)
+                shared.n_plays++
+                if (valid) {
+                    shared.n_wins += score
+                    shared.n_valid++
+                }
+                this.transpositionUpdates++
+            }
             node.n_plays += 1
-            node.n_wins += score
+            if (valid) {
+                node.n_wins += score // soma bruta dos scores válidos
+                node.n_valid += 1
+            }
             node = node.parent
         }
     }
 
-    /** Return MCTS statistics for this node and children nodes */
     getStats(state) {
-        let node = this.nodes.get(state.hash())
-        let stats = {
+        const node = this.roots.get(state) || this.stateNodes.get(state)
+        if (!node) return null
+        const stats = {
             n_plays: node.n_plays,
             n_wins: node.n_wins,
+            n_valid: node.n_valid,
             children: []
         }
-
-        for (let child of node.children.values()) {
-            if (child.node === null)
-                stats.children.push({
-                    play: child.play,
-                    n_plays: null,
-                    n_wins: null
-                })
-            else
-                stats.children.push({
-                    play: child.play,
-                    n_plays: child.node.n_plays,
-                    n_wins: child.node.n_wins
-                })
+        for (const child of node.children.values()) {
+            stats.children.push({
+                play: child.play,
+                n_plays: child.node ? child.node.n_plays : null,
+                n_wins: child.node ? child.node.n_wins : null,
+                n_valid: child.node ? child.node.n_valid : null
+            })
         }
         return stats
     }

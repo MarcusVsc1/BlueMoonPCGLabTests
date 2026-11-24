@@ -17,10 +17,12 @@ class MonteCarloNode {
 
 		// Monte Carlo stuff
 		this.n_plays = 0
-		this.n_wins = 0
+		this.n_wins = 0 // soma dos scores válidos, antes da normalização
+		this.n_valid = 0
 
 		// Tree stuff
 		this.parent = parent
+		this.depth = parent === null ? 0 : parent.depth + 1
 		this.children = new Map()
 		for (let play of unexpandedPlays) {
 			this.children.set(play.hash(), { play: play, node: null })
@@ -54,6 +56,7 @@ class MonteCarloNode {
 	 */
 	expand(play, childState, unexpandedPlays) {
 		if (!this.children.has(play.hash())) throw new Error("No such play!")
+		if (this.children.get(play.hash()).node !== null) throw new Error("Child already expanded!")
 		let childNode = new MonteCarloNode(this, play, childState, unexpandedPlays)
 		this.children.set(play.hash(), { play: play, node: childNode })
 		return childNode
@@ -107,8 +110,21 @@ class MonteCarloNode {
 	 * @param {number} biasParam - The square of the bias parameter in the UCB1 algorithm, defaults to 2.
 	 * @return {number} The UCB1 value of this node.
 	 */
-	getUCB1(biasParam) {
-		return (this.n_wins / this.n_plays) + Math.sqrt(biasParam * Math.log(this.parent.n_plays) / this.n_plays);
+	getUCB1(biasParam = 2, bounds = { min: 0, max: 1 }, stats = this) {
+		if (this.n_plays === 0) return Infinity
+		// Recompensa inválida = 0; válida = [0.5, 1]. As médias
+		// são normalizadas com os mesmos limites globais a cada seleção.
+		let exploitation = 0
+		if (stats.n_valid > 0 && stats.n_plays > 0) {
+			const mean = stats.n_wins / stats.n_valid
+			const range = bounds.max - bounds.min
+			const scaled = Number.isFinite(range) && range > 0
+				? Math.max(0, Math.min(1, (mean - bounds.min) / range)) : 0.5
+			exploitation = (stats.n_valid / stats.n_plays) * (0.5 + 0.5 * scaled)
+		}
+		if (this.parent === null) return exploitation
+		const exploration = Math.sqrt(Math.max(0, biasParam) * Math.log(Math.max(1, this.parent.n_plays)) / this.n_plays)
+		return exploitation + exploration
 	}
 
 }

@@ -2,11 +2,21 @@ class SokobanAgent {
     constructor(){
         this.defaultTag = "SokobanAgent"
         this.defaultSearchTotalMoves = 1000
+        this.defaultMaxAttempts = 20
+        this.defaultTimeBudgetMs = 2000
+        this.defaultRestartEveryAttempts = 10
+        this.targetDifficulty = null // null = qualquer nível; 1..5 = faixa obrigatória
+        this.difficultyCalibration = {} // pesos e limiares opcionais
+        this.rejectTrivial = false // true rejeita puzzles com solução direta comprovada
+        this.defaultSolverMaxExpanded = 4000
+        this.defaultCandidatesPerBatch = 8
+        this.defaultSolverReserveMs = 250
+        this.lastGeneration = null
     }
 
     gerarAgenteAuxiliar(room, collectible) {
         this.posicionarCollectible(room, collectible)
-        this.gerarSokoban(room, collectible)
+        return this.gerarSokoban(room, collectible)
     }
 
     gerarTagAuxiliar(mapGraph, room) {
@@ -24,32 +34,36 @@ class SokobanAgent {
 
     gerarSokoban(room, collectible) {
 
-        //console.log("Id da sala " + room.roomId)
-
+        this.lastGeneration = null
         this.roomTotalCells = room.roomHeight * room.roomWidth
+        const deadline = Date.now() + this.defaultTimeBudgetMs
+        const fail = () => {
+            // Mantém a geometria original e não registra um Sokoban inválido.
+            if (room.tag && room.tag.auxiliar === this.defaultTag) {
+                room.tag.auxiliar = null
+            }
+            console.warn("SokobanAgent: nenhum puzzle válido com pelo menos 2 caixas na sala " + room.roomId)
+            return false
+        }
+        if (!room.cells.length || !room.terminalCells || !room.terminalCells.length) return fail()
 
-        var startCell = {
+        const startCell = {
             x: room.terminalCells[0].y - room.cells[0].y,
             y: room.terminalCells[0].x - room.cells[0].x,
         }
-        let game = new Game()
-        let mcts = new MonteCarlo(game)
-        let state = game.start(startCell, room.roomHeight, room.roomWidth)
-        var winner = state;
-        winner.score = 0
-        var tentativas = 0
-        mcts.best = winner
-        // From initial state, take turns to play game until finished
-        //console.time("total mcts")
-        while (Game.countCells(winner.board, { x: 0, y: 0 }, { x: winner.board.length - 1, y: winner.board[0].length - 1 }, "caixa") < 2) {
-            winner = mcts.runSearch(state, this.defaultSearchTotalMoves)
-            tentativas++
-            if (tentativas == 20) {
-                mcts = new MonteCarlo(game)
-                tentativas = 0
-            }
-        }
-        //console.timeEnd("total mcts")
+        if (!Number.isInteger(startCell.x) || !Number.isInteger(startCell.y) ||
+            startCell.x < 0 || startCell.y < 0 || startCell.x >= room.roomHeight || startCell.y >= room.roomWidth) return fail()
+        const game = new Game()
+        const state = game.start(startCell, room.roomHeight, room.roomWidth)
+        this.lastGeneration = SokobanDifficulty.generate(game, state, {
+            deadline, totalMoves: this.defaultSearchTotalMoves, maxAttempts: this.defaultMaxAttempts,
+            restartEvery: this.defaultRestartEveryAttempts, targetDifficulty: this.targetDifficulty,
+            rejectTrivial: this.rejectTrivial, calibration: this.difficultyCalibration, maxExpanded: this.defaultSolverMaxExpanded,
+            maxCandidatesPerBatch: this.defaultCandidatesPerBatch, solverReserveMs: this.defaultSolverReserveMs
+        })
+        const {winner, analysis} = this.lastGeneration
+        if (!winner || winner.snapshot.length !== room.roomHeight || winner.snapshot[0].length !== room.roomWidth ||
+            winner.snapshot[startCell.x][startCell.y].tipo !== 'jogador') return fail()
 
         //console.log("Score: " + winner.score)
         var matrizMapeada = this.mapBoardToGameMap(winner)
@@ -57,9 +71,8 @@ class SokobanAgent {
         var boxes = this.placeBoxes(winner, room.cells[0])
         var goals = this.placeGoals(winner, room.cells[0])
         this.mapToDungeon(room.cells[0], matrizMapeada)
-        cena1.sokobans.push({ boxes: boxes, goals: goals, room: room, startCell: startCell, countdown: 0.5, collectible: collectible })
-
-
+        cena1.sokobans.push({ boxes: boxes, goals: goals, room: room, startCell: startCell, countdown: 0.5, collectible: collectible, difficulty: analysis })
+        return true
     }
 
     formatMatrix(matrix) {

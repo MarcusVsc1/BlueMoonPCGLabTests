@@ -4,6 +4,8 @@
 class Game {
     constructor() {
         this.winner = null
+        this.evaluationCache = new Map()
+        this.maxEvaluationCache = 2048
     }
     /** Generate and return the initial game state. */
     start(initialPosition, m, n) {
@@ -26,52 +28,83 @@ class Game {
         return new SokobanState(matriz)
     }
 
-    /** Return the current player’s legal moves from given state. */
+    /** Retorna ações legais nas duas fases de geração. */
     legalPlays(state) {
-        let legalPlays = []
-
-        if (!state.finish) {
-            var player = this.findPositionByType(state.board, "jogador")[0]
-            //verifica se já congelou o tabuleiro
-            if (!state.snapped) {
-                //conjunto de jogadas: inserir uma caixa em um espaço vazio (Place Box)
-                var candidateCells = this.findPositionByType(state.board, "vazio")
-                for (var cell of candidateCells) {
-                    cell.tipo = "caixa"
-                    legalPlays.push(new Play(cell))
-                }
-                //conjunto de jogadas: inserir um espaço vazio próximo a um espaço que não é parede (Delete obstacle)
-                /*
-                candidateCells.push(player)
-                candidateCells.push(... this.findPositionByType(state.board, "caixa"))
-                var newEmptyCells = this.findWallNeighbors(candidateCells, state.board)
-                for (var cell of newEmptyCells) {
-                    cell.tipo = "vazio"
-                    legalPlays.push(new Play(cell))
-                }
-                */
-                if (Game.countCells(state.board, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") > 5) {
-                    legalPlays.push(new Play({}))
-                }
-            } else {
-                if (Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa") > 0) {
-                    // conjunto de jogadas: mover jogador (Move Agent)
-                    const directions = [{ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }];
-                    for (const direction of directions) {
-                        if (this.isMoveValid(player, direction, state.board)) {
-                            var params = { direction: null }
-                            params.direction = direction
-                            legalPlays.push(new Play(params))
-                        }
-                    }
-                }
-                legalPlays.push(new Play({}))
+        if (state.finish) return []
+        const legalPlays = []
+        if (!state.snapped) {
+            const empty = this.findPositionByType(state.board, "vazio")
+            const boxes = this.findPositionByType(state.board, "caixa").length
+            // Duas caixas finais continuam sendo o mínimo; caixas do rascunho
+            // podem virar paredes ou ser descartadas. Reserva espaço para manobra.
+            if (empty.length > 2) {
+                for (const cell of empty) legalPlays.push(new Play({ ...cell, tipo: "caixa" }))
             }
-            //adiciona uma jogada vazia. no método nextState(), verifica se há congelou o nível
-            //serve tanto para o Freeze Level quanto para o Evaluate Level
-
+            if (boxes >= 2 || !legalPlays.length) legalPlays.push(new Play({}))
+        } else {
+            const player = this.findPositionByType(state.board, "jogador")[0]
+            if (player && this.findPositionByType(state.snapshot, "caixa").length) {
+                for (const direction of Game.directions()) {
+                    if (this.isMoveValid(player, direction, state.board)) legalPlays.push(new Play({ direction }))
+                }
+            }
+            // Encerrar é legal inclusive em becos sem saída. A aceitação final
+            // (>= 2 caixas, objetivos diferentes) continua responsabilidade do MCTS.
+            legalPlays.push(new Play({}))
         }
         return legalPlays
+    }
+
+    static directions() {
+        return [{ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }]
+    }
+
+    static copyBoard(board) {
+        return board.map(row => row.map(cell => ({ ...cell })))
+    }
+
+    /** Copia por demanda: tabuleiros compartilhados nunca são mutados. */
+    copyState(state, changes) {
+        return Object.assign(new SokobanState(), state, changes)
+    }
+
+    /** Política estocástica: somente rollouts, não elimina ações da árvore. */
+    chooseRolloutPlay(state, plays, nextRandom = () => random.nextRandFloat()) {
+        if (!plays.length) return undefined
+        // Mantém exploração aleatória, inclusive alternativas pouco promissoras.
+        if (nextRandom() < 0.12) return plays[Math.floor(nextRandom() * plays.length)]
+        const boxes = this.findPositionByType(state.board, "caixa")
+        let weights
+        if (!state.snapped) {
+            const area = state.board.length * state.board[0].length
+            const target = Math.max(3, Math.min(12, Math.round(area * 0.22)))
+            const placementCount = plays.filter(p => p.tipo).length
+            weights = plays.map(p => {
+                if (!p.tipo) return Math.max(1, placementCount) * (boxes.length >= target ? 3 : 0.06)
+                return 1
+            })
+        } else {
+            const player = this.findPositionByType(state.board, "jogador")[0]
+            const useful = this.findPositionByType(state.finalBoard || state.board, "caixa")
+                .filter(p => (state.finalBoard || state.board)[p.x][p.y].moves >= 2).length
+            weights = plays.map(p => {
+                if (!p.direction) return useful >= 2 ? 0.8 : (plays.length === 1 ? 1 : 0.015)
+                if (!player) return 1
+                const cell = state.board[player.x + p.direction.x][player.y + p.direction.y]
+                if (cell.tipo === "caixa") {
+                    // Favorece a inclusão de outras caixas e mudanças de direção.
+                    const changed = cell.lastDirection && (cell.lastDirection.x !== p.direction.x || cell.lastDirection.y !== p.direction.y)
+                    return (cell.moves < 2 ? 5 : 2) * (changed ? 1.7 : 1)
+                }
+                return cell.visitado ? 0.7 : 1.7
+            })
+        }
+        let threshold = nextRandom() * weights.reduce((a, b) => a + b, 0)
+        for (let i = 0; i < plays.length; i++) {
+            threshold -= weights[i]
+            if (threshold < 0) return plays[i]
+        }
+        return plays[plays.length - 1]
     }
 
     /** Advance the given state and return it. */
@@ -92,94 +125,162 @@ class Game {
     }
 
     positionNewElement(state, play, newHistory) {
-        var newCell = {
-            tipo: play.tipo,
-            moves: 0,
-            boxId: play.boxId
-        }
-        var newState = JSON.parse(JSON.stringify(state))
-        newState.board[play.x][play.y] = newCell
-        newState.playHistory = newHistory
-        return Object.assign(new SokobanState(), newState)
+        const board = Game.copyBoard(state.board)
+        board[play.x][play.y] = { tipo: play.tipo, moves: 0, boxId: play.boxId, visitado: false }
+        return this.copyState(state, { board, playHistory: newHistory })
     }
 
     freezeLevel(state, newHistory) {
-        var newState = JSON.parse(JSON.stringify(state))
-        newState.snapped = true
-        newState.snapshot = state.board
-        newState.playHistory = newHistory
-        newState.finalBoard = JSON.parse(JSON.stringify(state.board))
-        return Object.assign(new SokobanState(), newState)
+        const snapshot = Game.copyBoard(state.board)
+        return this.copyState(state, {
+            snapped: true, snapshot, finalBoard: Game.copyBoard(state.board), playHistory: newHistory
+        })
     }
 
     movePlayer(state, play, newHistory) {
-        var newState = JSON.parse(JSON.stringify(state))
-        var direction = play.direction
-        var player = this.findPositionByType(newState.board, "jogador")[0]
-        var nextPosition = newState.board[player.x + direction.x][player.y + direction.y]
-        var moved = false
-        if (nextPosition.tipo == "caixa") {
-            if(nextPosition.moves > 0){
-                moved = true
-            }
-            newState.board[player.x + direction.x * 2][player.y + direction.y * 2] = {
-                tipo: "caixa",
-                moves: nextPosition.moves + 1,
-                boxId: nextPosition.boxId
+        const board = Game.copyBoard(state.board)
+        const { direction } = play
+        const player = this.findPositionByType(board, "jogador")[0]
+        const x = player.x + direction.x, y = player.y + direction.y
+        const next = board[x][y]
+        let moved = false
+        if (next.tipo === "caixa") {
+            moved = next.moves > 0
+            board[x + direction.x][y + direction.y] = {
+                tipo: "caixa", moves: next.moves + 1, boxId: next.boxId,
+                visitado: true, lastDirection: { ...direction }
             }
         }
-        newState.board[player.x][player.y].tipo = "vazio"
-        newState.board[player.x + direction.x][player.y + direction.y].tipo = "jogador"
-        newState.board[player.x + direction.x][player.y + direction.y].visitado = true
-        newState.board[player.x + direction.x][player.y + direction.y].moves = undefined
-        newState.playHistory = newHistory
-        if (moved == true) {
-            newState.finalBoard = JSON.parse(JSON.stringify(newState.board))
-        }
-
-        return Object.assign(new SokobanState(), newState)
+        // Limpa metadados de caixa da célula agora ocupada pelo jogador.
+        board[player.x][player.y] = { tipo: "vazio", visitado: true }
+        board[x][y] = { tipo: "jogador", visitado: true }
+        return this.copyState(state, {
+            board, playHistory: newHistory, finalBoard: moved ? board : state.finalBoard
+        })
     }
 
     finishGame(state, newHistory) {
-        var newState = JSON.parse(JSON.stringify(state))
-        newState.finish = true
-        newState.playHistory = newHistory
-        newState.board = JSON.parse(JSON.stringify(newState.finalBoard))
-
+        const newState = this.copyState(state, {
+            finish: true, playHistory: newHistory,
+            board: Game.copyBoard(state.finalBoard || state.board),
+            snapshot: Game.copyBoard(state.snapshot || state.board)
+        })
         this.postProcessing(newState)
-        newState.score = this.calculateScore(newState)
-        return Object.assign(new SokobanState(), newState)
+        const key = this.evaluationKey(newState)
+        if (this.evaluationCache.has(key)) {
+            newState.score = this.evaluationCache.get(key)
+        } else {
+            newState.score = this.calculateScore(newState)
+            if (this.evaluationCache.size >= this.maxEvaluationCache) {
+                this.evaluationCache.delete(this.evaluationCache.keys().next().value)
+            }
+            this.evaluationCache.set(key, newState.score)
+        }
+        return newState
     }
 
+    /** Cache de avaliações finais, não compartilha nós ou estados da árvore.
+     * IDs globais de caixas são substituídos por correspondências de coordenadas.
+     */
+    evaluationKey(state) {
+        const types = board => board.map(row => row.map(cell => cell.tipo))
+        const pairs = this.findSameBoxIdBoxPositions(state.board, state.snapshot)
+            .map(p => [p.matrix1.x, p.matrix1.y, p.matrix2.x, p.matrix2.y])
+        return JSON.stringify([types(state.snapshot), types(state.board), pairs])
+    }
 
     /*
         finalização de um tabuleiro
     */
 
     postProcessing(state) {
-        var boxPositions = this.findSameBoxIdBoxPositions(state.board, state.snapshot)
-        for (var position of boxPositions) {
-            var box = state.board[position.matrix1.x][position.matrix1.y]
-            if (box.moves == 0) {
-                state.snapshot[position.matrix2.x][position.matrix2.y].tipo = "parede"
-                state.board[position.matrix1.x][position.matrix1.y].tipo = "parede"
-            }
-            if (box.moves == 1) {
-                state.snapshot[position.matrix2.x][position.matrix2.y].tipo = "vazio"
-                state.snapshot[position.matrix2.x][position.matrix2.y].visitado = true
-                state.board[position.matrix1.x][position.matrix1.y].tipo = "vazio"
-                state.board[position.matrix1.x][position.matrix1.y].visitado = true
+        const positions = this.findSameBoxIdBoxPositions(state.board, state.snapshot)
+        for (const p of positions) {
+            const box = state.board[p.matrix1.x][p.matrix1.y]
+            if (box.moves === 0) {
+                state.snapshot[p.matrix2.x][p.matrix2.y] = { tipo: "parede", visitado: false }
+                state.board[p.matrix1.x][p.matrix1.y] = { tipo: "parede", visitado: false }
+            } else if (box.moves === 1) {
+                state.snapshot[p.matrix2.x][p.matrix2.y] = { tipo: "vazio", visitado: true }
+                state.board[p.matrix1.x][p.matrix1.y] = { tipo: "vazio", visitado: true }
             }
         }
         this.removeUnreachableCells(state)
     }
 
-    calculateScore(state, wb = 5, wc = 10, wn = 1, k = 50) {
+    calculateScore(state, wb = 5, wc = 10, wn = 1, k = 50, wd = 20) {
+        const pairs = this.findSameBoxIdBoxPositions(state.board, state.snapshot)
+        if (pairs.length < 2) return 0
+        const area = state.board.length * state.board[0].length
+        // Componentes limitados, evitando que distância ou tamanho dominem a avaliação.
+        const heterogeneity = this.calcularScoreHeterogeneo(state) / area
+        const congestion = this.calcularScoreCongestionamento(state)
+        const conflict = congestion > 0 ? congestion / (75 + congestion) : 0
+        const boxes = Math.min(1, pairs.length / 6)
+        const difficulty = this.calcularScoreDificuldade(state)
+        // Sem mudanças de direção nem congestionamento, a geometria por si só
+        // não deve elevar muito a pontuação. Pesos experimentais, não calibrados.
+        const logicFactor = 0.15 + 0.85 * Math.max(difficulty, conflict)
+        const raw = Math.sqrt(Math.max(0, wb * heterogeneity + wc * conflict + wn * boxes + wd * difficulty)) * logicFactor / Math.max(1, k)
+        return Game.normalizarScore(raw)
+    }
 
-        var scoreCaixas = Game.countCells(state.snapshot, { x: 0, y: 0 }, { x: state.board.length - 1, y: state.board[0].length - 1 }, "caixa")
-        var scoreCongestionamento = this.calcularScoreCongestionamento(state);
-        var scoreHeterogeneo = this.calcularScoreHeterogeneo(state)
-        return Math.sqrt(wb * scoreHeterogeneo + wc * scoreCongestionamento + wn * scoreCaixas) / k
+    /** Proxy de dificuldade: mínimo de segmentos de empurrão para cada caixa
+     * em isolamento, relaxando outras caixas e acesso do jogador entre empurrões.
+     * Não é uma prova de dificuldade humana nem um solver do puzzle completo.
+     */
+    calcularScoreDificuldade(state) {
+        const pairs = this.findSameBoxIdBoxPositions(state.board, state.snapshot)
+        if (!pairs.length) return 0
+        let score = 0
+        for (const p of pairs) {
+            const lines = this.minimumBoxLines(state.snapshot, p.matrix2, p.matrix1)
+            if (!Number.isFinite(lines)) continue
+            // Um corredor reto, independentemente do comprimento, vale zero.
+            score += Math.min(1, Math.max(0, lines - 1) / 4)
+        }
+        return score / pairs.length
+    }
+
+    minimumBoxLines(board, start, goal) {
+        if (start.x === goal.x && start.y === goal.y) return 0
+        const dirs = Game.directions(), rows = board.length, cols = board[0].length
+        const floor = (x, y) => x >= 0 && x < rows && y >= 0 && y < cols && board[x][y].tipo !== "parede"
+        const dist = new Int16Array(rows * cols * 4).fill(32767)
+        const index = (x, y, d) => (x * cols + y) * 4 + d
+        const queue = []
+        for (let d = 0; d < 4; d++) {
+            const v = dirs[d], x = start.x + v.x, y = start.y + v.y
+            if (floor(x, y) && floor(start.x - v.x, start.y - v.y)) {
+                dist[index(x, y, d)] = 1
+                queue.push([x, y, d])
+            }
+        }
+        // Relaxamento de arestas com custo 0 (mesma direção) ou 1 (nova linha).
+        for (let head = 0; head < queue.length; head++) {
+            const [x, y, prev] = queue[head], base = dist[index(x, y, prev)]
+            for (let d = 0; d < 4; d++) {
+                const v = dirs[d], nx = x + v.x, ny = y + v.y
+                if (!floor(nx, ny) || !floor(x - v.x, y - v.y)) continue
+                const i = index(nx, ny, d), cost = base + (d === prev ? 0 : 1)
+                if (cost < dist[i]) {
+                    dist[i] = cost
+                    queue.push([nx, ny, d])
+                }
+            }
+        }
+        const best = Math.min(...dirs.map((_, d) => dist[index(goal.x, goal.y, d)]))
+        return best === 32767 ? Infinity : best
+    }
+
+    /*
+        Normaliza o score bruto para o intervalo [0,1), faixa que o UCB1 assume.
+        A transformação é monotônica, então preserva a ordem entre estados, e
+        também absorve NaN/Infinity (ex.: divisão por zero no congestionamento).
+    */
+    static normalizarScore(scoreBruto) {
+        if (!Number.isFinite(scoreBruto) || scoreBruto <= 0) return 0
+        return scoreBruto / (1 + scoreBruto)
     }
 
     calcularScoreHeterogeneo(state) {
@@ -205,7 +306,9 @@ class Game {
             var goalCount = Game.countCells(evalMatrix, matrix1, matrix2, "caixa") - 1
             var wallCount = Game.countCells(evalMatrix, matrix1, matrix2, "parede")
             var rectangleArea = (Math.abs(matrix2.x - matrix1.x) + 1) * (Math.abs(matrix2.y - matrix1.y) + 1)
-            var boxScore = (alfa * boxCount + beta * goalCount) / (gama * (rectangleArea - wallCount))
+            var denominator = gama * (rectangleArea - wallCount)
+            if (denominator <= 0) continue
+            var boxScore = (alfa * Math.max(0, boxCount) + beta * Math.max(0, goalCount)) / denominator
             scoreCongestionamento = scoreCongestionamento + boxScore
 
         }
@@ -225,7 +328,7 @@ class Game {
 
         for (let i = min_x; i <= max_x; i++) {
             for (let j = min_y; j <= max_y; j++) {
-                if (matriz[i] && matriz[i][j].tipo == tipo) {
+                if (matriz[i] && matriz[i][j] && matriz[i][j].tipo == tipo) {
                     contador++;
                 }
             }
@@ -283,7 +386,7 @@ class Game {
         as posições passadas por parâmetro são garantidas de ser espaços vazios ou o jogador
     */
     findWallNeighbors(posicoes, board) {
-        const vizinhos = new Set();
+        const vizinhos = new Map();
 
         const numRows = board.length;
         const numCols = board[0].length;
@@ -305,12 +408,12 @@ class Game {
                     newY >= 0 && newY < numCols &&
                     board[newX][newY].tipo === "parede"
                 ) {
-                    vizinhos.add({ x: newX, y: newY, tipo: "vazio" });
+                    vizinhos.set(`${newX},${newY}`, { x: newX, y: newY, tipo: "vazio" });
                 }
             }
         }
 
-        return Array.from(vizinhos); // Converter o conjunto em uma matriz
+        return Array.from(vizinhos.values()); // Converter o conjunto em uma matriz
     }
 
     /*
@@ -381,23 +484,22 @@ class Game {
         localiza nas matrizes as posições de caixas de mesmo id
     */
     findSameBoxIdBoxPositions(matriz1, matriz2) {
-        const posicoes = [];
-
-        for (let i = 0; i < matriz1.length; i++) {
-            for (let j = 0; j < matriz1[i].length; j++) {
-                const caixa1 = matriz1[i][j];
-                for (let x = 0; x < matriz2.length; x++) {
-                    for (let y = 0; y < matriz2[x].length; y++) {
-                        const caixa2 = matriz2[x][y];
-                        if (caixa1.tipo === "caixa" && caixa2.tipo === "caixa" && caixa1.boxId === caixa2.boxId) {
-                            posicoes.push({ matrix1: { x: i, y: j }, matrix2: { x, y } });
-                        }
-                    }
+        const byId = new Map(), posicoes = []
+        for (let x = 0; x < matriz2.length; x++) {
+            for (let y = 0; y < matriz2[x].length; y++) {
+                const cell = matriz2[x][y]
+                if (cell.tipo === "caixa") byId.set(cell.boxId, { x, y })
+            }
+        }
+        for (let x = 0; x < matriz1.length; x++) {
+            for (let y = 0; y < matriz1[x].length; y++) {
+                const cell = matriz1[x][y]
+                if (cell.tipo === "caixa" && byId.has(cell.boxId)) {
+                    posicoes.push({ matrix1: { x, y }, matrix2: byId.get(cell.boxId) })
                 }
             }
         }
-
-        return posicoes;
+        return posicoes
     }
 
     static mapearMatriz(matriz) {
@@ -422,17 +524,16 @@ class Game {
     }
 
     removeUnreachableCells(state) {
-        var board = state.board
-        var snapshot = state.snapshot
-        const rows = board.length;
-        const cols = board[0].length;
-
-        // Remove unreachable cells
+        const { board, snapshot } = state
         for (let i = 0; i < snapshot.length; i++) {
             for (let j = 0; j < snapshot[i].length; j++) {
-                if (board[i][j].tipo === "vazio" && !board[i][j].visitado) {
-                    board[i][j].tipo = "parede";
-                    snapshot[i][j].tipo = "parede";
+                const before = snapshot[i][j], after = board[i][j]
+                // Somente fecha células vazias em ambos os tabuleiros que não
+                // participaram do trajeto do jogador nem de uma caixa empurrada.
+                if (before.tipo === "vazio" && after.tipo === "vazio" &&
+                    !before.visitado && !after.visitado) {
+                    snapshot[i][j] = { tipo: "parede", visitado: false }
+                    board[i][j] = { tipo: "parede", visitado: false }
                 }
             }
         }
