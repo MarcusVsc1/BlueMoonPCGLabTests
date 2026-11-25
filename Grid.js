@@ -93,6 +93,53 @@ const BMAutoTile = (() => {
         return mask;
     }
 
+    // BM_AUTOTILE_TEXTURE_CACHE_V1: montar tiles a 1:1, sem interpolar o atlas.
+    // Cache por imagem e receita, nunca por posicao do mapa ou camera.
+    const tileTextures=new WeakMap();
+    function cachedTexture(ctx,img,key,parts){
+        if(!img || (typeof img!=='object' && typeof img!=='function') || img.complete===false) return null;
+        const w=img.naturalWidth ?? img.width, h=img.naturalHeight ?? img.height;
+        if(!(w>0 && h>0)) return null;
+        // Se a mesma instancia de Image trocar de URL, invalidar o cache.
+        const stamp=(img.currentSrc || img.src || '')+'|'+w+'x'+h;
+        let bucket=tileTextures.get(img);
+        if(!bucket || bucket.stamp!==stamp){bucket={stamp,tiles:new Map()};tileTextures.set(img,bucket);}
+        if(bucket.tiles.has(key))return bucket.tiles.get(key);
+        const doc=ctx.canvas?.ownerDocument || (typeof document!=='undefined' ? document : null);
+        const tile=doc ? doc.createElement('canvas') : typeof OffscreenCanvas!=='undefined' ? new OffscreenCanvas(48,48) : null;
+        if(!tile)return null;
+        tile.width=48;tile.height=48;
+        const tc=tile.getContext('2d');
+        if(!tc)return null;
+        tc.imageSmoothingEnabled=false;
+        for(const [sx,sy,size,tx,ty] of parts){
+            if(sx<0||sy<0||sx+size>w||sy+size>h)return null;
+            tc.drawImage(img,sx,sy,size,size,tx,ty,size,size);
+        }
+        bucket.tiles.set(key,tile);
+        return tile;
+    }
+    function paintTexture(ctx,img,key,parts,dx,dy,z){
+        const tile=cachedTexture(ctx,img,key,parts);
+        if(tile){ctx.drawImage(tile,dx,dy,z,z);return;}
+        // Fallback para a inicializacao dos assets/contextos sem Canvas auxiliar.
+        for(const [sx,sy,size,tx,ty] of parts){
+            ctx.drawImage(img,sx,sy,size,size,dx+tx*z/48,dy+ty*z/48,size*z/48,size*z/48);
+        }
+    }
+    const singles=new Map([[408,504],[384,432],[480,288],[480,432]].map(([sx,sy])=>{
+        const key='s:'+sx+','+sy;return [key,[[sx,sy,48,0,0]]];
+    }));
+    function paintSingle(ctx,img,sx,sy,dx,dy,z){
+        const key='s:'+sx+','+sy;
+        paintTexture(ctx,img,key,singles.get(key),dx,dy,z);
+    }
+    // Receitas equivalentes compartilham a mesma textura (47 formas canonicas).
+    const tileRecipes=[[384,432],[480,288],[480,432]].map(([ox,oy])=>recipes.map(r=>({
+        key:'q:'+ox+','+oy+':'+r.map(q=>q.join(',')).join(';'),
+        parts:r.map(([sx,sy],i)=>[ox+sx,oy+sy,24,(i%2)*24,(i>>1)*24])
+    })));
+
     function draw(g,ctx,scene,x,y,img){
         const raw=type(g,x,y);
         if(raw!==6&&raw!==11&&raw!==13&&!isHole(raw))return false;
@@ -107,15 +154,12 @@ const BMAutoTile = (() => {
         // Se houver parede adjacente, desenhe a borda correspondente para
         // preservar a face inferior das paredes e a continuidade nos cantos.
         if(isHole(t)&&mask===255){
-            ctx.drawImage(img,408,504,48,48,dx,dy,z,z);return true;
+            paintSingle(ctx,img,408,504,dx,dy,z);return true;
         }
 
-        if((mask&15)===0){ctx.drawImage(img,ox,oy,48,48,dx,dy,z,z);return true;}
-        const h=z/2;
-        for(let i=0;i<4;i++){
-            const [sx,sy]=recipes[mask][i];
-            ctx.drawImage(img,ox+sx,oy+sy,24,24,dx+(i%2)*h,dy+(i>>1)*h,h,h);
-        }
+        if((mask&15)===0){paintSingle(ctx,img,ox,oy,dx,dy,z);return true;}
+        const recipe=tileRecipes[isHole(t)?0:t===6?1:2][mask];
+        paintTexture(ctx,img,recipe.key,recipe.parts,dx,dy,z);
         return true;
     }
 
