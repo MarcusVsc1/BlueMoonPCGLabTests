@@ -167,41 +167,70 @@ function desenharCelulas(cells, fillStyle) {
     });
 }
 
-function preencherComPreto(room) {
-    ctx.save();
-    const salaX = room.cells[0].x * 32
-    const salaY = room.cells[0].y * 32
-    const larguraSala = room.roomWidth * 32
-    const alturaSala = room.roomHeight * 32
-
-    const pcX = pc.x/* posição X do personagem */;
-    const pcY = pc.y/* posição Y do personagem */;
-
-    // Raio do buraco circular
-    const raioDoBuraco = 48;
-
-    // Posição do buraco em relação ao canto superior esquerdo da sala (considerando a translação)
-    const buracoX = pcX - salaX - raioDoBuraco - cena1.cameraX;
-    const buracoY = pcY - salaY - raioDoBuraco - cena1.cameraY;
-
-    ctx.translate(salaX, salaY)
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(- cena1.cameraX, - cena1.cameraY, larguraSala, alturaSala)
-    if (pc.x >= salaX && pc.x <= salaX + larguraSala && pc.y >= salaY && pc.y <= salaY + alturaSala) {
-        ctx.arc(buracoX + raioDoBuraco - 2, buracoY + raioDoBuraco - 4, raioDoBuraco, 0, Math.PI * 2);
+// BM_DARKROOM_SOFT_V1: mascara separada do canvas do jogo.
+const BMDarkRoom = (() => {
+    let layer, mask;
+    const black = 'rgba(0,0,0,1)', clear = 'rgba(0,0,0,0)';
+    function draw(room, scene) {
+        if (!room?.cells?.length || !scene?.ctx || !scene.pc) return;
+        const ctx = scene.ctx, z = scene.map?.SIZE || 32;
+        const x0 = room.cells[0].x * z, y0 = room.cells[0].y * z;
+        const w = room.roomWidth * z, h = room.roomHeight * z;
+        if (![x0,y0,w,h].every(Number.isFinite) || w <= 0 || h <= 0) return;
+        const feather = z / 2, radius = z * 1.5, inner = z;
+        const x = x0 - scene.cameraX, y = y0 - scene.cameraY;
+        const left = Math.max(0, Math.floor(x - feather)), top = Math.max(0, Math.floor(y - feather));
+        const right = Math.min(ctx.canvas.width, Math.ceil(x + w + feather));
+        const bottom = Math.min(ctx.canvas.height, Math.ceil(y + h + feather));
+        if (right <= left || bottom <= top) return;
+        if (!layer) { layer = document.createElement('canvas'); mask = layer.getContext('2d'); }
+        const bw = right-left, bh = bottom-top;
+        // Uma unica superficie reutilizada; tamanho limitado a viewport.
+        if (layer.width < bw || layer.height < bh) {
+            layer.width = Math.max(bw,layer.width); layer.height = Math.max(bh,layer.height);
+        }
+        mask.setTransform(1,0,0,1,0,0);
+        mask.globalAlpha = 1;
+        mask.globalCompositeOperation = 'source-over';
+        mask.clearRect(0,0,bw,bh);
+        const a = x-left, b = y-top, c = a+w, d = b+h;
+        mask.fillStyle = black;
+        mask.fillRect(a,b,w,h);
+        function strip(x1,y1,x2,y2,rx,ry,rw,rh) {
+            const g = mask.createLinearGradient(x1,y1,x2,y2);
+            g.addColorStop(0,black); g.addColorStop(0.5,'rgba(0,0,0,0.5)'); g.addColorStop(1,clear);
+            mask.fillStyle = g; mask.fillRect(rx,ry,rw,rh);
+        }
+        strip(a,b,a-feather,b,a-feather,b,feather,h);
+        strip(c,b,c+feather,b,c,b,feather,h);
+        strip(a,b,a,b-feather,a,b-feather,w,feather);
+        strip(a,d,a,d+feather,a,d,w,feather);
+        for (const [cx,cy,rx,ry] of [[a,b,a-feather,b-feather],[c,b,c,b-feather],[a,d,a-feather,d],[c,d,c,d]]) {
+            const g = mask.createRadialGradient(cx,cy,0,cx,cy,feather);
+            g.addColorStop(0,black); g.addColorStop(0.5,'rgba(0,0,0,0.5)'); g.addColorStop(1,clear);
+            mask.fillStyle = g; mask.fillRect(rx,ry,feather,feather);
+        }
+        const pc = scene.pc;
+        // Mesmo criterio de entrada e deslocamento do centro da versao original.
+        if (pc.x >= x0 && pc.x <= x0+w && pc.y >= y0 && pc.y <= y0+h) {
+            const cx = pc.x-scene.cameraX-left-2, cy = pc.y-scene.cameraY-top-4;
+            const light = mask.createRadialGradient(cx,cy,inner,cx,cy,radius);
+            light.addColorStop(0,black); light.addColorStop(1,clear);
+            mask.globalCompositeOperation = 'destination-out';
+            mask.fillStyle = light;
+            mask.fillRect(cx-radius,cy-radius,radius*2,radius*2);
+            mask.globalCompositeOperation = 'source-over';
+        }
+        ctx.save();
+        try {
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+            ctx.drawImage(layer,0,0,bw,bh,left,top,bw,bh);
+        } finally { ctx.restore(); }
     }
-    ctx.clip('evenodd');
-    ctx.closePath();
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
-    ctx.fill();
-    ctx.restore();
-
-
-    ctx.restore();
-
+    return Object.freeze({draw});
+})();
+function preencherComPreto(room) {
+    BMDarkRoom.draw(room, cena1);
 }
 
 function desenharQuadradoComX(ctx) {

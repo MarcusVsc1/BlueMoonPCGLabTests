@@ -1,22 +1,47 @@
-# BlueMoon - dissipacao V2
+# BlueMoon versão *roguelike*
 
-Extraia a pasta inteira. No PowerShell, dentro dela:
+Versão adaptada do jogo BlueMoon para o gênero *roguelike*
 
-```powershell
-node .\aplicar-projeteis-v2.js "C:\Users\Marcus\Documents\BlueMoonPCGLabTests"
-```
+![enter image description here](https://i.imgur.com/IEyAGFb.jpg)
 
-Aceita a revisao de colisoes anterior a dissipacao ou a primeira revisao dos projeteis. Verifica a integracao em Scene.js e faz backup. Opcional: acrescente --dry-run para verificar sem gravar. Recarregue o navegador com Ctrl+F5. Nao copie patch-base.js ou tests para o jogo.
 
-Parede/vazio: 220 ms de tempo-base, mais uma pequena entrada visual (ate 6 px, no maximo 60 ms de tempo adicional); 32 px de deslocamento total no maximo. A opacidade cai suavemente apos a entrada visual. O tiro fisico continua parando no primeiro impacto e nao causa dano apos sua remocao. Bloqueios de tipo 7/10 mantem 60 ms e 2 px; limites de mapa continuam com remocao direta. Espada, espinhos, colisoes de movimento, Kruskal, Prim, Sokoban e renderizacao global nao sao modificados.
+# Controles
 
-Para conferir se a revisao esta carregada, abra o Console do navegador (F12) e digite:
+ - **WASD**: Botões direcionais de movimento
+ - **K**: Ataque com espada
+ - **J**: Atira bola de fogo
+ - **P**: Reseta sala de sokoban*
 
-```js
-[CollisionSystem.projectileFadeSeconds, CollisionSystem.projectileFadePixels,
- typeof cena1.desenhar === 'function' && cena1.desenhar.toString().includes('drawProjectileFades')]
-```
+*para resetar a sala, precisa estar dentro dela. Fora das salas de sokoban, este comando não tem efeito
+*sokoban são os puzzles de empurrar caixas até uma área de destino
 
-Esperado: [0.22, 32, true]. Se continuar abrupto apesar disso, envie Scene.js e utils/CollisionSystem.js da copia local, e informe se o efeito ocorre no tiro da personagem ou inimigo.
+**Funciona também com joystick**:
+- Direcionais: movimento
+- X: Ataque com espada
+- □: Atira bola de fogo
+- R2: Reseta sala de sokoban
 
-Testes: 68 de regressao e 16 especificos, incluindo desenho com as coordenadas/recorte/alpha do desenho real em um Canvas simulado, 60 FPS, remocao fisica, limites e integracao das chamadas. Tambem verificada a equivalencia de atualizar a V1 ou a revisao anterior. Nao executado o jogo completo em navegador. A origem exata do sintoma na maquina local ainda nao esta confirmada.
+![enter image description here](https://p7.hiclipart.com/preview/348/543/811/playstation-3-black-sixaxis-playstation-2-playstation-4-gamepad.jpg)
+
+## Como jogar
+
+- **Baixando o jogo**:
+Vá até o canto superior direito, clique no botão "<> Code" e depois "Download ZIP"
+![enter image description here](https://i.imgur.com/dQHimFf.png)
+
+- **Abrindo o jogo**:
+Abra o arquivo index.html na pasta principal do jogo. O jogo abrirá automaticamente.
+
+## Avaliação do jogo
+
+Agradecemos pelo seu tempo ao testar o BlueMoon Roguelike! Este é um projeto acadêmico que visa criar um jogo roguelike com ênfase em quebra-cabeças.
+Pedimos que preencha o formulário de avaliação a seguir, é muito importante para este trabalho e é bem rapidinho! :) 
+
+https://forms.gle/vocKj9kQA5pzjQbu6
+
+## Repetindo o mesmo jogo
+
+O jogo muda a cada vez que é jogado, porém é possível repetir o mesmo jogo. Para isso, adicione ao final da url da página "?seed=n", substituindo n pelo número do jogo. Com isso, o jogo será igual ao ser jogado novamente. Por exemplo, se quiser jogar o jogo 3, a url ficaria:
+
+file:///C:/dcc138-2019-3-trb2-MarcusVsc1/index.html?seed=3
+
