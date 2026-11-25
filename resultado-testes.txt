@@ -1,0 +1,89 @@
+OK parede direita
+OK parede esquerda
+OK parede baixo
+OK parede cima
+OK quina diagonal
+OK hitbox cobre mais que uma linha
+OK desliza na parede
+OK nao atravessa parede distante
+OK borda direita e inferior retangular
+OK borda esquerda e superior
+OK spawn na borda pode sair
+OK atravessa preservado
+OK lava e gelo passaveis
+OK diagonal normalizada no jogador
+OK dt zero seguro
+OK coordenadas da celula atualizadas
+OK hitbox independente e offset
+OK projetil bloqueado no tile 6
+OK projetil bloqueado no tile 7
+OK projetil bloqueado no tile 9
+OK projetil bloqueado no tile 10
+OK projetil bloqueado no tile 11
+OK projetil bloqueado no tile 12
+OK projetil cruza tile liberado com atravessa
+OK projetil detecta alvo no caminho
+OK projetil tangente desliza sem falso impacto
+OK limpeza de projeteis
+OK espada ancorada na mao 0
+OK espada ancorada na mao 1
+OK espada ancorada na mao 2
+OK espada ancorada na mao 3
+OK espada expirada nao colide
+OK empurrar caixa valida
+OK nao empilha caixas
+OK nao empurra por diagonal ou lado errado
+OK regra esquerda bloqueia piso nao zero
+OK caixa nao sai da sala
+OK uma caixa por ataque
+OK cooldown sem tiros
+OK reset com origens sobrepostas a iniciais
+40 testes de regressao aprovados.
+OK ancora e alcance baseado nos pixels, direcao 0
+OK ancora e alcance baseado nos pixels, direcao 1
+OK ancora e alcance baseado nos pixels, direcao 2
+OK ancora e alcance baseado nos pixels, direcao 3
+OK cache de pixels nao rele o frame
+OK alavanca: aciona apenas quando lamina e pixels visiveis se cruzam
+OK alavanca: sobreposicao com hitbox antiga nao basta
+OK alavanca: cabo nao aciona
+OK interruptor 24px usa origem visual propria
+OK fallback CORS: geometria reduzida e jogavel
+OK espada expirada nao ativa a alavanca
+OK patch de desenho preserva demais funcoes e nao reaplica
+12 testes especificos aprovados.
+OK area perigosa coincide com imagem 24x24 deslocada
+OK pes na metade inferior da hitbox fisica
+OK hitbox fisica permanece 12x12
+OK corredor acima dos espinhos: sem dano ao tangenciar tile
+OK corredor a direita: sem dano na antiga margem invisivel
+OK corredor abaixo: sem dano na antiga margem invisivel
+OK borda direita: tangencia segura, entrada causa dano
+OK borda esquerda: tangencia segura, entrada causa dano
+OK borda acima: tangencia segura, entrada causa dano
+OK borda abaixo: tangencia segura, entrada causa dano
+OK espinhos levantados causam dano no centro, em ambas as ordens
+OK espinhos recolhidos nao causam dano; reativacao causa
+OK customizacao dos retangulos
+OK colisao generica preserva contato por bordas
+OK espada para baixo preserva ajuste de 23 px
+OK F2 desenha as mesmas regioes em coordenadas de camera
+16 testes de espinhos aprovados.
+OK parede/vazio 6
+OK parede/vazio 8
+OK parede/vazio 9
+OK parede/vazio 11
+OK parede/vazio 12
+OK parede/vazio -1
+OK bloqueio 7
+OK bloqueio 10
+OK render realista em 60 fps, camera, opacidade e remocao das listas
+OK nao causa dano atras da parede
+OK inimigo atingido antes nao gera dissipacao de parede
+OK tiro inimigo desenhado somente na camada certa
+OK projeteis lentos nao aceleram
+OK atravessa e limite do mapa
+OK troca de mapa e espada preservados
+OK instalador integra Scene antiga e valida a ja atualizada
+16 testes de dissipacao V2 aprovados.
+OK instalacao sobre a versao anterior ao efeito e sobre a V1 (resultado identico).

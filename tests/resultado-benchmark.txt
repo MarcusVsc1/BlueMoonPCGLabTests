@@ -1,0 +1,5 @@
+45 6 success 10/10 attempts 10 mean ms 21
+55 12 success 10/10 attempts 11 mean ms 122
+65 16 success 10/10 attempts 10 mean ms 309
+70 20 success 10/10 attempts 10 mean ms 582
+Mazes: 310/310

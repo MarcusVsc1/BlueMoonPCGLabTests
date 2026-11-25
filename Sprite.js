@@ -78,16 +78,25 @@ Sprite.prototype.desenhar = function (ctx) {
     var F = Math.floor(this.frame);
     if (this.vx == 0 && this.vy == 0 && this.props.tipo == "pc") { F = 1; }
     if (this.charStop > 0) { F = 0; }
+    // LYRA_HD_RECORTE: escala do arquivo, nao do mundo.
+    const sheet = this.scene.assets.img(img);
+    const ratio = sheet.naturalWidth / 576;
+    const hd = img === "hero" && Number.isInteger(ratio) && ratio > 1 && sheet.naturalHeight === 384 * ratio;
+    const sourceScale = hd ? ratio : 1;
+    if (hd) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+    }
     ctx.drawImage(
-        this.scene.assets.img(img),
-        144 * picX + (F % 3) * 48,
-        192 * picY + d * 48 + 1,
-        48,
-        48,
+        sheet,
+        (144 * picX + (F % 3) * 48) * sourceScale,
+        (192 * picY + d * 48 + (hd ? 0 : 1)) * sourceScale,
+        48 * sourceScale,
+        48 * sourceScale,
         this.renderOffset.x,
         this.renderOffset.y,
         30,
-        30,
+        30
     );
     if(this.props.tipo == "npc" && this.maxVidas > 1){
         ctx.fillStyle = "white";

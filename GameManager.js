@@ -488,7 +488,7 @@ GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
 
 GameManager.prototype.criarFireball = function (posX, posY, level, fireplaces) {
     return new Sprite({
-        x: posX * 32 + 32, y: posY * 32 + 32, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: 0.4 - (level - 1) * 0.1, firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
+        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: 0.4 - (level - 1) * 0.1, firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
         contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, level: level, toggled: false, props: { tipo: "tiroE" }
     });
 }

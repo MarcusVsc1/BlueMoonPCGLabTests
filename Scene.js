@@ -90,12 +90,28 @@ Scene.prototype.adicionar = function (sprite) {
 
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
 Scene.prototype.desenhar = function () {
+    // LYRA_GAMEOVER_DRAW: tela de derrota independente da lista de objetos e da camera.
+    if (this.stageIndex === 2 && this.pc && this.pc.vidas <= 0) {
+        const sheet = this.assets.img("expressoes");
+        const ctx = this.ctx;
+        ctx.save();
+        try {
+            ctx.globalAlpha = 1;
+            ctx.drawImage(sheet, 336, 241, 48, 48, (this.w - 120) / 2, (this.h - 120) / 2 - 22.5, 120, 120);
+        } finally { ctx.restore(); }
+        return;
+    }
+
+    // Dispositivo antilava: abaixo das labaredas, uma unica vez.
+    for (const obj of this.spritesO) {
+        if (CollisionSystem.isLavaDevice(obj)) obj.desenhar(this.ctx);
+    }
 
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].desenhar(this.ctx);
     }
     for (var i = 0; i < this.spritesO.length; i++) {
-        if (this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId)
+        if (!CollisionSystem.isLavaDevice(this.spritesO[i]) && (this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId))
             this.spritesO[i].desenhar(this.ctx);
     }
     for (var sokoban of this.sokobans) {
@@ -138,7 +154,7 @@ Scene.prototype.desenhar = function () {
         if (this.pc.desenhar) { this.pc.desenhar(this.ctx); }
     }
     for (var i = 0; i < this.spritesO.length; i++) {
-        if (this.spritesO[i].y > this.pc.y && this.spritesO[i].switchId == null) this.spritesO[i].desenhar(this.ctx);
+        if (!CollisionSystem.isLavaDevice(this.spritesO[i]) && this.spritesO[i].y > this.pc.y && this.spritesO[i].switchId == null) this.spritesO[i].desenhar(this.ctx);
     }
 
 
@@ -164,7 +180,7 @@ Scene.prototype.mover = function (dt) {
         this.spritesE[i].mover(dt);
     }
     for (var i = 0; i < this.spritesT.length; i++) {
-        this.spritesT[i].mover(dt);
+        if (!CollisionSystem.tickStationaryProjectile(this.spritesT[i], dt)) this.spritesT[i].mover(dt);
     }
     for (var i = 0; i < this.spritesPoder.length; i++) {
         this.spritesPoder[i].mover(dt);
@@ -173,7 +189,7 @@ Scene.prototype.mover = function (dt) {
         this.spritesTP[i].mover(dt);
     }
     for (var i = 0; i < this.spritesTE.length; i++) {
-        this.spritesTE[i].mover(dt);
+        if (!CollisionSystem.tickStationaryProjectile(this.spritesTE[i], dt)) this.spritesTE[i].mover(dt);
     }
     for (var i = 0; i < this.spritesO.length; i++) {
         this.spritesO[i].mover(dt);
@@ -213,12 +229,12 @@ Scene.prototype.comportar = function () {
         }
     }
     for (var i = 0; i < this.spritesT.length; i++) {
-        if (this.spritesT[i].comportar) {
+        if (!this.spritesT[i]._stationaryFade && this.spritesT[i].comportar) {
             this.spritesT[i].comportar();
         }
     }
     for (var i = 0; i < this.spritesTE.length; i++) {
-        if (this.spritesTE[i].comportar) {
+        if (!this.spritesTE[i]._stationaryFade && this.spritesTE[i].comportar) {
             this.spritesTE[i].comportar();
         }
     }
@@ -245,6 +261,9 @@ Scene.prototype.limpar = function () {
 
 //checa colisao entre sprites
 Scene.prototype.checaColisao = function (dt = 1/60) {
+    // LYRA_GAMEOVER_GUARD: nao repetir a transicao nem limpar os objetos da tela.
+    if (this.stageIndex === 2 && this.pc && this.pc.vidas <= 0) return;
+
     //não exatamente colisão, mas verifica se a posição do jogador é em lava
     var playerPositionX = Math.floor(this.pc.x / this.map.SIZE);
     var playerPositionY = Math.floor(this.pc.y / this.map.SIZE);
@@ -794,7 +813,11 @@ Scene.prototype.desenharDialogo = function () {
         this.frameCounter++
         ctx.font = "30px Medieval";
         ctx.fillStyle = this.caution ? `rgba(255, 0, 0, ${this.mensagemOpacity})` : `rgba(255, 255, 255, ${this.mensagemOpacity})`;
-        ctx.fillText(this.dialogo, 90, this.h - 75);
+        // BlueMoon: separadores de linha do dialogo
+        const linhasDialogo = String(this.dialogo).split(/_|\r?\n/);
+        linhasDialogo.forEach((linha, indice) => {
+            ctx.fillText(linhasDialogo.length === 1 ? linha : linha.trim(), 90, this.h - 75 + indice * 30);
+        });
         if (this.frameCounter >= 180 && this.stageIndex < 1) {
             this.mensagemOpacity -= 0.02;
         }

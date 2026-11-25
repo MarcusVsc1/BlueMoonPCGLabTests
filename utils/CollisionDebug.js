@@ -22,6 +22,7 @@ class CollisionDebug {
             worldRect(b,s.toggled?'#ff8228':'#999');
         }
         for(const s of [scene.pc,...scene.spritesE,...scene.spritesTE,...scene.spritesT,...scene.sokobans.flatMap(p=>p.boxes)].filter(Boolean)) {
+            if(s._stationaryFade) continue;
             if(s.props?.modelo==='espada') {
                 if(s._collisionExpired) continue;
                 CollisionSystem.swordPose(s);

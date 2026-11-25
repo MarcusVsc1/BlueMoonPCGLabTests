@@ -1,0 +1,22 @@
+OK Graph: distancia zero e primeira sala na ordenacao
+OK Graph: BFS em ciclo e caminho mais curto
+OK Graph: aresta inacessivel retorna null
+OK Graph: caminho ate aresta inclui a propria aresta
+OK Graph: Manhattan e todas as combinacoes
+OK A*: desvio de terceira sala
+OK Kruskal: mapa fisico e grafo consistentes
+OK Validador: corredor interrompido
+OK Validador: piso nao registrado
+OK Kruskal: limite de grau aplicado nos dois lados
+OK Kruskal: reproducibilidade da semente
+OK Prim: todas as entradas de borda em salas 5-10
+OK Prim: rejeita ciclos e passagens isoladas
+OK Prim: objetivo em distancia maxima e sem atravessar paredes
+OK Prim: posicionamento do collectible e coordenadas do Grid
+OK Estilos: sequencias ortogonais e quatro formas distintas
+OK Estilos: recusa obstaculo, contato com outra sala e auto-atalho
+OK Estilos: fallback A* quando diagonal impossivel
+OK Estilos: pesos zero preservam A* e nao consomem sorteio
+OK Estilos: peso unico seleciona somente o estilo pedido
+OK Estilos: limite de extensao, entradas e conectividade em mapas completos
+Total: 21 testes aprovados

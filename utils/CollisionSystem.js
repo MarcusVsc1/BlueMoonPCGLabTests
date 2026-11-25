@@ -78,25 +78,40 @@ class CollisionSystem {
         }
         return lo>=0 && lo<=1 ? lo:null;
     }
-    static moveProjectile(s,dt) {
+    // Dissipacao exclusivamente visual, em segundos e pixels de mundo.
+    static projectileFadeSeconds = 0.35;
+        static moveProjectile(s,dt) {
+        if(s._collisionExpired) return;
         const map=s.scene?.map;
         if(!map || !Number.isFinite(dt) || dt<=0) return;
         const a=this.box(s),dx=s.vx*dt,dy=s.vy*dt,z=this.size(map),n=this.bounds(map);
         if(!Number.isFinite(dx)||!Number.isFinite(dy)) return;
-        let t=1;
+        let t=1, impact=null;
         // Examina a caixa envolvente da trajetoria e seleciona o primeiro impacto.
         const x0=Math.max(-1,Math.floor((Math.min(a.x,a.x+dx)-a.w/2)/z));
         const x1=Math.min(n.w,Math.floor((Math.max(a.x,a.x+dx)+a.w/2)/z));
         const y0=Math.max(-1,Math.floor((Math.min(a.y,a.y+dy)-a.h/2)/z));
         const y1=Math.min(n.h,Math.floor((Math.max(a.y,a.y+dy)+a.h/2)/z));
         for(let x=x0;x<=x1;x++) for(let y=y0;y<=y1;y++) {
-            if(!this.solid(map,x,y,s)) continue;
+            const tile=this.tile(map,x,y);
+            // Buraco preto tambem encerra tiros comuns; atravessa=1 preservado.
+            if(!this.solid(map,x,y,s) && !(s.atravessa!=1 && Number(tile?.tipo)===-1)) continue;
             const hit=this.sweep(a,dx,dy,{x:(x+.5)*z,y:(y+.5)*z,w:z,h:z});
-            if(hit!==null) t=Math.min(t,hit);
+            const kind=!tile?'bounds':[7,10].includes(Number(tile.tipo))?'barrier':'wall';
+            const rank={wall:0,barrier:1,bounds:2};
+            if(hit!==null && (hit<t || (hit===t && impact && rank[kind]>rank[impact]))) {
+                t=hit;impact=kind;
+            }
         }
         s._collisionSweep={a,dx:dx*t,dy:dy*t};
         s.x+=dx*t;s.y+=dy*t; this.sync(s,map);
-        if(t<1) s._collisionWall=true;
+        if(t<1) {
+            s._collisionWall=true;
+            s._projectileImpact={kind:impact,vx:s.vx,vy:s.vy};
+            // Para no impacto. A checagem de alvos usa somente o segmento anterior;
+            // a limpeza no mesmo frame desativa definitivamente a colisao.
+            s.vx=0;s.vy=0;
+        }
     }
     static projectile(s) { return ['tiro','tiroE','tiroQ'].includes(s?.props?.tipo) && s.props.modelo!=='espada'; }
     // A mesma janela do spritesheet usada por desenhaEspada/desenharAlavanca.
@@ -202,7 +217,35 @@ class CollisionSystem {
         const mask=this.frameMask(img,size*s.imgX,size*2*Number(s.toggled)+size*4*s.imgY,size,size);
         if(!mask) {
             if(!this.imageReady(img)) return [];
-            return [{x:s.x-s.w/2+12,y:s.y-s.h/2+12,w:12,h:12}];
+            // Botao de piso: fallback aproximado do contorno visivel, distinto da alavanca.
+            // A mascara alfa real continua tendo prioridade quando disponivel.
+            const cx=s.x-s.w/2+12, cy=s.y-s.h/2+12;
+            if(s.imagem==='switch' && s.imgX===10 && s.imgY===1) {
+                return [
+                    {x:cx-.25,y:cy-4.75,w:12,h:3},
+                    {x:cx-.75,y:cy+.75,w:15,h:8},
+                    {x:cx-.75,y:cy+6.25,w:11,h:3}
+                ];
+            }
+            // Alavanca comum: faixas aproximadas do sprite (24x24), incluindo a base.
+            // Nao altera o botao nem o dispositivo antilava. Mascara alfa tem prioridade.
+            if(s.imagem==='switch' && s.imgX===2 && s.imgY===0) {
+                return [
+                    {x:cx,y:cy-4.5,w:12,h:3},
+                    {x:cx,y:cy+1,w:15,h:8},
+                    {x:cx,y:cy+8,w:17,h:6}
+                ];
+            }
+            // Dispositivo antilava: fallback proprio, incluindo a parte superior visivel.
+            // Coordenadas relativas ao centro do desenho 24x24, nao ao centro do tile.
+            if(s.imagem==='switch' && s.imgX===0 && s.imgY===0) {
+                return [
+                    {x:cx+.5,y:cy-10.5,w:16,h:3},
+                    {x:cx,y:cy-3.5,w:15,h:11},
+                    {x:cx,y:cy+4.5,w:15,h:5}
+                ];
+            }
+            return [{x:cx,y:cy,w:12,h:12}];
         }
         // Iguais aos deslocamentos e tamanho em desenharAlavanca().
         return this.worldRects(mask.runs,s.x-s.w/2,s.y-s.h/2,24/size);
@@ -216,20 +259,21 @@ class CollisionSystem {
     // Contato com o chao, separado da colisao fisica e do combate.
     // O sprite do heroi termina em y+6; os pes ocupam a metade inferior
     // da hitbox fisica original. Personalizavel sem modificar w/h.
+    // LYRA_SPIKE_GAP_FIX
     static groundRect(pc) {
         const b=this.box(pc), g=pc.groundBox||{};
         return {x:pc.x+(g.offsetX??(b.x-pc.x)),
-            y:pc.y+(g.offsetY??(b.y-pc.y+b.h/2-3)),
-            w:g.w??8,h:g.h??6};
+            y:pc.y+(g.offsetY??(b.y-pc.y+b.h/2-5)),
+            w:g.w??10,h:g.h??10};
     }
     // desenharEspinho: imagem 24x24 em (x-w/2,y-h/2).
-    // Margem interna de 2 px em cada lado; centro visual em x-4,y-4
+    // Area visual completa de 24 px; centro visual em x-4,y-4
     // quando as dimensoes do sprite sao 32x32.
     static hazardRect(spike) {
         const b=spike.hazardBox||{};
         return {x:spike.x+(b.offsetX??(12-spike.w/2)),
             y:spike.y+(b.offsetY??(12-spike.h/2)),
-            w:b.w??20,h:b.h??20};
+            w:b.w??24,h:b.h??24};
     }
     static spikeContact(pc,spike) {
         if(!spike.toggled) return false;
@@ -239,6 +283,9 @@ class CollisionSystem {
     }
     static intersects(a,b) {
         if (!a || !b || a._collisionExpired || b._collisionExpired) return false;
+        // Se a parede foi atingida neste frame, so vale o caminho anterior ao impacto.
+        if(a._collisionWall && this.projectile(a)) return this.preWallContact(a,b);
+        if(b._collisionWall && this.projectile(b)) return this.preWallContact(b,a);
         // Apenas jogador x espinho: preserva todas as demais interacoes.
         if(a.props?.tipo==='pc' && b.props?.tipo==='espinho') return this.spikeContact(a,b);
         if(b.props?.tipo==='pc' && a.props?.tipo==='espinho') return this.spikeContact(b,a);
@@ -297,11 +344,50 @@ class CollisionSystem {
         for(const sword of scene.spritesT) if(sword.props?.modelo==='espada') {sword._collisionExpired=true;scene.toRemove.push(sword);}
         return true;
     }
-    static cleanupProjectiles(scene) {
+    static preWallContact(s,target) {
+        const p=s._collisionSweep;
+        if(!p || Math.hypot(p.dx,p.dy)<=this.eps) return false;
+        return this.sweep(p.a,p.dx,p.dy,this.box(target,'hurtBox'))!==null;
+    }
+    static stopProjectile(s,kind) {
+        if(s._stationaryFade) return;
+        s._collisionExpired=true;
+        s._collisionSweep=null;
+        s.vx=0;s.vy=0;
+        if(kind==='bounds') {
+            if(!s.scene.toRemove.includes(s)) s.scene.toRemove.push(s);
+            return;
+        }
+        const alpha=s.toggled?0.5:Math.max(0,Math.min(1,Number.isFinite(s.opacity)?s.opacity:1));
+        s.toggled=false;s.opacity=alpha;
+        s._stationaryFade={age:0,alpha,x:s.x,y:s.y};
+    }
+    static tickStationaryProjectile(s,dt) {
+        const f=s._stationaryFade;
+        if(!f) return false;
+        const step=Number.isFinite(dt)?Math.max(0,dt):0;
+        f.age+=step;
+        s.x=f.x;s.y=f.y;s.vx=0;s.vy=0;
+        const t=Math.min(1,f.age/Math.max(this.eps,this.projectileFadeSeconds));
+        s.opacity=f.alpha*(1-t);
+        if(t>=1 && !s.scene.toRemove.includes(s))s.scene.toRemove.push(s);
+        return true;
+    }
+    static isLavaDevice(s) {
+        return s?.props?.subtipo==='alavanca' && s.imagem==='switch' && s.imgX===0 && s.imgY===0;
+    }
+    static cleanupProjectiles(scene,dt=1/60) {
         const map=scene.map,z=this.size(map),n=this.bounds(map);
         for(const s of [...scene.spritesT,...scene.spritesTE]) {
-            if(s.props?.modelo==='espada') continue;
-            if(s._collisionWall || s.x<0 || s.y<0 || s.x>=n.w*z || s.y>=n.h*z) scene.toRemove.push(s);
+            if(s.props?.modelo==='espada' || s._stationaryFade) continue;
+            const outside=s.x<0 || s.y<0 || s.x>=n.w*z || s.y>=n.h*z;
+            if(s._collisionWall || outside) {
+                if(!scene.toRemove.includes(s)) {
+                    if(outside || !s._projectileImpact || s._projectileImpact.kind==='bounds') {
+                        s._collisionExpired=true;scene.toRemove.push(s);
+                    } else this.stopProjectile(s,s._projectileImpact.kind);
+                } else s._collisionExpired=true;
+            }
             s._collisionSweep=null;
         }
     }

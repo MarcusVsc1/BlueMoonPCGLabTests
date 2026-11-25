@@ -1,0 +1,25 @@
+'use strict';
+const assert=require('node:assert/strict'), fs=require('node:fs'), vm=require('node:vm'), path=require('node:path');
+const load=f=>fs.readFileSync(path.join(__dirname,'../utils',f),'utf8');
+const context=vm.createContext({addEventListener(){}});
+vm.runInContext(load('CollisionSystem.js')+'\n'+load('CollisionDebug.js'),context);
+const C=vm.runInContext('CollisionSystem',context), D=vm.runInContext('CollisionDebug',context);
+let count=0;
+function test(name,fn){fn();count++;console.log('OK '+name);}
+const pc=(x=48,y=48)=>({x,y,w:12,h:12,props:{tipo:'pc'}});
+const spike=(x=80,y=48,toggled=true)=>({x,y,w:32,h:32,toggled,props:{tipo:'espinho'}});
+const rect=b=>[b.x,b.y,b.w,b.h];
+test('area perigosa coincide com imagem 24x24 deslocada',()=>assert.deepEqual(rect(C.hazardRect(spike())),[76,44,20,20]));
+test('pes na metade inferior da hitbox fisica',()=>assert.deepEqual(rect(C.groundRect(pc())),[48,51,8,6]));
+test('hitbox fisica permanece 12x12',()=>assert.deepEqual(rect(C.box(pc())),[48,48,12,12]));
+test('corredor acima dos espinhos: sem dano ao tangenciar tile',()=>assert.equal(C.intersects(pc(76,26),spike()),false));
+test('corredor a direita: sem dano na antiga margem invisivel',()=>{const p=pc(98,44);assert.ok(C.overlaps(C.box(p),C.box(spike())));assert.equal(C.intersects(p,spike()),false);});
+test('corredor abaixo: sem dano na antiga margem invisivel',()=>{const p=pc(76,62);assert.ok(C.overlaps(C.box(p),C.box(spike())));assert.equal(C.intersects(p,spike()),false);});
+for(const [side,x,y,dx,dy] of [['direita',90,41,-1,0],['esquerda',62,41,1,0],['acima',76,28,0,1],['abaixo',76,54,0,-1]]) test('borda '+side+': tangencia segura, entrada causa dano',()=>{assert.equal(C.intersects(pc(x,y),spike()),false);assert.equal(C.intersects(pc(x+dx,y+dy),spike()),true);});
+test('espinhos levantados causam dano no centro, em ambas as ordens',()=>{const p=pc(76,41),s=spike();assert.equal(C.intersects(p,s),true);assert.equal(C.intersects(s,p),true);});
+test('espinhos recolhidos nao causam dano; reativacao causa',()=>{const p=pc(76,41),s=spike(80,48,false);assert.equal(C.intersects(s,p),false);s.toggled=true;assert.equal(C.intersects(s,p),true);});
+test('customizacao dos retangulos',()=>{const p=pc();p.groundBox={w:4,h:2,offsetX:1,offsetY:2};assert.deepEqual(rect(C.groundRect(p)),[49,50,4,2]);const s=spike();s.hazardBox={w:12,h:14,offsetX:0,offsetY:1};assert.deepEqual(rect(C.hazardRect(s)),[80,49,12,14]);});
+test('colisao generica preserva contato por bordas',()=>{const a=pc(),b={x:60,y:48,w:12,h:12,props:{tipo:'npc'}};assert.equal(C.intersects(a,b),true);});
+test('espada para baixo preserva ajuste de 23 px',()=>assert.equal(C.handAnchors[0].y,23));
+test('F2 desenha as mesmas regioes em coordenadas de camera',()=>{const calls=[];const ctx={save(){},restore(){},strokeRect(...a){calls.push([this.strokeStyle,...a]);},fillRect(){},fillText(){}};const s=spike(),p=pc();const scene={pc:p,spritesSpike:[s],spritesE:[],spritesTE:[],spritesT:[],sokobans:[],spritesO:[],ctx,cameraX:10,cameraY:20,w:200,h:200,map:{SIZE:32,COLUMNS:6,LINES:6,cells:Array.from({length:6},()=>Array.from({length:6},()=>({tipo:0})))}};D.enabled=true;D.draw(scene);assert.ok(calls.some(c=>JSON.stringify(c)===JSON.stringify(['#ff8228',56,14,20,20])));assert.ok(calls.some(c=>JSON.stringify(c)===JSON.stringify(['#00ffb0',34,28,8,6])));s.toggled=false;calls.length=0;D.draw(scene);assert.ok(calls.some(c=>c[0]==='#999'));});
+console.log(count+' testes de espinhos aprovados.');

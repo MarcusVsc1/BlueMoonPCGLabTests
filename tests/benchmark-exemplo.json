@@ -1,0 +1,5806 @@
+{
+  "dungeons": [
+    {
+      "seed": "bench-0",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 31,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 371,
+        "walkable": 371,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 38,
+      "leaves": 3
+    },
+    {
+      "seed": "bench-1",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 19,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 359,
+        "walkable": 359,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 39,
+      "leaves": 3
+    },
+    {
+      "seed": "bench-2",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 32,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 510,
+        "walkable": 510,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 24,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-3",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 24,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 430,
+        "walkable": 430,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 6,
+      "relaxations": 0,
+      "corridorTiles": 27,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-4",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 18,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 337,
+        "walkable": 337,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 6,
+      "relaxations": 0,
+      "corridorTiles": 35,
+      "leaves": 3
+    },
+    {
+      "seed": "bench-5",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 15,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 354,
+        "walkable": 354,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 7,
+      "relaxations": 0,
+      "corridorTiles": 38,
+      "leaves": 2
+    },
+    {
+      "seed": "bench-6",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 15,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 341,
+        "walkable": 341,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 31,
+      "leaves": 3
+    },
+    {
+      "seed": "bench-7",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 16,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 339,
+        "walkable": 339,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 36,
+      "leaves": 2
+    },
+    {
+      "seed": "bench-8",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 15,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 352,
+        "walkable": 352,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 38,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-9",
+      "size": 45,
+      "rooms": 6,
+      "attempts": 1,
+      "ms": 22,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 379,
+        "walkable": 379,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "searches": 5,
+      "relaxations": 0,
+      "corridorTiles": 39,
+      "leaves": 2
+    },
+    {
+      "seed": "bench-0",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 126,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 839,
+        "walkable": 839,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 11,
+      "relaxations": 0,
+      "corridorTiles": 58,
+      "leaves": 3
+    },
+    {
+      "seed": "bench-1",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 125,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 731,
+        "walkable": 731,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 11,
+      "relaxations": 0,
+      "corridorTiles": 54,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-2",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 133,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 747,
+        "walkable": 747,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 11,
+      "relaxations": 0,
+      "corridorTiles": 63,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-3",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 2,
+      "ms": 114,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 641,
+        "walkable": 641,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 11,
+      "relaxations": 0,
+      "corridorTiles": 55,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-4",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 112,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 666,
+        "walkable": 666,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 12,
+      "relaxations": 0,
+      "corridorTiles": 71,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-5",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 117,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 760,
+        "walkable": 760,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 12,
+      "relaxations": 0,
+      "corridorTiles": 48,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-6",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 99,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 650,
+        "walkable": 650,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 16,
+      "relaxations": 0,
+      "corridorTiles": 51,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-7",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 127,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 680,
+        "walkable": 680,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 12,
+      "relaxations": 0,
+      "corridorTiles": 58,
+      "leaves": 3
+    },
+    {
+      "seed": "bench-8",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 131,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 760,
+        "walkable": 760,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 11,
+      "relaxations": 0,
+      "corridorTiles": 58,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-9",
+      "size": 55,
+      "rooms": 12,
+      "attempts": 1,
+      "ms": 137,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 726,
+        "walkable": 726,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "searches": 13,
+      "relaxations": 0,
+      "corridorTiles": 62,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-0",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 310,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1078,
+        "walkable": 1078,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 16,
+      "relaxations": 0,
+      "corridorTiles": 81,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-1",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 328,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1062,
+        "walkable": 1062,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 15,
+      "relaxations": 0,
+      "corridorTiles": 89,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-2",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 328,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1074,
+        "walkable": 1074,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 18,
+      "relaxations": 0,
+      "corridorTiles": 89,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-3",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 355,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1134,
+        "walkable": 1134,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 17,
+      "relaxations": 0,
+      "corridorTiles": 70,
+      "leaves": 7
+    },
+    {
+      "seed": "bench-4",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 255,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 918,
+        "walkable": 918,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 16,
+      "relaxations": 0,
+      "corridorTiles": 97,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-5",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 321,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1018,
+        "walkable": 1018,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 16,
+      "relaxations": 0,
+      "corridorTiles": 78,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-6",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 237,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 923,
+        "walkable": 923,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 16,
+      "relaxations": 0,
+      "corridorTiles": 90,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-7",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 275,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 917,
+        "walkable": 917,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 16,
+      "relaxations": 0,
+      "corridorTiles": 84,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-8",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 325,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1029,
+        "walkable": 1029,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 18,
+      "relaxations": 0,
+      "corridorTiles": 95,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-9",
+      "size": 65,
+      "rooms": 16,
+      "attempts": 1,
+      "ms": 352,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 971,
+        "walkable": 971,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "searches": 18,
+      "relaxations": 0,
+      "corridorTiles": 72,
+      "leaves": 7
+    },
+    {
+      "seed": "bench-0",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 531,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1223,
+        "walkable": 1223,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 20,
+      "relaxations": 0,
+      "corridorTiles": 99,
+      "leaves": 6
+    },
+    {
+      "seed": "bench-1",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 606,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1240,
+        "walkable": 1240,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 20,
+      "relaxations": 0,
+      "corridorTiles": 105,
+      "leaves": 4
+    },
+    {
+      "seed": "bench-2",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 669,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1281,
+        "walkable": 1281,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 20,
+      "relaxations": 0,
+      "corridorTiles": 87,
+      "leaves": 5
+    },
+    {
+      "seed": "bench-3",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 645,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1255,
+        "walkable": 1255,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 20,
+      "relaxations": 0,
+      "corridorTiles": 86,
+      "leaves": 6
+    },
+    {
+      "seed": "bench-4",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 524,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1220,
+        "walkable": 1220,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 24,
+      "relaxations": 0,
+      "corridorTiles": 118,
+      "leaves": 6
+    },
+    {
+      "seed": "bench-5",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 650,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1314,
+        "walkable": 1314,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 21,
+      "relaxations": 0,
+      "corridorTiles": 90,
+      "leaves": 6
+    },
+    {
+      "seed": "bench-6",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 518,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1215,
+        "walkable": 1215,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 29,
+      "relaxations": 0,
+      "corridorTiles": 104,
+      "leaves": 8
+    },
+    {
+      "seed": "bench-7",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 495,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1092,
+        "walkable": 1092,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 22,
+      "relaxations": 0,
+      "corridorTiles": 107,
+      "leaves": 7
+    },
+    {
+      "seed": "bench-8",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 596,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1249,
+        "walkable": 1249,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 22,
+      "relaxations": 0,
+      "corridorTiles": 101,
+      "leaves": 6
+    },
+    {
+      "seed": "bench-9",
+      "size": 70,
+      "rooms": 20,
+      "attempts": 1,
+      "ms": 590,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1144,
+        "walkable": 1144,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "searches": 29,
+      "relaxations": 0,
+      "corridorTiles": 102,
+      "leaves": 10
+    }
+  ],
+  "mazes": [
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 0,
+      "ok": true,
+      "score": 62.22909698996656,
+      "metrics": {
+        "distance": 13,
+        "branches": 3,
+        "detourDepth": 10,
+        "turns": 6,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 1,
+      "ok": true,
+      "score": 60.76190476190477,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 7,
+        "turns": 3,
+        "deadEnds": 3,
+        "walkable": 16,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 2,
+      "ok": true,
+      "score": 61.75000000000001,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 23,
+        "coverage": 0.575
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 3,
+      "ok": true,
+      "score": 62.90476190476192,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 7,
+        "turns": 4,
+        "deadEnds": 3,
+        "walkable": 16,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 4,
+      "ok": true,
+      "score": 62.34090909090908,
+      "metrics": {
+        "distance": 9,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 23,
+        "coverage": 0.575
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 5,
+      "ok": true,
+      "score": 62.90909090909091,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 9,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 23,
+        "coverage": 0.575
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 6,
+      "ok": true,
+      "score": 62.33333333333334,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 5,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 16,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 7,
+      "ok": true,
+      "score": 61.96212121212121,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 23,
+        "coverage": 0.575
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 8,
+      "ok": true,
+      "score": 60.5,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 6,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 17,
+        "coverage": 0.425
+      }
+    },
+    {
+      "h": 5,
+      "w": 8,
+      "seed": 9,
+      "ok": true,
+      "score": 60.76190476190477,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 7,
+        "turns": 3,
+        "deadEnds": 3,
+        "walkable": 16,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 0,
+      "ok": true,
+      "score": 61.27170868347339,
+      "metrics": {
+        "distance": 18,
+        "branches": 4,
+        "detourDepth": 10,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 1,
+      "ok": true,
+      "score": 61.323232323232325,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 23,
+        "coverage": 0.5111111111111111
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 2,
+      "ok": true,
+      "score": 61.682539682539684,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 18,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 3,
+      "ok": true,
+      "score": 62.15873015873016,
+      "metrics": {
+        "distance": 9,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 4,
+      "ok": true,
+      "score": 60.62865497076023,
+      "metrics": {
+        "distance": 7,
+        "branches": 2,
+        "detourDepth": 12,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 20,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 5,
+      "ok": true,
+      "score": 60.72222222222222,
+      "metrics": {
+        "distance": 7,
+        "branches": 2,
+        "detourDepth": 8,
+        "turns": 3,
+        "deadEnds": 3,
+        "walkable": 16,
+        "coverage": 0.35555555555555557
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 6,
+      "ok": true,
+      "score": 61.88888888888889,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 5,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 16,
+        "coverage": 0.35555555555555557
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 7,
+      "ok": true,
+      "score": 61.2147793726741,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 7,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 20,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 8,
+      "ok": true,
+      "score": 61.184704184704174,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 5,
+      "w": 9,
+      "seed": 9,
+      "ok": true,
+      "score": 64.15873015873017,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 0,
+      "ok": true,
+      "score": 59.290909090909096,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 21,
+        "coverage": 0.42
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 1,
+      "ok": true,
+      "score": 60.16902834008098,
+      "metrics": {
+        "distance": 13,
+        "branches": 3,
+        "detourDepth": 6,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 20,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 2,
+      "ok": true,
+      "score": 60.72857142857144,
+      "metrics": {
+        "distance": 11,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 3,
+      "ok": true,
+      "score": 60.72857142857144,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 4,
+        "deadEnds": 7,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 4,
+      "ok": true,
+      "score": 61.9038961038961,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 5,
+      "ok": true,
+      "score": 60.929824561403514,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 20,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 6,
+      "ok": true,
+      "score": 61.56923076923078,
+      "metrics": {
+        "distance": 14,
+        "branches": 6,
+        "detourDepth": 14,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 7,
+      "ok": true,
+      "score": 62.13397129186602,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 7,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 20,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 8,
+      "ok": true,
+      "score": 60.72857142857144,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 5,
+      "w": 10,
+      "seed": 9,
+      "ok": true,
+      "score": 60.48275862068966,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 0,
+      "ok": true,
+      "score": 61.15079365079366,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 8,
+        "turns": 3,
+        "deadEnds": 3,
+        "walkable": 17,
+        "coverage": 0.4722222222222222
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 1,
+      "ok": true,
+      "score": 60.919117647058826,
+      "metrics": {
+        "distance": 9,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 2,
+      "ok": true,
+      "score": 61.59722222222223,
+      "metrics": {
+        "distance": 7,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 3,
+        "deadEnds": 3,
+        "walkable": 17,
+        "coverage": 0.4722222222222222
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 3,
+      "ok": true,
+      "score": 63.27731092436976,
+      "metrics": {
+        "distance": 8,
+        "branches": 3,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 4,
+      "ok": true,
+      "score": 62.597222222222236,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 5,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 17,
+        "coverage": 0.4722222222222222
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 5,
+      "ok": true,
+      "score": 61.15079365079366,
+      "metrics": {
+        "distance": 8,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 17,
+        "coverage": 0.4722222222222222
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 6,
+      "ok": true,
+      "score": 62.5,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 19,
+        "coverage": 0.5277777777777778
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 7,
+      "ok": true,
+      "score": 62.54901960784315,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 7,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 8,
+      "ok": true,
+      "score": 61.13445378151261,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 3,
+        "deadEnds": 3,
+        "walkable": 18,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 6,
+      "seed": 9,
+      "ok": true,
+      "score": 63.27731092436976,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 3,
+        "walkable": 18,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 0,
+      "ok": true,
+      "score": 62.99689440993789,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 1,
+      "ok": true,
+      "score": 62.74985883681536,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 2,
+      "ok": true,
+      "score": 63.5014005602241,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 7,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 3,
+      "ok": true,
+      "score": 63.39544513457558,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 4,
+      "ok": true,
+      "score": 61.83473389355743,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 7,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 5,
+      "ok": true,
+      "score": 61.47619047619048,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 23,
+        "coverage": 0.5476190476190477
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 6,
+      "ok": true,
+      "score": 62.99689440993789,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 7,
+      "ok": true,
+      "score": 61.49689440993789,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 8,
+      "ok": true,
+      "score": 63.39544513457558,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 6,
+      "w": 7,
+      "seed": 9,
+      "ok": true,
+      "score": 62.563025210084035,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 3,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 0,
+      "ok": true,
+      "score": 62.02651515151515,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 25,
+        "coverage": 0.5208333333333334
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 1,
+      "ok": true,
+      "score": 60.94202898550726,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 2,
+      "ok": true,
+      "score": 61.014492753623195,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 3,
+      "ok": true,
+      "score": 61.014492753623195,
+      "metrics": {
+        "distance": 10,
+        "branches": 5,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 4,
+      "ok": true,
+      "score": 61.00378787878788,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 23,
+        "coverage": 0.4791666666666667
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 5,
+      "ok": true,
+      "score": 61.413043478260875,
+      "metrics": {
+        "distance": 9,
+        "branches": 3,
+        "detourDepth": 14,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 6,
+      "ok": true,
+      "score": 62.681159420289866,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 7,
+      "ok": true,
+      "score": 63.87500000000001,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 8,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.5208333333333334
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 8,
+      "ok": true,
+      "score": 62.02651515151515,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.5208333333333334
+      }
+    },
+    {
+      "h": 6,
+      "w": 8,
+      "seed": 9,
+      "ok": true,
+      "score": 62.035573122529655,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 0,
+      "ok": true,
+      "score": 60.07834757834758,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.46296296296296297
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 1,
+      "ok": true,
+      "score": 61.72705314009661,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 2,
+      "ok": true,
+      "score": 62.293447293447294,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.5370370370370371
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 3,
+      "ok": true,
+      "score": 60.16835016835017,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 23,
+        "coverage": 0.42592592592592593
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 4,
+      "ok": true,
+      "score": 62.843653930610444,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 5,
+      "ok": true,
+      "score": 61.152372531682886,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 6,
+      "ok": true,
+      "score": 61.84865900383142,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 7,
+      "ok": true,
+      "score": 60.16835016835017,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 23,
+        "coverage": 0.42592592592592593
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 8,
+      "ok": true,
+      "score": 61.44781144781144,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.46296296296296297
+      }
+    },
+    {
+      "h": 6,
+      "w": 9,
+      "seed": 9,
+      "ok": true,
+      "score": 62.042624521072796,
+      "metrics": {
+        "distance": 17,
+        "branches": 6,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 30,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 0,
+      "ok": true,
+      "score": 61.54761904761904,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.48333333333333334
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 1,
+      "ok": true,
+      "score": 61.487068965517246,
+      "metrics": {
+        "distance": 17,
+        "branches": 6,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 2,
+      "ok": true,
+      "score": 60.95611285266458,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 3,
+      "ok": true,
+      "score": 61.78160919540231,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 4,
+      "ok": true,
+      "score": 61.78160919540231,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 5,
+      "ok": true,
+      "score": 59.44297082228117,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 6,
+      "ok": true,
+      "score": 61.78160919540231,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 7,
+      "ok": true,
+      "score": 60.95611285266458,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 8,
+      "ok": true,
+      "score": 61.51724137931035,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 6,
+      "w": 10,
+      "seed": 9,
+      "ok": true,
+      "score": 60.6025641025641,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.5166666666666667
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 0,
+      "ok": true,
+      "score": 60.204831932773104,
+      "metrics": {
+        "distance": 9,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 1,
+      "ok": true,
+      "score": 60.42016806722689,
+      "metrics": {
+        "distance": 8,
+        "branches": 3,
+        "detourDepth": 9,
+        "turns": 3,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 2,
+      "ok": true,
+      "score": 60.02164502164502,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 10,
+        "turns": 3,
+        "deadEnds": 6,
+        "walkable": 23,
+        "coverage": 0.5476190476190477
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 3,
+      "ok": true,
+      "score": 62.976190476190474,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 23,
+        "coverage": 0.5476190476190477
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 4,
+      "ok": true,
+      "score": 62.563025210084035,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 3,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 5,
+      "ok": true,
+      "score": 61.74603174603175,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 19,
+        "coverage": 0.4523809523809524
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 6,
+      "ok": true,
+      "score": 62.0798319327731,
+      "metrics": {
+        "distance": 9,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 7,
+      "ok": true,
+      "score": 63.5014005602241,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 7,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 8,
+      "ok": true,
+      "score": 62.563025210084035,
+      "metrics": {
+        "distance": 8,
+        "branches": 3,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 6,
+      "seed": 9,
+      "ok": true,
+      "score": 62.563025210084035,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 3,
+        "walkable": 18,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 0,
+      "ok": true,
+      "score": 62.916274201988486,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.6326530612244898
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 1,
+      "ok": true,
+      "score": 62.08510904361745,
+      "metrics": {
+        "distance": 17,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.6326530612244898
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 2,
+      "ok": true,
+      "score": 61.950780312124856,
+      "metrics": {
+        "distance": 8,
+        "branches": 2,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 3,
+        "walkable": 18,
+        "coverage": 0.3673469387755102
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 3,
+      "ok": true,
+      "score": 61.683673469387756,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.6326530612244898
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 4,
+      "ok": true,
+      "score": 61.950780312124856,
+      "metrics": {
+        "distance": 8,
+        "branches": 3,
+        "detourDepth": 9,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.3673469387755102
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 5,
+      "ok": true,
+      "score": 62.57911860396334,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4897959183673469
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 6,
+      "ok": true,
+      "score": 62.18056787932564,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4897959183673469
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 7,
+      "ok": true,
+      "score": 62.766439909297056,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 19,
+        "coverage": 0.3877551020408163
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 8,
+      "ok": true,
+      "score": 61.46758703481392,
+      "metrics": {
+        "distance": 9,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.3673469387755102
+      }
+    },
+    {
+      "h": 7,
+      "w": 7,
+      "seed": 9,
+      "ok": true,
+      "score": 62.55047473534867,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 5,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 18,
+        "coverage": 0.3673469387755102
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 0,
+      "ok": true,
+      "score": 60.06832298136645,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 1,
+      "ok": true,
+      "score": 61.966873706004144,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 2,
+      "ok": true,
+      "score": 61.82738095238095,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 13,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 31,
+        "coverage": 0.5535714285714286
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 3,
+      "ok": true,
+      "score": 61.3538961038961,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 31,
+        "coverage": 0.5535714285714286
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 4,
+      "ok": true,
+      "score": 62.684923771880285,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 5,
+      "ok": true,
+      "score": 62.684923771880285,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 6,
+      "ok": true,
+      "score": 61.3538961038961,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 31,
+        "coverage": 0.5535714285714286
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 7,
+      "ok": true,
+      "score": 61.290068446733535,
+      "metrics": {
+        "distance": 17,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 8,
+      "ok": true,
+      "score": 60.91013824884792,
+      "metrics": {
+        "distance": 15,
+        "branches": 6,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 7,
+      "w": 8,
+      "seed": 9,
+      "ok": true,
+      "score": 61.56832298136645,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 0,
+      "ok": true,
+      "score": 60.786435786435774,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 25,
+        "coverage": 0.3968253968253968
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 1,
+      "ok": true,
+      "score": 60.71801761456934,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.47619047619047616
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 2,
+      "ok": true,
+      "score": 61.08730158730159,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.49206349206349204
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 3,
+      "ok": true,
+      "score": 59.03258145363408,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 25,
+        "turns": 4,
+        "deadEnds": 8,
+        "walkable": 39,
+        "coverage": 0.6190476190476191
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 4,
+      "ok": true,
+      "score": 60.40100250626567,
+      "metrics": {
+        "distance": 16,
+        "branches": 6,
+        "detourDepth": 22,
+        "turns": 5,
+        "deadEnds": 8,
+        "walkable": 39,
+        "coverage": 0.6190476190476191
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 5,
+      "ok": true,
+      "score": 61.54351395730706,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 19,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.47619047619047616
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 6,
+      "ok": true,
+      "score": 61.49068322981367,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.38095238095238093
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 7,
+      "ok": true,
+      "score": 60.73881673881674,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 31,
+        "coverage": 0.49206349206349204
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 8,
+      "ok": true,
+      "score": 61.34664618535586,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 32,
+        "coverage": 0.5079365079365079
+      }
+    },
+    {
+      "h": 7,
+      "w": 9,
+      "seed": 9,
+      "ok": true,
+      "score": 60.786435786435774,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 25,
+        "coverage": 0.3968253968253968
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 0,
+      "ok": true,
+      "score": 59.76190476190477,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.44285714285714284
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 1,
+      "ok": true,
+      "score": 57.71717755928283,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 24,
+        "turns": 3,
+        "deadEnds": 5,
+        "walkable": 39,
+        "coverage": 0.5571428571428572
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 2,
+      "ok": true,
+      "score": 60.57881773399014,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 3,
+      "ok": true,
+      "score": 61.03637741568776,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 4,
+      "ok": true,
+      "score": 58.883116883116884,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 18,
+        "turns": 4,
+        "deadEnds": 7,
+        "walkable": 31,
+        "coverage": 0.44285714285714284
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 5,
+      "ok": true,
+      "score": 60.24182713837886,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 6,
+      "ok": true,
+      "score": 59.688013136289,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 7,
+      "ok": true,
+      "score": 61.80295566502464,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 13,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 8,
+      "ok": true,
+      "score": 60.24182713837886,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 7,
+      "w": 10,
+      "seed": 9,
+      "ok": true,
+      "score": 59.86446886446887,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 31,
+        "coverage": 0.44285714285714284
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 0,
+      "ok": true,
+      "score": 61.78260869565217,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 1,
+      "ok": true,
+      "score": 62.014492753623195,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 2,
+      "ok": true,
+      "score": 62.33333333333334,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 5,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 16,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 3,
+      "ok": true,
+      "score": 61.67193675889329,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 4,
+      "ok": true,
+      "score": 60.29545454545454,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 3,
+        "deadEnds": 6,
+        "walkable": 23,
+        "coverage": 0.575
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 5,
+      "ok": true,
+      "score": 61.78260869565217,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 6,
+      "ok": true,
+      "score": 64.39920948616601,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 7,
+      "ok": true,
+      "score": 62.33333333333334,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 5,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 16,
+        "coverage": 0.4
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 8,
+      "ok": true,
+      "score": 63.035573122529655,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 5,
+      "seed": 9,
+      "ok": true,
+      "score": 60.97909698996655,
+      "metrics": {
+        "distance": 13,
+        "branches": 3,
+        "detourDepth": 10,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 24,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 0,
+      "ok": true,
+      "score": 61.81089743589745,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 10,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.5208333333333334
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 1,
+      "ok": true,
+      "score": 62.035573122529655,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 2,
+      "ok": true,
+      "score": 63.39920948616601,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 3,
+      "ok": true,
+      "score": 64.16387959866222,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 9,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 4,
+      "ok": true,
+      "score": 63.20075757575757,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 9,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 23,
+        "coverage": 0.4791666666666667
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 5,
+      "ok": true,
+      "score": 60.65705128205129,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.5208333333333334
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 6,
+      "ok": true,
+      "score": 62.02651515151515,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 25,
+        "coverage": 0.5208333333333334
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 7,
+      "ok": true,
+      "score": 63.39920948616601,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 8,
+      "ok": true,
+      "score": 60.70075757575758,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 23,
+        "coverage": 0.4791666666666667
+      }
+    },
+    {
+      "h": 8,
+      "w": 6,
+      "seed": 9,
+      "ok": true,
+      "score": 60.70075757575758,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 23,
+        "coverage": 0.4791666666666667
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 0,
+      "ok": true,
+      "score": 60.91013824884792,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 1,
+      "ok": true,
+      "score": 63.30733782346686,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 2,
+      "ok": true,
+      "score": 59.957651044607566,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 3,
+      "ok": true,
+      "score": 59.03571428571428,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 31,
+        "coverage": 0.5535714285714286
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 4,
+      "ok": true,
+      "score": 61.32128740824393,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 5,
+      "ok": true,
+      "score": 62.767071638039376,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 19,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 6,
+      "ok": true,
+      "score": 61.3538961038961,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 31,
+        "coverage": 0.5535714285714286
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 7,
+      "ok": true,
+      "score": 61.28246753246752,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 4,
+        "walkable": 25,
+        "coverage": 0.44642857142857145
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 8,
+      "ok": true,
+      "score": 58.70238095238096,
+      "metrics": {
+        "distance": 11,
+        "branches": 5,
+        "detourDepth": 19,
+        "turns": 3,
+        "deadEnds": 7,
+        "walkable": 31,
+        "coverage": 0.5535714285714286
+      }
+    },
+    {
+      "h": 8,
+      "w": 7,
+      "seed": 9,
+      "ok": true,
+      "score": 63.24223602484472,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 7,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 0,
+      "ok": true,
+      "score": 60.19585253456221,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 1,
+      "ok": true,
+      "score": 61.30272952853599,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 2,
+      "ok": true,
+      "score": 62.16129032258064,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 15,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 3,
+      "ok": true,
+      "score": 59.39882697947214,
+      "metrics": {
+        "distance": 12,
+        "branches": 6,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 8,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 4,
+      "ok": true,
+      "score": 60.72443181818181,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 20,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 33,
+        "coverage": 0.515625
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 5,
+      "ok": true,
+      "score": 60.19585253456221,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 6,
+      "ok": true,
+      "score": 61.267281105990776,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 7,
+      "ok": true,
+      "score": 60.20432692307691,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 33,
+        "coverage": 0.515625
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 8,
+      "ok": true,
+      "score": 60.19585253456221,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 8,
+      "seed": 9,
+      "ok": true,
+      "score": 61.267281105990776,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 32,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 0,
+      "ok": true,
+      "score": 60.88141025641025,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 18,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 33,
+        "coverage": 0.4583333333333333
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 1,
+      "ok": true,
+      "score": 59.46271929824562,
+      "metrics": {
+        "distance": 17,
+        "branches": 6,
+        "detourDepth": 19,
+        "turns": 6,
+        "deadEnds": 9,
+        "walkable": 39,
+        "coverage": 0.5416666666666666
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 2,
+      "ok": true,
+      "score": 59.59332781913427,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 3,
+      "ok": true,
+      "score": 60.81140350877193,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 27,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.5416666666666666
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 4,
+      "ok": true,
+      "score": 58.972222222222214,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.4305555555555556
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 5,
+      "ok": true,
+      "score": 60.12373737373736,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 18,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.4305555555555556
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 6,
+      "ok": true,
+      "score": 61.138888888888886,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.4305555555555556
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 7,
+      "ok": true,
+      "score": 61.13799283154121,
+      "metrics": {
+        "distance": 13,
+        "branches": 5,
+        "detourDepth": 18,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 8,
+      "ok": true,
+      "score": 59.513888888888886,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 8,
+      "w": 9,
+      "seed": 9,
+      "ok": true,
+      "score": 61.627192982456144,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 22,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.5416666666666666
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 0,
+      "ok": true,
+      "score": 59.046474358974365,
+      "metrics": {
+        "distance": 17,
+        "branches": 8,
+        "detourDepth": 22,
+        "turns": 5,
+        "deadEnds": 9,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 1,
+      "ok": true,
+      "score": 61.346153846153854,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 24,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 2,
+      "ok": true,
+      "score": 59.35897435897437,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 25,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 3,
+      "ok": true,
+      "score": 60.07692307692308,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 21,
+        "turns": 7,
+        "deadEnds": 8,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 4,
+      "ok": true,
+      "score": 60.8014705882353,
+      "metrics": {
+        "distance": 18,
+        "branches": 6,
+        "detourDepth": 22,
+        "turns": 7,
+        "deadEnds": 8,
+        "walkable": 41,
+        "coverage": 0.5125
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 5,
+      "ok": true,
+      "score": 57.440789473684205,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 21,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.4875
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 6,
+      "ok": true,
+      "score": 59.0328947368421,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.4875
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 7,
+      "ok": true,
+      "score": 60.274725274725284,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 24,
+        "turns": 6,
+        "deadEnds": 8,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 8,
+      "ok": true,
+      "score": 59.90950226244344,
+      "metrics": {
+        "distance": 18,
+        "branches": 7,
+        "detourDepth": 21,
+        "turns": 6,
+        "deadEnds": 8,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 8,
+      "w": 10,
+      "seed": 9,
+      "ok": true,
+      "score": 59.98397435897436,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 22,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 0,
+      "ok": true,
+      "score": 61.69444444444444,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 6,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 17,
+        "coverage": 0.37777777777777777
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 1,
+      "ok": true,
+      "score": 63.14087301587301,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 2,
+      "ok": true,
+      "score": 59.615942028985515,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 3,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5333333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 3,
+      "ok": true,
+      "score": 61.34782608695652,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 7,
+        "walkable": 24,
+        "coverage": 0.5333333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 4,
+      "ok": true,
+      "score": 59.615942028985515,
+      "metrics": {
+        "distance": 11,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 3,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5333333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 5,
+      "ok": true,
+      "score": 61.1159420289855,
+      "metrics": {
+        "distance": 11,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5333333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 6,
+      "ok": true,
+      "score": 61.08730158730158,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 7,
+      "ok": true,
+      "score": 62.21367521367521,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.6444444444444445
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 8,
+      "ok": true,
+      "score": 61.34782608695652,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.5333333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 5,
+      "seed": 9,
+      "ok": true,
+      "score": 61.69444444444444,
+      "metrics": {
+        "distance": 10,
+        "branches": 3,
+        "detourDepth": 6,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 17,
+        "coverage": 0.37777777777777777
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 0,
+      "ok": true,
+      "score": 61.28831417624521,
+      "metrics": {
+        "distance": 13,
+        "branches": 5,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 30,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 1,
+      "ok": true,
+      "score": 60.45893719806763,
+      "metrics": {
+        "distance": 10,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 2,
+      "ok": true,
+      "score": 61.26322751322751,
+      "metrics": {
+        "distance": 13,
+        "branches": 5,
+        "detourDepth": 15,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.5370370370370371
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 3,
+      "ok": true,
+      "score": 63.22751322751322,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 13,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.5370370370370371
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 4,
+      "ok": true,
+      "score": 61.4800175669741,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 5,
+      "ok": true,
+      "score": 62.811447811447806,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.46296296296296297
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 6,
+      "ok": true,
+      "score": 62.811447811447806,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 25,
+        "coverage": 0.46296296296296297
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 7,
+      "ok": true,
+      "score": 61.08465608465609,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.5370370370370371
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 8,
+      "ok": true,
+      "score": 62.843653930610444,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 6,
+      "seed": 9,
+      "ok": true,
+      "score": 61.129298941798936,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 11,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.5370370370370371
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 0,
+      "ok": true,
+      "score": 59.272913466461866,
+      "metrics": {
+        "distance": 13,
+        "branches": 5,
+        "detourDepth": 18,
+        "turns": 4,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.5079365079365079
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 1,
+      "ok": true,
+      "score": 59.461697722567294,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 10,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.38095238095238093
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 2,
+      "ok": true,
+      "score": 61.22143594279817,
+      "metrics": {
+        "distance": 18,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.6190476190476191
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 3,
+      "ok": true,
+      "score": 59.47819205883722,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 8,
+        "walkable": 32,
+        "coverage": 0.5079365079365079
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 4,
+      "ok": true,
+      "score": 60.40100250626567,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 22,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.6190476190476191
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 5,
+      "ok": true,
+      "score": 60.51378446115287,
+      "metrics": {
+        "distance": 15,
+        "branches": 6,
+        "detourDepth": 21,
+        "turns": 6,
+        "deadEnds": 8,
+        "walkable": 39,
+        "coverage": 0.6190476190476191
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 6,
+      "ok": true,
+      "score": 59.42279942279942,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 12,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 25,
+        "coverage": 0.3968253968253968
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 7,
+      "ok": true,
+      "score": 61.34664618535586,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 32,
+        "coverage": 0.5079365079365079
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 8,
+      "ok": true,
+      "score": 60.84182842247359,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.5079365079365079
+      }
+    },
+    {
+      "h": 9,
+      "w": 7,
+      "seed": 9,
+      "ok": true,
+      "score": 62.20873329568981,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 11,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 24,
+        "coverage": 0.38095238095238093
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 0,
+      "ok": true,
+      "score": 59.58333333333334,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 33,
+        "coverage": 0.4583333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 1,
+      "ok": true,
+      "score": 59.58333333333334,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 33,
+        "coverage": 0.4583333333333333
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 2,
+      "ok": true,
+      "score": 60.94298245614035,
+      "metrics": {
+        "distance": 20,
+        "branches": 5,
+        "detourDepth": 16,
+        "turns": 8,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.5416666666666666
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 3,
+      "ok": true,
+      "score": 62.60566188197768,
+      "metrics": {
+        "distance": 23,
+        "branches": 7,
+        "detourDepth": 15,
+        "turns": 9,
+        "deadEnds": 8,
+        "walkable": 39,
+        "coverage": 0.5416666666666666
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 4,
+      "ok": true,
+      "score": 59.72980424593327,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 5,
+      "ok": true,
+      "score": 59.64029697900665,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 6,
+      "ok": true,
+      "score": 58.843271423916576,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 17,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 7,
+      "ok": true,
+      "score": 59.64029697900665,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 8,
+      "ok": true,
+      "score": 57.792404596247096,
+      "metrics": {
+        "distance": 17,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 8,
+      "seed": 9,
+      "ok": true,
+      "score": 60.13359400456174,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 19,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 32,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 0,
+      "ok": true,
+      "score": 60.07407407407407,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 33,
+        "coverage": 0.4074074074074074
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 1,
+      "ok": true,
+      "score": 59.48688271604938,
+      "metrics": {
+        "distance": 17,
+        "branches": 7,
+        "detourDepth": 27,
+        "turns": 7,
+        "deadEnds": 10,
+        "walkable": 49,
+        "coverage": 0.6049382716049383
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 2,
+      "ok": true,
+      "score": 61.07407407407408,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 33,
+        "coverage": 0.4074074074074074
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 3,
+      "ok": true,
+      "score": 60.579297245963915,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 23,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.49382716049382713
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 4,
+      "ok": true,
+      "score": 60.975853304284676,
+      "metrics": {
+        "distance": 18,
+        "branches": 6,
+        "detourDepth": 30,
+        "turns": 7,
+        "deadEnds": 9,
+        "walkable": 49,
+        "coverage": 0.6049382716049383
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 5,
+      "ok": true,
+      "score": 60.00771604938272,
+      "metrics": {
+        "distance": 19,
+        "branches": 9,
+        "detourDepth": 29,
+        "turns": 6,
+        "deadEnds": 12,
+        "walkable": 49,
+        "coverage": 0.6049382716049383
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 6,
+      "ok": true,
+      "score": 60.85099902534113,
+      "metrics": {
+        "distance": 17,
+        "branches": 6,
+        "detourDepth": 21,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.48148148148148145
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 7,
+      "ok": true,
+      "score": 60.728127508313264,
+      "metrics": {
+        "distance": 18,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.48148148148148145
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 8,
+      "ok": true,
+      "score": 59.81006647673315,
+      "metrics": {
+        "distance": 19,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.49382716049382713
+      }
+    },
+    {
+      "h": 9,
+      "w": 9,
+      "seed": 9,
+      "ok": true,
+      "score": 60.372150997150996,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 18,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 33,
+        "coverage": 0.4074074074074074
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 0,
+      "ok": true,
+      "score": 57.66788766788766,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 1,
+      "ok": true,
+      "score": 59.71527777777778,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 29,
+        "turns": 7,
+        "deadEnds": 8,
+        "walkable": 49,
+        "coverage": 0.5444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 2,
+      "ok": true,
+      "score": 59.25213675213674,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 24,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 3,
+      "ok": true,
+      "score": 59.54700854700854,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 23,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 4,
+      "ok": true,
+      "score": 60.09896536212326,
+      "metrics": {
+        "distance": 20,
+        "branches": 5,
+        "detourDepth": 19,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 5,
+      "ok": true,
+      "score": 58.9265873015873,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 33,
+        "turns": 5,
+        "deadEnds": 9,
+        "walkable": 49,
+        "coverage": 0.5444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 6,
+      "ok": true,
+      "score": 58.80341880341881,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 25,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 7,
+      "ok": true,
+      "score": 61.11865258924082,
+      "metrics": {
+        "distance": 18,
+        "branches": 7,
+        "detourDepth": 21,
+        "turns": 8,
+        "deadEnds": 8,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 8,
+      "ok": true,
+      "score": 58.77777777777777,
+      "metrics": {
+        "distance": 17,
+        "branches": 6,
+        "detourDepth": 29,
+        "turns": 6,
+        "deadEnds": 9,
+        "walkable": 49,
+        "coverage": 0.5444444444444444
+      }
+    },
+    {
+      "h": 9,
+      "w": 10,
+      "seed": 9,
+      "ok": true,
+      "score": 57.80045351473924,
+      "metrics": {
+        "distance": 19,
+        "branches": 5,
+        "detourDepth": 26,
+        "turns": 6,
+        "deadEnds": 9,
+        "walkable": 50,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 0,
+      "ok": true,
+      "score": 60.65454545454546,
+      "metrics": {
+        "distance": 12,
+        "branches": 3,
+        "detourDepth": 8,
+        "turns": 4,
+        "deadEnds": 4,
+        "walkable": 21,
+        "coverage": 0.42
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 1,
+      "ok": true,
+      "score": 61.596816976127336,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 15,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 2,
+      "ok": true,
+      "score": 61.56923076923078,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 14,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 3,
+      "ok": true,
+      "score": 63.51724137931036,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 4,
+      "ok": true,
+      "score": 62.51428571428571,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 5,
+      "ok": true,
+      "score": 60.54025974025974,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 6,
+      "ok": true,
+      "score": 61.69285714285715,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 7,
+      "ok": true,
+      "score": 61.529556650246306,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.6
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 8,
+      "ok": true,
+      "score": 60.44285714285714,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.58
+      }
+    },
+    {
+      "h": 10,
+      "w": 5,
+      "seed": 9,
+      "ok": true,
+      "score": 60.65454545454546,
+      "metrics": {
+        "distance": 12,
+        "branches": 4,
+        "detourDepth": 8,
+        "turns": 4,
+        "deadEnds": 5,
+        "walkable": 21,
+        "coverage": 0.42
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 0,
+      "ok": true,
+      "score": 61.756410256410255,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 31,
+        "coverage": 0.5166666666666667
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 1,
+      "ok": true,
+      "score": 61.51724137931035,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 2,
+      "ok": true,
+      "score": 61.61904761904762,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 13,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.48333333333333334
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 3,
+      "ok": true,
+      "score": 61.600985221674875,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 4,
+      "ok": true,
+      "score": 61.75066312997348,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 5,
+      "ok": true,
+      "score": 62.672413793103445,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 14,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 6,
+      "ok": true,
+      "score": 60.73275862068965,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 16,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 7,
+      "ok": true,
+      "score": 60.54761904761905,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 5,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.48333333333333334
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 8,
+      "ok": true,
+      "score": 61.61904761904762,
+      "metrics": {
+        "distance": 15,
+        "branches": 4,
+        "detourDepth": 13,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 29,
+        "coverage": 0.48333333333333334
+      }
+    },
+    {
+      "h": 10,
+      "w": 6,
+      "seed": 9,
+      "ok": true,
+      "score": 59.592476489028215,
+      "metrics": {
+        "distance": 12,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 30,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 0,
+      "ok": true,
+      "score": 61.17871602082129,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 24,
+        "turns": 6,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.5571428571428572
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 1,
+      "ok": true,
+      "score": 60.857142857142854,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 12,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 29,
+        "coverage": 0.4142857142857143
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 2,
+      "ok": true,
+      "score": 61.03637741568776,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 15,
+        "turns": 6,
+        "deadEnds": 5,
+        "walkable": 30,
+        "coverage": 0.42857142857142855
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 3,
+      "ok": true,
+      "score": 60.07326007326008,
+      "metrics": {
+        "distance": 14,
+        "branches": 6,
+        "detourDepth": 25,
+        "turns": 5,
+        "deadEnds": 9,
+        "walkable": 40,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 4,
+      "ok": true,
+      "score": 59.76076007326008,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 22,
+        "turns": 5,
+        "deadEnds": 8,
+        "walkable": 40,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 5,
+      "ok": true,
+      "score": 57.939849624060145,
+      "metrics": {
+        "distance": 13,
+        "branches": 4,
+        "detourDepth": 23,
+        "turns": 4,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.5571428571428572
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 6,
+      "ok": true,
+      "score": 60.58608058608059,
+      "metrics": {
+        "distance": 19,
+        "branches": 6,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 7,
+      "ok": true,
+      "score": 61.41941391941393,
+      "metrics": {
+        "distance": 19,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 8,
+      "ok": true,
+      "score": 61.22544122544122,
+      "metrics": {
+        "distance": 22,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 10,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.5714285714285714
+      }
+    },
+    {
+      "h": 10,
+      "w": 7,
+      "seed": 9,
+      "ok": true,
+      "score": 59.78195488721805,
+      "metrics": {
+        "distance": 16,
+        "branches": 6,
+        "detourDepth": 22,
+        "turns": 5,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.5571428571428572
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 0,
+      "ok": true,
+      "score": 59.0328947368421,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 20,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.4875
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 1,
+      "ok": true,
+      "score": 60.07692307692308,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 21,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 2,
+      "ok": true,
+      "score": 59.198308270676684,
+      "metrics": {
+        "distance": 15,
+        "branches": 5,
+        "detourDepth": 21,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 39,
+        "coverage": 0.4875
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 3,
+      "ok": true,
+      "score": 61.08552631578947,
+      "metrics": {
+        "distance": 16,
+        "branches": 5,
+        "detourDepth": 22,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.4875
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 4,
+      "ok": true,
+      "score": 61.66666666666668,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 25,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 5,
+      "ok": true,
+      "score": 61.102564102564116,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 23,
+        "turns": 7,
+        "deadEnds": 5,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 6,
+      "ok": true,
+      "score": 59.08258408258409,
+      "metrics": {
+        "distance": 22,
+        "branches": 5,
+        "detourDepth": 17,
+        "turns": 8,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 7,
+      "ok": true,
+      "score": 59.03846153846154,
+      "metrics": {
+        "distance": 19,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 8,
+      "ok": true,
+      "score": 60.65131578947369,
+      "metrics": {
+        "distance": 20,
+        "branches": 5,
+        "detourDepth": 20,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 41,
+        "coverage": 0.5125
+      }
+    },
+    {
+      "h": 10,
+      "w": 8,
+      "seed": 9,
+      "ok": true,
+      "score": 59.35897435897437,
+      "metrics": {
+        "distance": 14,
+        "branches": 4,
+        "detourDepth": 25,
+        "turns": 5,
+        "deadEnds": 6,
+        "walkable": 40,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 0,
+      "ok": true,
+      "score": 58.83361678004536,
+      "metrics": {
+        "distance": 17,
+        "branches": 5,
+        "detourDepth": 30,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 50,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 1,
+      "ok": true,
+      "score": 59.72122182206216,
+      "metrics": {
+        "distance": 18,
+        "branches": 6,
+        "detourDepth": 25,
+        "turns": 9,
+        "deadEnds": 11,
+        "walkable": 50,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 2,
+      "ok": true,
+      "score": 60.16666666666667,
+      "metrics": {
+        "distance": 19,
+        "branches": 5,
+        "detourDepth": 19,
+        "turns": 7,
+        "deadEnds": 6,
+        "walkable": 39,
+        "coverage": 0.43333333333333335
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 3,
+      "ok": true,
+      "score": 60.92612483589927,
+      "metrics": {
+        "distance": 20,
+        "branches": 5,
+        "detourDepth": 27,
+        "turns": 9,
+        "deadEnds": 8,
+        "walkable": 50,
+        "coverage": 0.5555555555555556
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 4,
+      "ok": true,
+      "score": 59.957264957264954,
+      "metrics": {
+        "distance": 14,
+        "branches": 5,
+        "detourDepth": 25,
+        "turns": 6,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 5,
+      "ok": true,
+      "score": 58.592982456140355,
+      "metrics": {
+        "distance": 20,
+        "branches": 5,
+        "detourDepth": 26,
+        "turns": 7,
+        "deadEnds": 9,
+        "walkable": 51,
+        "coverage": 0.5666666666666667
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 6,
+      "ok": true,
+      "score": 58.65522875816993,
+      "metrics": {
+        "distance": 18,
+        "branches": 5,
+        "detourDepth": 28,
+        "turns": 6,
+        "deadEnds": 8,
+        "walkable": 49,
+        "coverage": 0.5444444444444444
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 7,
+      "ok": true,
+      "score": 60.236111111111114,
+      "metrics": {
+        "distance": 19,
+        "branches": 8,
+        "detourDepth": 29,
+        "turns": 7,
+        "deadEnds": 10,
+        "walkable": 49,
+        "coverage": 0.5444444444444444
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 8,
+      "ok": true,
+      "score": 60.55555555555555,
+      "metrics": {
+        "distance": 16,
+        "branches": 4,
+        "detourDepth": 22,
+        "turns": 8,
+        "deadEnds": 7,
+        "walkable": 41,
+        "coverage": 0.45555555555555555
+      }
+    },
+    {
+      "h": 10,
+      "w": 9,
+      "seed": 9,
+      "ok": true,
+      "score": 60.79059829059828,
+      "metrics": {
+        "distance": 15,
+        "branches": 6,
+        "detourDepth": 24,
+        "turns": 7,
+        "deadEnds": 7,
+        "walkable": 40,
+        "coverage": 0.4444444444444444
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 0,
+      "ok": true,
+      "score": 59.50000000000001,
+      "metrics": {
+        "distance": 22,
+        "branches": 6,
+        "detourDepth": 28,
+        "turns": 7,
+        "deadEnds": 8,
+        "walkable": 51,
+        "coverage": 0.51
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 1,
+      "ok": true,
+      "score": 59.47107843137255,
+      "metrics": {
+        "distance": 17,
+        "branches": 4,
+        "detourDepth": 31,
+        "turns": 8,
+        "deadEnds": 7,
+        "walkable": 49,
+        "coverage": 0.49
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 2,
+      "ok": true,
+      "score": 59.448979591836746,
+      "metrics": {
+        "distance": 16,
+        "branches": 6,
+        "detourDepth": 31,
+        "turns": 7,
+        "deadEnds": 9,
+        "walkable": 50,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 3,
+      "ok": true,
+      "score": 58.15126050420169,
+      "metrics": {
+        "distance": 18,
+        "branches": 6,
+        "detourDepth": 29,
+        "turns": 6,
+        "deadEnds": 9,
+        "walkable": 50,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 4,
+      "ok": true,
+      "score": 57.24489795918368,
+      "metrics": {
+        "distance": 19,
+        "branches": 5,
+        "detourDepth": 26,
+        "turns": 6,
+        "deadEnds": 10,
+        "walkable": 50,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 5,
+      "ok": true,
+      "score": 58.1475667189953,
+      "metrics": {
+        "distance": 14,
+        "branches": 6,
+        "detourDepth": 31,
+        "turns": 6,
+        "deadEnds": 11,
+        "walkable": 50,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 6,
+      "ok": true,
+      "score": 58.15126050420169,
+      "metrics": {
+        "distance": 18,
+        "branches": 6,
+        "detourDepth": 29,
+        "turns": 6,
+        "deadEnds": 11,
+        "walkable": 50,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 7,
+      "ok": true,
+      "score": 59.69166666666668,
+      "metrics": {
+        "distance": 19,
+        "branches": 6,
+        "detourDepth": 27,
+        "turns": 8,
+        "deadEnds": 10,
+        "walkable": 49,
+        "coverage": 0.49
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 8,
+      "ok": true,
+      "score": 60.10204081632653,
+      "metrics": {
+        "distance": 22,
+        "branches": 6,
+        "detourDepth": 25,
+        "turns": 9,
+        "deadEnds": 8,
+        "walkable": 50,
+        "coverage": 0.5
+      }
+    },
+    {
+      "h": 10,
+      "w": 10,
+      "seed": 9,
+      "ok": true,
+      "score": 59.61578947368421,
+      "metrics": {
+        "distance": 20,
+        "branches": 6,
+        "detourDepth": 28,
+        "turns": 8,
+        "deadEnds": 8,
+        "walkable": 51,
+        "coverage": 0.51
+      }
+    }
+  ]
+}

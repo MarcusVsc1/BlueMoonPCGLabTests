@@ -1,0 +1,4863 @@
+{
+  "summary": {
+    "base": {
+      "valid": 20,
+      "total": 20,
+      "attempts": 21,
+      "corridors": 250,
+      "actual": {
+        "straight": 226,
+        "angular": 24
+      },
+      "requested": {},
+      "fallbacks": 0,
+      "turns": 24,
+      "tiles": 1385,
+      "baseTiles": 1385,
+      "meanMs": 264
+    },
+    "hybrid": {
+      "valid": 20,
+      "total": 20,
+      "attempts": 21,
+      "corridors": 250,
+      "actual": {
+        "angular": 59,
+        "organic": 49,
+        "straight": 46,
+        "diagonal": 96
+      },
+      "requested": {
+        "angular": 57,
+        "organic": 54,
+        "diagonal": 101,
+        "straight": 38
+      },
+      "fallbacks": 12,
+      "turns": 699,
+      "tiles": 1799,
+      "baseTiles": 1409,
+      "meanMs": 270
+    }
+  },
+  "data": [
+    {
+      "seed": "bench-0",
+      "size": 45,
+      "rooms": 6,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 39,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 371,
+        "walkable": 371,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 5,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 5
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 11,
+            "baseTiles": 11
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 11,
+            "baseTiles": 11
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 45,
+      "rooms": 6,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 23,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 359,
+        "walkable": 359,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 5,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 4,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 13,
+            "baseTiles": 13
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 45,
+      "rooms": 6,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 31,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 510,
+        "walkable": 510,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 5,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 4,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 45,
+      "rooms": 6,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 31,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 430,
+        "walkable": 430,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 6,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 3,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 7
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 45,
+      "rooms": 6,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 18,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 337,
+        "walkable": 337,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 6,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 1,
+          "angular": 4
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 15,
+            "baseTiles": 15
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 45,
+      "rooms": 6,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 26,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 376,
+        "walkable": 376,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 5,
+        "relaxations": 0,
+        "requestedStyles": {
+          "angular": 1,
+          "organic": 2,
+          "diagonal": 2
+        },
+        "actualStyles": {
+          "angular": 1,
+          "organic": 2,
+          "straight": 2
+        },
+        "fallbacks": 2,
+        "corridors": [
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 10,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 11,
+            "baseTiles": 11
+          },
+          {
+            "requested": "diagonal",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 11,
+            "baseTiles": 11
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 45,
+      "rooms": 6,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 30,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 371,
+        "walkable": 371,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 5,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 3,
+          "angular": 1,
+          "organic": 1
+        },
+        "actualStyles": {
+          "diagonal": 2,
+          "angular": 1,
+          "organic": 1,
+          "straight": 1
+        },
+        "fallbacks": 1,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 7,
+            "tiles": 12,
+            "baseTiles": 8
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 12,
+            "baseTiles": 10
+          },
+          {
+            "requested": "diagonal",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 16,
+            "baseTiles": 16
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 45,
+      "rooms": 6,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 26,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 519,
+        "walkable": 519,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 5,
+        "relaxations": 0,
+        "requestedStyles": {
+          "straight": 2,
+          "organic": 3
+        },
+        "actualStyles": {
+          "straight": 2,
+          "organic": 3
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 45,
+      "rooms": 6,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 25,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 433,
+        "walkable": 433,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 6,
+        "relaxations": 0,
+        "requestedStyles": {
+          "straight": 2,
+          "organic": 2,
+          "diagonal": 1
+        },
+        "actualStyles": {
+          "straight": 2,
+          "organic": 2,
+          "diagonal": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 7
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 45,
+      "rooms": 6,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 19,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 340,
+        "walkable": 340,
+        "rooms": 6,
+        "edges": 5
+      },
+      "error": null,
+      "routing": {
+        "searches": 6,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 2,
+          "organic": 1,
+          "straight": 1,
+          "angular": 1
+        },
+        "actualStyles": {
+          "diagonal": 2,
+          "organic": 1,
+          "straight": 1,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 15,
+            "baseTiles": 15
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 55,
+      "rooms": 12,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 146,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 839,
+        "walkable": 839,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 9,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 55,
+      "rooms": 12,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 122,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 731,
+        "walkable": 731,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 10,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 55,
+      "rooms": 12,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 122,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 747,
+        "walkable": 747,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 9,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 55,
+      "rooms": 12,
+      "mode": "base",
+      "attempts": 2,
+      "ms": 118,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 641,
+        "walkable": 641,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 10,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 8,
+            "baseTiles": 8
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 55,
+      "rooms": 12,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 105,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 666,
+        "walkable": 666,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 12,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 9,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 11,
+            "baseTiles": 11
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 55,
+      "rooms": 12,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 125,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 859,
+        "walkable": 859,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {
+          "organic": 6,
+          "angular": 3,
+          "diagonal": 2
+        },
+        "actualStyles": {
+          "organic": 5,
+          "angular": 3,
+          "straight": 1,
+          "diagonal": 2
+        },
+        "fallbacks": 1,
+        "corridors": [
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 5,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 12,
+            "baseTiles": 8
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 55,
+      "rooms": 12,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 132,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 755,
+        "walkable": 755,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 6,
+          "angular": 3,
+          "organic": 2
+        },
+        "actualStyles": {
+          "diagonal": 6,
+          "angular": 3,
+          "organic": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 12,
+            "baseTiles": 8
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 55,
+      "rooms": 12,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 122,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 764,
+        "walkable": 764,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 5,
+          "angular": 2,
+          "organic": 2,
+          "straight": 2
+        },
+        "actualStyles": {
+          "diagonal": 5,
+          "angular": 3,
+          "organic": 2,
+          "straight": 1
+        },
+        "fallbacks": 1,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 8,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 55,
+      "rooms": 12,
+      "mode": "hybrid",
+      "attempts": 2,
+      "ms": 124,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 656,
+        "walkable": 656,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 11,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 5,
+          "organic": 2,
+          "straight": 2,
+          "angular": 2
+        },
+        "actualStyles": {
+          "diagonal": 5,
+          "straight": 3,
+          "organic": 1,
+          "angular": 2
+        },
+        "fallbacks": 1,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 8,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 55,
+      "rooms": 12,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 103,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 680,
+        "walkable": 680,
+        "rooms": 12,
+        "edges": 11
+      },
+      "error": null,
+      "routing": {
+        "searches": 12,
+        "relaxations": 0,
+        "requestedStyles": {
+          "straight": 3,
+          "diagonal": 4,
+          "angular": 3,
+          "organic": 1
+        },
+        "actualStyles": {
+          "straight": 3,
+          "diagonal": 4,
+          "angular": 3,
+          "organic": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 9,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 8
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 11,
+            "baseTiles": 11
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 65,
+      "rooms": 16,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 295,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1078,
+        "walkable": 1078,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 16,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 15
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 65,
+      "rooms": 16,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 320,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1062,
+        "walkable": 1062,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 15,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 14,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 65,
+      "rooms": 16,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 326,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1074,
+        "walkable": 1074,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 18,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 13,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 65,
+      "rooms": 16,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 344,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1134,
+        "walkable": 1134,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 17,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 13,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 65,
+      "rooms": 16,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 251,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 918,
+        "walkable": 918,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 16,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 15
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 11,
+            "baseTiles": 11
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 65,
+      "rooms": 16,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 327,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1109,
+        "walkable": 1109,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 16,
+        "relaxations": 0,
+        "requestedStyles": {
+          "organic": 5,
+          "straight": 3,
+          "diagonal": 7
+        },
+        "actualStyles": {
+          "organic": 5,
+          "straight": 3,
+          "diagonal": 7
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 65,
+      "rooms": 16,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 329,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1093,
+        "walkable": 1093,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 16,
+        "relaxations": 0,
+        "requestedStyles": {
+          "straight": 1,
+          "angular": 6,
+          "organic": 3,
+          "diagonal": 5
+        },
+        "actualStyles": {
+          "straight": 2,
+          "angular": 6,
+          "organic": 3,
+          "diagonal": 4
+        },
+        "fallbacks": 1,
+        "corridors": [
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 8,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 8,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 13,
+            "baseTiles": 9
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 11,
+            "baseTiles": 10
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 10
+          },
+          {
+            "requested": "diagonal",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 13,
+            "baseTiles": 13
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 65,
+      "rooms": 16,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 387,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1101,
+        "walkable": 1101,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 17,
+        "relaxations": 0,
+        "requestedStyles": {
+          "straight": 2,
+          "diagonal": 6,
+          "angular": 3,
+          "organic": 4
+        },
+        "actualStyles": {
+          "straight": 2,
+          "diagonal": 6,
+          "angular": 3,
+          "organic": 4
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 10,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 12,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 13,
+            "baseTiles": 9
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 65,
+      "rooms": 16,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 371,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1155,
+        "walkable": 1155,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 18,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 7,
+          "straight": 4,
+          "angular": 3,
+          "organic": 1
+        },
+        "actualStyles": {
+          "diagonal": 7,
+          "straight": 3,
+          "angular": 4,
+          "organic": 1
+        },
+        "fallbacks": 1,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 65,
+      "rooms": 16,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 251,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 946,
+        "walkable": 946,
+        "rooms": 16,
+        "edges": 15
+      },
+      "error": null,
+      "routing": {
+        "searches": 16,
+        "relaxations": 0,
+        "requestedStyles": {
+          "organic": 1,
+          "diagonal": 8,
+          "angular": 3,
+          "straight": 3
+        },
+        "actualStyles": {
+          "organic": 1,
+          "diagonal": 8,
+          "angular": 3,
+          "straight": 3
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 12,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 13,
+            "baseTiles": 9
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 12,
+            "baseTiles": 11
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 70,
+      "rooms": 20,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 551,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1223,
+        "walkable": 1223,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 17,
+          "angular": 2
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 70,
+      "rooms": 20,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 631,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1240,
+        "walkable": 1240,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 19
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 70,
+      "rooms": 20,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 658,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1281,
+        "walkable": 1281,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 19
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 70,
+      "rooms": 20,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 636,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1255,
+        "walkable": 1255,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 19
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 70,
+      "rooms": 20,
+      "mode": "base",
+      "attempts": 1,
+      "ms": 519,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1220,
+        "walkable": 1220,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 24,
+        "relaxations": 0,
+        "requestedStyles": {},
+        "actualStyles": {
+          "straight": 18,
+          "angular": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          },
+          {
+            "requested": null,
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-0",
+      "size": 70,
+      "rooms": 20,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 562,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1249,
+        "walkable": 1249,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {
+          "organic": 4,
+          "diagonal": 10,
+          "angular": 4,
+          "straight": 1
+        },
+        "actualStyles": {
+          "straight": 5,
+          "diagonal": 9,
+          "angular": 4,
+          "organic": 1
+        },
+        "fallbacks": 4,
+        "corridors": [
+          {
+            "requested": "organic",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 6,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 6,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 3,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 8,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 12,
+            "baseTiles": 8
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": "organic",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          },
+          {
+            "requested": "diagonal",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-1",
+      "size": 70,
+      "rooms": 20,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 635,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1267,
+        "walkable": 1267,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {
+          "angular": 7,
+          "diagonal": 5,
+          "organic": 2,
+          "straight": 5
+        },
+        "actualStyles": {
+          "angular": 7,
+          "diagonal": 5,
+          "organic": 2,
+          "straight": 5
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 5
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 12,
+            "baseTiles": 8
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 9,
+            "baseTiles": 8
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 9,
+            "baseTiles": 9
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-2",
+      "size": 70,
+      "rooms": 20,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 668,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1315,
+        "walkable": 1315,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 21,
+        "relaxations": 0,
+        "requestedStyles": {
+          "organic": 7,
+          "diagonal": 6,
+          "angular": 5,
+          "straight": 1
+        },
+        "actualStyles": {
+          "organic": 7,
+          "diagonal": 6,
+          "angular": 5,
+          "straight": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 1,
+            "tiles": 6,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 7,
+            "baseTiles": 5
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 9,
+            "baseTiles": 7
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 10,
+            "baseTiles": 8
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-3",
+      "size": 70,
+      "rooms": 20,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 632,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1298,
+        "walkable": 1298,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 20,
+        "relaxations": 0,
+        "requestedStyles": {
+          "diagonal": 9,
+          "organic": 5,
+          "angular": 4,
+          "straight": 1
+        },
+        "actualStyles": {
+          "diagonal": 9,
+          "organic": 5,
+          "angular": 4,
+          "straight": 1
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 3,
+            "tiles": 5,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 7,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 4
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 7,
+            "baseTiles": 6
+          },
+          {
+            "requested": "organic",
+            "actual": "organic",
+            "turns": 3,
+            "tiles": 8,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 8,
+            "tiles": 13,
+            "baseTiles": 9
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 10,
+            "baseTiles": 9
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    },
+    {
+      "seed": "bench-4",
+      "size": 70,
+      "rooms": 20,
+      "mode": "hybrid",
+      "attempts": 1,
+      "ms": 515,
+      "ok": true,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "reachable": 1244,
+        "walkable": 1244,
+        "rooms": 20,
+        "edges": 19
+      },
+      "error": null,
+      "routing": {
+        "searches": 24,
+        "relaxations": 0,
+        "requestedStyles": {
+          "angular": 6,
+          "diagonal": 8,
+          "straight": 5
+        },
+        "actualStyles": {
+          "angular": 6,
+          "diagonal": 8,
+          "straight": 5
+        },
+        "fallbacks": 0,
+        "corridors": [
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 4,
+            "baseTiles": 3
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 4,
+            "tiles": 6,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 4,
+            "baseTiles": 4
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 5,
+            "baseTiles": 5
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 6,
+            "baseTiles": 6
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 9,
+            "baseTiles": 6
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 8,
+            "baseTiles": 7
+          },
+          {
+            "requested": "straight",
+            "actual": "straight",
+            "turns": 0,
+            "tiles": 7,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 7
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 9,
+            "baseTiles": 8
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 9,
+            "baseTiles": 8
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 5,
+            "tiles": 8,
+            "baseTiles": 8
+          },
+          {
+            "requested": "angular",
+            "actual": "angular",
+            "turns": 2,
+            "tiles": 11,
+            "baseTiles": 10
+          },
+          {
+            "requested": "diagonal",
+            "actual": "diagonal",
+            "turns": 6,
+            "tiles": 10,
+            "baseTiles": 10
+          }
+        ]
+      }
+    }
+  ]
+}

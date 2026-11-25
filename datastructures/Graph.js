@@ -1,402 +1,53 @@
+// Graph: mesmas interfaces de Room/Edge, BFS sem duplicar entradas na fila.
 class Graph {
-    constructor() {
-        this.nodes = [];
-        this.adjacencyList = [],
-            this.MAX_EDGES_PER_ROOM = Infinity
+    constructor(){this.nodes=[];this.adjacencyList=[];this.MAX_EDGES_PER_ROOM=Infinity;}
+    addNode(room){this.nodes.push(room);}
+    addEdge(a,b,cells){this.adjacencyList.push(new Edge(a.roomId,b.roomId,cells));}
+    hasEdge(a,b){return this.getEdge(a,b)!==null;}
+    hasEdgeBetweenRooms(a,b){return this.hasEdge(a,b);}
+    getEdge(a,b){return this.adjacencyList.find(e=>(e.fromRoom===a.roomId&&e.toRoom===b.roomId)||(e.fromRoom===b.roomId&&e.toRoom===a.roomId))||null;}
+    countEdges(r){return this.getCorridorsFromRoom(r).length;}
+    getCorridorsFromRoom(r){return this.adjacencyList.filter(e=>e.fromRoom===r.roomId||e.toRoom===r.roomId);}
+    getOtherRoomInCorridor(e,r){return e.fromRoom===r.roomId?this.getNodeById(e.toRoom):e.toRoom===r.roomId?this.getNodeById(e.fromRoom):null;}
+    getNodeById(id){return this.nodes.find(n=>n.roomId==id);}
+    getNeighbors(r){return this.getCorridorsFromRoom(r).map(e=>this.getOtherRoomInCorridor(e,r)).filter(Boolean);}
+    findRoomByCoordinates(x,y){return this.nodes.find(r=>r.cells.some(c=>c.x===x&&c.y===y))||null;}
+    removeCellsFromArray(a,b){const s=new Set(b.map(c=>`${c.x},${c.y}`));return a.filter(c=>!s.has(`${c.x},${c.y}`));}
+    getClosestCellsAndDistances(a,b){
+        const result=[],aa=this.removeCellsFromArray(a.findEdgeCells(),a.unavailableCells),bb=this.removeCellsFromArray(b.findEdgeCells(),b.unavailableCells);
+        for(const cellA of aa)for(const cellB of bb)result.push({cells:{cellA,cellB},distance:Math.abs(cellA.x-cellB.x)+Math.abs(cellA.y-cellB.y)});
+        return result.sort((x,y)=>x.distance-y.distance);
     }
-
-    addNode(room) {
-        this.nodes.push(room);
-    }
-
-    addEdge(fromRoom, toRoom, cells) {
-        this.adjacencyList.push(new Edge(fromRoom.roomId, toRoom.roomId, cells));
-    }
-
-    hasEdge(fromRoom, toRoom) {
-        for (const edge of this.adjacencyList) {
-            if ((edge.fromRoom === fromRoom.roomId && edge.toRoom === toRoom.roomId) ||
-                (edge.fromRoom === toRoom.roomId && edge.toRoom === fromRoom.roomId)) {
-                return true;
+    getWeight(a,b){return this.getClosestCellsAndDistances(a,b)[0]||{distance:Infinity,cells:{}};}
+    getClosestRoomId(id){const a=this.getNodeById(id);if(!a)return null;let best=null,dist=Infinity;for(const b of this.nodes)if(b!==a)for(const p of a.cells)for(const q of b.cells){const d=Math.abs(p.x-q.x)+Math.abs(p.y-q.y);if(d<dist){best=b.roomId;dist=d;}}return best;}
+    // A busca marca cada sala no enfileiramento e guarda o predecessor.
+    _bfs(start,canExpand=()=>true,canCross=()=>true){
+        const distances=new Map(),previous=new Map(),rooms=[];
+        if(!start)return {distances,previous,rooms};
+        distances.set(start,0);rooms.push(start);
+        for(let i=0;i<rooms.length;i++){
+            const r=rooms[i];if(!canExpand(r))continue;
+            for(const e of this.getCorridorsFromRoom(r)){
+                const n=this.getOtherRoomInCorridor(e,r);
+                if(!n||distances.has(n)||!canCross(e,r,n))continue;
+                distances.set(n,distances.get(r)+1);previous.set(n,{room:r,edge:e});rooms.push(n);
             }
         }
-        return false;
+        return {distances,previous,rooms};
     }
-
-    getWeight(roomA, roomB) {
-        let minDistance = Infinity;
-        let closestCells = {};
-
-        let availableCellsA = this.removeCellsFromArray(roomA.findEdgeCells(), roomA.unavailableCells);
-        let availableCellsB = this.removeCellsFromArray(roomB.findEdgeCells(), roomB.unavailableCells);
-
-        for (const cellA of availableCellsA) {
-            for (const cellB of availableCellsB) {
-                const distance = Math.sqrt(Math.pow(cellB.x - cellA.x, 2) + Math.pow(cellB.y - cellA.y, 2));
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestCells = { cellA, cellB };
-                }
-            }
-        }
-
-        return { distance: minDistance, cells: closestCells };
+    areNodesConnected(a,b){return !!b&&this._bfs(a).distances.has(b);}
+    calculateDistancesFromStart(r){return this._bfs(r).distances;}
+    findFarthestRoomFromStart(r){const b=this._bfs(r);let farthest=r,max=-1;for(const n of b.rooms){const d=b.distances.get(n);if(d>max){farthest=n;max=d;}}return farthest;}
+    sortRoomsByDistanceFromStart(r){const d=this.calculateDistancesFromStart(r);return [...this.nodes].sort((a,b)=>(d.get(a)??Infinity)-(d.get(b)??Infinity));}
+    findCollectibleRoomsInPathByCorridor(r,c){return this._bfs(r,()=>true,e=>e!==c).rooms.filter(n=>n.tag.tipo==='colecionável');}
+    findCollectibleRoomsInPathByRoom(r,stop){return this._bfs(r,n=>n.roomId!==stop.roomId).rooms.filter(n=>n.tag.tipo==='colecionável');}
+    isCorridorWithinDistance(r,target,maxDistance){const d=this.calculateDistancesFromStart(r);return this.nodes.some(n=>(d.get(n)??Infinity)<=maxDistance&&this.getCorridorsFromRoom(n).includes(target));}
+    findShortestPath(a,b){const t=this._bfs(a);if(!t.distances.has(b))return null;const path=[b];while(path[0]!==a)path.unshift(t.previous.get(path[0]).room);return path;}
+    findMinimumPathFromRoomToEdge(r,target){
+        const t=this._bfs(r),n=t.rooms.find(a=>this.getCorridorsFromRoom(a).includes(target));if(!n)return null;
+        const path=[target];let cur=n;while(cur!==r){const p=t.previous.get(cur);path.unshift(p.edge);cur=p.room;}return path;
     }
-
-    removeCellsFromArray(mainArray, cellsToRemove) {
-        return mainArray.filter(cell => {
-            // Check if the current cell is not present in the cellsToRemove array
-            return !cellsToRemove.some(cellToRemove => cellToRemove.x === cell.x && cellToRemove.y === cell.y);
-        });
-    }
-
-    getEdge(roomA, roomB) {
-        for (const edge of this.adjacencyList) {
-            if ((edge.fromRoom === roomA.roomId && edge.toRoom === roomB.roomId) ||
-                (edge.fromRoom === roomB.roomId && edge.toRoom === roomA.roomId)) {
-                return edge;
-            }
-        }
-        return null; // Retorna null se a aresta não for encontrada
-    }
-
-
-    countEdges(room) {
-        let roomId = room.roomId
-        let count = 0;
-        for (const edge of this.adjacencyList) {
-            if (edge.fromRoom === roomId || edge.toRoom === roomId) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    getCorridorsFromRoom(room) {
-        return this.adjacencyList.filter(edge =>
-            edge.fromRoom === room.roomId || edge.toRoom === room.roomId
-        );
-    }
-
-    getOtherRoomInCorridor(corridor, room) {
-        if (corridor.fromRoom === room.roomId) {
-            return this.getNodeById(corridor.toRoom);
-        } else if (corridor.toRoom === room.roomId) {
-            return this.getNodeById(corridor.fromRoom);
-        }
-        return null;
-    }
-
-    getNodeById(id) {
-        return this.nodes.find((node) => node.roomId == id)
-    }
-
-    hasEdgeBetweenRooms(roomA, roomB) {
-        for (const edge of this.adjacencyList) {
-            if ((edge.fromRoom === roomA.roomId && edge.toRoom === roomB.roomId) ||
-                (edge.fromRoom === roomB.roomId && edge.toRoom === roomA.roomId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    findRoomByCoordinates(x, y) {
-        for (const node of this.nodes) {
-            for (const cell of node.cells) {
-                if (cell.x === x && cell.y === y) {
-                    return node;
-                }
-            }
-        }
-        return null; // Caso não encontre nenhum nó correspondente
-    }
-
-    getClosestRoomId(roomId) {
-        const sourceRoom = this.graph.getNodeById(roomId);
-        let minDistance = Infinity;
-        let closestRoomId = null;
-
-        for (const room of this.graph.nodes) {
-            if (room.roomId !== roomId) {
-                for (const cellA of sourceRoom.cells) {
-                    for (const cellB of room.cells) {
-                        const distance = Math.abs(cellA.x - cellB.x) + Math.abs(cellA.y - cellB.y);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            closestRoomId = room.roomId;
-                        }
-                    }
-                }
-            }
-        }
-
-        return closestRoomId;
-    }
-
-    getClosestCellsAndDistances(roomA, roomB) {
-        const closestCellsAndDistances = [];
-        const availableCellsA = this.removeCellsFromArray(roomA.findEdgeCells(), roomA.unavailableCells);
-        const availableCellsB = this.removeCellsFromArray(roomB.findEdgeCells(), roomB.unavailableCells);
-
-        for (const cellA of availableCellsA) {
-            for (const cellB of availableCellsB) {
-                const distance = Math.hypot((cellB.x - cellA.x), (cellB.y - cellA.y));
-                closestCellsAndDistances.push({ cells: { cellA, cellB }, distance });
-            }
-        }
-
-        closestCellsAndDistances.sort((a, b) => a.distance - b.distance);
-
-        return closestCellsAndDistances.slice(0, Math.floor(closestCellsAndDistances.length / 2));
-    }
-
-    getNeighbors(room) {
-        const neighbors = [];
-
-        this.adjacencyList.forEach(edge => {
-            if (edge.fromRoom == room.roomId) {
-                neighbors.push(this.getNodeById(edge.toRoom))
-            }
-            if (edge.toRoom == room.roomId) {
-                neighbors.push(this.getNodeById(edge.fromRoom))
-            }
-        })
-
-        return neighbors;
-    }
-
-    getCorridorsFromRoom(room) {
-        return this.adjacencyList.filter(edge => edge.fromRoom === room.roomId || edge.toRoom === room.roomId);
-    }
-
-
-    areNodesConnected(nodeA, nodeB) {
-        const visited = new Set();
-        const queue = [nodeA];
-
-        while (queue.length > 0) {
-            const currentNode = queue.shift();
-
-            if (currentNode.roomId == nodeB.roomId) {
-                return true; // Nodes are connected
-            }
-
-            visited.add(currentNode);
-
-            var neighbors = this.getNeighbors(currentNode).filter(neighbor => !visited.has(neighbor));
-
-            queue.push(...neighbors);
-
-        }
-
-        return false; // Nodes are not connected
-    }
-
-    findFarthestRoomFromStart(startRoom) {
-        const visited = new Set();
-        const queue = [{ room: startRoom, distance: 0 }];
-        let farthestRoom = startRoom;
-        let maxDistance = 0;
-
-        while (queue.length > 0) {
-            const { room, distance } = queue.shift();
-
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                farthestRoom = room;
-            }
-
-            visited.add(room);
-
-            const neighbors = this.getNeighbors(room).filter(neighbor => !visited.has(neighbor));
-
-            for (const neighbor of neighbors) {
-                queue.push({ room: neighbor, distance: distance + 1 });
-            }
-        }
-
-        return farthestRoom;
-    }
-
-    /*
-      métodos de puzzle
-    */
-
-    findCollectibleRoomsInPathByCorridor(startRoom, corridor) {
-        const collectibleRooms = [];
-        const visited = new Set();
-        const queue = [startRoom]; // Inicie com a sala inicial como ponto de partida.
-
-        while (queue.length > 0) {
-            const currentRoom = queue.shift();
-
-            // Verifique se o nó atual é uma sala com a tag "colecionável".
-            if (currentRoom.tag.tipo === "colecionável") {
-                collectibleRooms.push(currentRoom);
-            }
-
-            visited.add(currentRoom);
-
-            for (const neighbor of this.getNeighbors(currentRoom)) {
-                // Verifique se a aresta entre a sala atual e o vizinho é o corredor passado por parâmetro (corridor).
-                const edge = this.getEdge(currentRoom, neighbor);
-                if (edge && !(edge === corridor) && !visited.has(neighbor)) {
-                    queue.push(neighbor);
-                }
-            }
-        }
-
-        return collectibleRooms;
-    }
-
-    findCollectibleRoomsInPathByRoom(startRoom, room) {
-        const collectibleRooms = [];
-        const visited = new Set();
-        const queue = [startRoom]; // Inicie com a sala inicial como ponto de partida.
-
-        while (queue.length > 0) {
-            const currentRoom = queue.shift();
-
-            // Verifique se o nó atual é uma sala com a tag "colecionável".
-            if (currentRoom.tag.tipo === "colecionável") {
-                collectibleRooms.push(currentRoom);
-            }
-
-            visited.add(currentRoom);
-
-            if (currentRoom.roomId !== room.roomId) {
-                for (const neighbor of this.getNeighbors(currentRoom)) {
-                    // Verifique se a aresta entre a sala atual e o vizinho é o corredor passado por parâmetro (corridor).
-                    if (!visited.has(neighbor)) {
-                        queue.push(neighbor);
-                    }
-                }
-            }
-
-        }
-
-        return collectibleRooms;
-    }
-
-    calculateDistancesFromStart(startRoom) {
-        const distances = new Map(); // Mapa para armazenar as distâncias de cada sala.
-        const visited = new Set();
-        const queue = [{ room: startRoom, distance: 0 }]; // Inicie com a sala inicial e distância zero.
-
-        while (queue.length > 0) {
-            const { room, distance } = queue.shift();
-
-            distances.set(room, distance);
-
-            visited.add(room);
-
-            for (const neighbor of this.getNeighbors(room)) {
-                if (!visited.has(neighbor)) {
-                    queue.push({ room: neighbor, distance: distance + 1 });
-                }
-            }
-        }
-
-        return distances;
-    }
-
-    // Função para ordenar todas as salas pela distância em relação à sala inicial
-    sortRoomsByDistanceFromStart(startRoom) {
-        const distances = this.calculateDistancesFromStart(startRoom);
-
-        // Ordenar as salas com base nas distâncias calculadas.
-        const sortedRooms = Array.from(this.nodes);
-        sortedRooms.sort((roomA, roomB) => {
-            const distanceA = distances.get(roomA) || Infinity;
-            const distanceB = distances.get(roomB) || Infinity;
-            return distanceA - distanceB;
-        });
-
-        return sortedRooms;
-    }
-
-    isCorridorWithinDistance(startRoom, targetCorridor, maxDistance) {
-        const visited = new Set();
-        const queue = [{ room: startRoom, distance: 0 }];
-
-        while (queue.length > 0) {
-            const { room, distance } = queue.shift();
-
-            if (distance <= maxDistance) {
-                visited.add(room);
-
-                // Buscar os corredores vizinhos a partir da sala
-                const neighboringCorridors = this.getCorridorsFromRoom(room);
-
-                // Adicionar a sala do outro lado do corredor à fila
-                for (const corridor of neighboringCorridors) {
-                    if (corridor === targetCorridor) {
-                        return true
-                    }
-                    const otherRoomId = (corridor.fromRoom === room.roomId) ? corridor.toRoom : corridor.fromRoom;
-                    const otherRoom = this.getNodeById(otherRoomId)
-                    if (!visited.has(otherRoom)) {
-                        queue.push({ room: otherRoom, distance: distance + 1 });
-                    }
-                }
-            }
-        }
-
-        return false; // O corredor alvo não foi encontrado dentro da distância especificada
-    }
-
-    findShortestPath(roomA, roomB) {
-        const visited = new Set();
-        const queue = [{ room: roomA, path: [roomA] }];
-
-        while (queue.length > 0) {
-            const { room, path } = queue.shift();
-
-            if (room === roomB) {
-                return path; // Caminho encontrado
-            }
-
-            visited.add(room);
-
-            for (const neighbor of this.getNeighbors(room)) {
-                if (!visited.has(neighbor)) {
-                    queue.push({ room: neighbor, path: [...path, neighbor] });
-                }
-            }
-        }
-
-        return null; // Não há caminho entre as salas
-    }
-
-    findMinimumPathFromRoomToEdge(startRoom, targetEdge) {
-        const visited = new Set();
-        const queue = [{ room: startRoom, edges: [] }];
-
-        while (queue.length > 0) {
-            const { room, edges } = queue.shift();
-
-            visited.add(room);
-
-            for (const neighborEdge of this.getCorridorsFromRoom(room)) {
-                if (!visited.has(neighborEdge)) {
-                    const otherRoomId = (neighborEdge.fromRoom === room.roomId) ? neighborEdge.toRoom : neighborEdge.fromRoom;
-                    const otherRoom = this.getNodeById(otherRoomId);
-
-                    const newEdges = [...edges, neighborEdge];
-
-                    if (neighborEdge === targetEdge) {
-                        return newEdges; // Encontramos o edge de destino
-                    }
-
-                    queue.push({ room: otherRoom, edges: newEdges });
-                }
-            }
-        }
-
-        return null; // Caminho mínimo não encontrado
-    }
-
+    // Metodo de progressao original: fora do escopo desta revisao.
     hasLeverDeadlock() {
         var startRoom = this.nodes.filter(node => node.tag.tipo === "inicio")[0].roomId
         var tamanho = this.nodes.filter(node => node.tag.subTipo === "LeverAgent").length
@@ -440,11 +91,6 @@ class Graph {
             visitedStates.push(actualState)
         }
         var deadlock = visitedRooms.size !== this.nodes.length
-
         return deadlock
     }
-
-
-
-
 }

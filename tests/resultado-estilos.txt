@@ -1,0 +1,49 @@
+45 base 5/5 mean ms 28
+45 hybrid 5/5 mean ms 25
+55 base 5/5 mean ms 123
+55 hybrid 5/5 mean ms 121
+65 base 5/5 mean ms 307
+65 hybrid 5/5 mean ms 333
+70 base 5/5 mean ms 599
+70 hybrid 5/5 mean ms 602
+{
+  "base": {
+    "valid": 20,
+    "total": 20,
+    "attempts": 21,
+    "corridors": 250,
+    "actual": {
+      "straight": 226,
+      "angular": 24
+    },
+    "requested": {},
+    "fallbacks": 0,
+    "turns": 24,
+    "tiles": 1385,
+    "baseTiles": 1385,
+    "meanMs": 264
+  },
+  "hybrid": {
+    "valid": 20,
+    "total": 20,
+    "attempts": 21,
+    "corridors": 250,
+    "actual": {
+      "angular": 59,
+      "organic": 49,
+      "straight": 46,
+      "diagonal": 96
+    },
+    "requested": {
+      "angular": 57,
+      "organic": 54,
+      "diagonal": 101,
+      "straight": 38
+    },
+    "fallbacks": 12,
+    "turns": 699,
+    "tiles": 1799,
+    "baseTiles": 1409,
+    "meanMs": 270
+  }
+}

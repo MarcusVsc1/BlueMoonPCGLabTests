@@ -1,0 +1,2 @@
+const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
+module.exports=function load(){const ctx=vm.createContext({console});for(const f of ['tests/SeedGenerator.js','tests/fixtures.js','datastructures/Graph.js','DungeonGenerator.js','puzzleagents/auxagents/MazeAgent.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'..',f),'utf8'),ctx,{filename:f});return code=>vm.runInContext(code,ctx);};

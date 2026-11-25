@@ -86,6 +86,8 @@
             resetSokoban: 0
         }
 
+        ctx.imageSmoothingEnabled = true;
+
         var pc = new Sprite({ x: 206, y: 176, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, maxVidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
 
         var gerenciador = new GameManager(pc);
@@ -152,6 +154,16 @@
                     ) {
                         this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0;
                     }
+                    const diagonalInputX = input.comandos['esquerda'].valor != input.comandos['direita'].valor || Math.abs(input.movimentos['horizontal'].valor) === 1;
+                    const diagonalInputY = input.comandos['cima'].valor != input.comandos['baixo'].valor || Math.abs(input.movimentos['vertical'].valor) === 1;
+                    if (diagonalInputX && diagonalInputY) {
+                        const length = Math.hypot(this.vx, this.vy);
+                        if (length > this.standardSpd && this.standardSpd > 0) {
+                            const factor = this.standardSpd / length;
+                            this.vx *= factor;
+                            this.vy *= factor;
+                        }
+                    }
                     if (input.comandos['espada'].valor == 1 && this.swCD <= 0 && this.globalCD <= 0) {
                         var tiro = new Sprite({
                             x: this.x, y: this.y,
@@ -176,6 +188,7 @@
                                 vm: 220, w: 12, h: 12, imgX: 0, imgY: 1, imune: 0,
                                 props: { tipo: "tiro", modelo: "fireball" }, desenhar: desenhaTiro, mover: moverTiro,
                             });
+                            alinharOrigemFireball(tiro, this);
                             this.scene.adicionar(tiro);
                             assetsMng.play("shot");
                             this.mana--;
@@ -208,9 +221,22 @@
 
         }
 
+        // A origem fisica do tiro coincide com o centro visual do personagem.
+        function alinharOrigemFireball(tiro, origem) {
+            const offset = origem.renderOffset || { x: -origem.w - 3.1, y: -origem.h - 12 };
+            const dx = offset.x + 15;
+            const dy = offset.y + 15;
+            const map = origem.scene && origem.scene.map;
+            if (map && Number.isFinite(dx) && Number.isFinite(dy)) {
+                // Nao atravessar paredes para reposicionar a origem do disparo.
+                CollisionSystem.axis(tiro, map, dx, 'x');
+                CollisionSystem.axis(tiro, map, dy, 'y');
+            }
+            return tiro;
+        }
         function atirarFireball() {
             if (this.globalCD <= 0) {
-                this.scene.adicionar(criarFireball(0, "tiroE", this.direcao, this.x, this.y))
+                this.scene.adicionar(alinharOrigemFireball(criarFireball(0, "tiroE", this.direcao, this.x, this.y), this))
                 this.globalCD = 1.5;
             }
         }
@@ -396,6 +422,8 @@
                         vm: 35, w: 12, h: 12, imgX: 1, imgY: 1, vx: 1, vy: 1, imune: 0, mover: moverCircular, a: angulo,
                         props: { tipo: "tiroE", modelo: "fireball" }, desenhar: desenhaTiro, atravessa: 1
                     });
+                    alinharOrigemFireball(tiro, this);
+                    tiro.a = Math.atan2(pc.y - tiro.y, pc.x - tiro.x);
                     this.scene.adicionar(tiro);
                     assetsMng.play("shot");
                 } else {
