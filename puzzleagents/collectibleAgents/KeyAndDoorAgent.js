@@ -7,6 +7,11 @@ class KeyAndDoorAgent {
 
 
     gerarTag(mapGraph, room) {
+        // BLUEMOON_30_40_ROOMS_V1: nao criar pares sem arte cadastrada; falha antes de alterar tags.
+        // BLUEMOON_KEYS_V2: apenas IDs com nome e ambos os sprites registrados.
+        if (!Object.prototype.hasOwnProperty.call(KeyColorEnum, this.agentLevel) ||
+            !assetsMng.img("key_" + this.agentLevel) ||
+            !assetsMng.img("door_" + this.agentLevel)) return false;
 
         var lastTag = JSON.parse(JSON.stringify(room.tag))
         room.tag = JSON.parse(JSON.stringify(this.defaultTag))

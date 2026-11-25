@@ -66,19 +66,26 @@ GameManager.prototype.criarEstagios = function () {
         };
     };
 
+    // BLUEMOON_30_40_ROOMS_V1: seis cristais em hexagono, em ordem crescente no sentido horario.
+    const roomPortals = [
+        { rooms: 6,  option: 0, x: 3.75, y: 2 },
+        { rooms: 12, option: 1, x: 8.25, y: 2 },
+        { rooms: 16, option: 2, x: 10.5, y: 4.5 },
+        { rooms: 20, option: 3, x: 8.25, y: 7 },
+        { rooms: 30, option: 4, x: 3.75, y: 7 },
+        { rooms: 40, option: 5, x: 1.5,  y: 4.5 }
+    ];
     var eventoInicial = function () {
         if (!this.preencheu) {
-            var fillStyle = 'rgba(255, 255, 255, 1'
-            var font = "15px Tahoma";
-            var text = '6 Salas'
-            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 55, y: 103 })
-            var text = '16 Salas'
-            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 307, y: 103 })
-            var text = '12 Salas'
-            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 52, y: 262 })
-            var text = '20 Salas'
-            cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 307, y: 262 })
-
+            var fillStyle = 'rgba(255, 255, 255, 1)';
+            var font = '15px Tahoma';
+            var text;
+            roomPortals.forEach(portal => {
+                const label = portal.rooms + ' Salas';
+                cena1.sceneMessages.push({ fillStyle, font, text: label,
+                    x: portal.x * 32 + 16 - (portal.rooms < 10 ? 25 : 30),
+                    y: portal.y * 32 + 39 });
+            });
             fillStyle = `rgba(255, 255, 255, 1)`;
             font = "50px Medieval2";
             text = 'Blue Moon'
@@ -87,14 +94,14 @@ GameManager.prototype.criarEstagios = function () {
             text = 'Roguelike'
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 155, y: 390 })
         }
-        cena1.dialogo = "Controles: Direcionais WASD, K: Espada, J: Magia. P: Reseta sokoban"
+        cena1.dialogo = "WASD: Mover | K: Espada | J: Magia | P: Reset | T/Y: Item"
         this.preencheu = true
     }
 
-    spriteLista.push(this.criarTeleporte(2, 2, 2, 2, 0, this.inicializarDungeonAleatoria(0)));
-    spriteLista.push(this.criarTeleporte(2, 7, 2, 2, 0, this.inicializarDungeonAleatoria(1)));
-    spriteLista.push(this.criarTeleporte(10, 2, 2, 2, 0, this.inicializarDungeonAleatoria(2)));
-    spriteLista.push(this.criarTeleporte(10, 7, 2, 2, 0, this.inicializarDungeonAleatoria(3)));
+    roomPortals.forEach(portal => {
+        spriteLista.push(this.criarTeleporte(portal.x, portal.y, 2, 2, 0,
+            this.inicializarDungeonAleatoria(portal.option)));
+    });
 
     eventoLista.push(eventoInicial)
 
@@ -198,6 +205,12 @@ GameManager.prototype.inicializarDungeonAleatoria = function (numero) {
 }
 
 GameManager.prototype.criarNovaDungeon = function (opcao) {
+    this.pc.atravessa = 0; // BM_NOCLIP_V2: nova partida sempre normal.
+
+    // BLUEMOON_PERSISTENT_INVENTORY_V1: cada nova masmorra e uma nova partida.
+    cena1.inventory = new Inventory();
+    cena1.inventoryHUD = new InventoryHUD(cena1.inventory);
+    this.pc.lavaImmunity = false;
     var novaDungeon
     switch (opcao) {
         case 0:
@@ -211,6 +224,12 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
             break;
         case 3:
             novaDungeon = { NUM_ROOMS: 20, MAP_SIZE: 70 }
+            break;
+        case 4:
+            novaDungeon = { NUM_ROOMS: 30, MAP_SIZE: 90 };
+            break;
+        case 5:
+            novaDungeon = { NUM_ROOMS: 40, MAP_SIZE: 105 };
             break;
     }
 
@@ -240,7 +259,12 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
     var estagio = this.fabricaDeEstagios(mapa, spriteLista, eventoLista)
     this.estagios[0] = estagio
 
-    new PuzzleAgentsManager(this.dungeonGenerator.graph)
+    CombatArenaAgent.ensureCombatRoomHook(); // BM_ARENA_INTEGRATION_V13
+    new PuzzleAgentsManager(this.dungeonGenerator.graph);
+    // BLUEMOON_COMBAT_ARENA_V1: todos os puzzles, portas e teleportes ja foram posicionados.
+    CombatArenaAgent.finalize(this.dungeonGenerator.graph, this.estagios[0].mapa, cena1);
+    // BM_DUNGEON_MAP_V1: apos toda a geracao, sem mudar puzzles ou quantidade de chaves.
+    DungeonMapSystem.prepare(this.dungeonGenerator.graph, this.estagios[0].mapa, cena1);
     this.pc.mana = 5
 
 }
@@ -293,6 +317,10 @@ GameManager.prototype.criarInimigo = function (tipo, posX, posY) {
             });
             break;
         //necromante
+        // BLUEMOON_SHIELD_ENEMY_V1
+        case "escudeiro":
+            inimigo = new ShieldEnemy(posX, posY);
+            break;
         case "necromante":
             inimigo = new Sprite({
                 x: posX * 32 + 16, y: posY * 32 + 16, w: 12, h: 12, vm: 0, imgX: 3, imgY: 1, vx: 0, vy: 0, globalCD: 2.0,
@@ -420,7 +448,7 @@ GameManager.prototype.criarChave = function (posX, posY, keyId) {
         imagem: "key_" + keyId, desenhar: desenharChave, props: {
             tipo: "objeto", subtipo: "colecionavel",
             mensagem: 'Adquirida Chave ' + KeyColorEnum[keyId],
-            droppable: true
+            droppable: false, inventoryKind: "consumable"
         }
     });
 }
@@ -439,7 +467,7 @@ GameManager.prototype.criarBotaAntiLava = function (posX, posY) {
         imagem: "gear", desenhar: desenharColecionavel, props: {
             tipo: "objeto", subtipo: "colecionavel", event: "lava",
             mensagem: 'Adquirida Bota Antilava',
-            droppable: true
+            droppable: false, inventoryKind: "permanent", permanentId: "lavaBoots"
         }
     });
 }
@@ -486,9 +514,14 @@ GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
     });
 }
 
+// BM_HAZARDS_V2: raiz tem tempo de reacao; filhos propagam abaixo da velocidade da Lyra.
+function bmFireSpreadSeconds(level) {
+    const n = Math.max(1, Math.min(4, Math.trunc(Number(level) || 1)));
+    return [0.40, 0.36, 0.33, 0.30][n - 1];
+}
 GameManager.prototype.criarFireball = function (posX, posY, level, fireplaces) {
     return new Sprite({
-        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: 0.4 - (level - 1) * 0.1, firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
+        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: fireplaces == null ? 0.65 : bmFireSpreadSeconds(level), firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
         contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, level: level, toggled: false, props: { tipo: "tiroE" }
     });
 }

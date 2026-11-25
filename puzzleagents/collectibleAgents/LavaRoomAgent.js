@@ -9,13 +9,9 @@ class LavaRoomAgent {
 
     gerarTag(mapGraph, room) {
         var lavaRoom = room
-        if(this.hasBoots) {
-            if(mapGraph.getNeighbors(room).some(neighbor => {return neighbor.tag.auxiliar === "LavaRoomAgent" || neighbor.tag.subTipo === "LavaRoomAgent"}) ||
-            mapGraph.getNeighbors(room).length == 1 || Object.keys(room.tag).length > 0) {
-                return false
-            }
-            lavaRoom = room
-
+        if (this.hasBoots) {
+            // BLUEMOON_LAVA_UNICA_AGENTE: a bota permanente permite somente uma geracao.
+            return false;
         } else {
             var lastTag = JSON.parse(JSON.stringify(room.tag))
             var startRoom = mapGraph.nodes.filter(node => node.tag.tipo === "inicio")[0]

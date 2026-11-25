@@ -33,10 +33,12 @@ function Scene(params) {
         extras: [],
         paintCorridor: [],
         darkRooms: [],
-        inventoryItem: null,
         sokobans: []
     }
     Object.assign(this, exemplo, params);
+    // BLUEMOON_PERSISTENT_INVENTORY_V1
+    this.inventory = new Inventory();
+    this.inventoryHUD = new InventoryHUD(this.inventory);
 }
 
 Scene.prototype = new Scene();
@@ -44,6 +46,8 @@ Scene.prototype.constructor = Scene;
 
 //adiciona os sprites ao scene
 Scene.prototype.adicionar = function (sprite) {
+    DungeonMapSystem.beforeAdd(this, sprite);
+    if (this.inventory.hidden(sprite)) return;
     if (sprite.props.tipo == "pc") {
         this.pc = sprite;
     }
@@ -86,6 +90,7 @@ Scene.prototype.adicionar = function (sprite) {
     }
 
     sprite.scene = this;
+    CombatArena.add(this, sprite);
 };
 
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
@@ -177,7 +182,7 @@ Scene.prototype.mover = function (dt) {
         this.spritesSpike[i].mover(dt);
     }
     for (var i = 0; i < this.spritesE.length; i++) {
-        this.spritesE[i].mover(dt);
+        if (CombatArena.canContact(this, this.spritesE[i])) this.spritesE[i].mover(dt);
     }
     for (var i = 0; i < this.spritesT.length; i++) {
         if (!CollisionSystem.tickStationaryProjectile(this.spritesT[i], dt)) this.spritesT[i].mover(dt);
@@ -212,19 +217,51 @@ Scene.prototype.mover = function (dt) {
 };
 
 //adiciona o comportamento dos sprites
+// BM_HAZARDS_V2: som segue a mudanca efetiva, nunca um segundo contador.
+Scene.prototype.bmPlaySpikeTransition = function (rooms) {
+    if (!rooms.size || !this.pc) return;
+    const audio = this.assets?.audios?.spike;
+    if (!audio) return;
+    const tile = this.map?.SIZE || 32;
+    let volume = 0;
+    for (const room of rooms) {
+        const origin = room.cells?.[0];
+        if (!origin) continue;
+        const x = (origin.x + room.roomWidth / 2) * tile;
+        const y = (origin.y + room.roomHeight / 2) * tile;
+        const radius = Math.hypot(room.roomWidth * tile / 2, room.roomHeight * tile / 2);
+        const distance = Math.hypot(this.pc.x - x, this.pc.y - y);
+        const v = distance < radius ? 0.8 : distance < radius * 1.3 ? 0.4 : distance < radius * 1.6 ? 0.25 : distance < radius * 2 ? 0.17 : 0;
+        volume = Math.max(volume, v);
+    }
+    if (!volume) return;
+    try {
+        audio.volume = volume;
+        audio.currentTime = 0;
+        const playing = audio.play();
+        if (playing && typeof playing.catch === 'function') playing.catch(() => {});
+    } catch (_) { /* audio indisponivel nao interrompe a simulacao */ }
+};
 Scene.prototype.comportar = function () {
+    const bmSpikeChangedRooms = new Set();
     for (var i = 0; i < this.spritesSpike.length; i++) {
-        if (this.spritesSpike[i].comportar) {
-            this.spritesSpike[i].comportar();
+        const spike = this.spritesSpike[i];
+        if (spike.comportar) {
+            const before = !!spike.toggled;
+            spike.comportar();
+            if (spike._bmSpikeRoom && spike.repeatCd > 0 && before !== !!spike.toggled) {
+                bmSpikeChangedRooms.add(spike._bmSpikeRoom);
+            }
         }
     }
+    this.bmPlaySpikeTransition(bmSpikeChangedRooms);
     for (var i = 0; i < this.spritesTP.length; i++) {
         if (this.spritesTP[i].comportar) {
             this.spritesTP[i].comportar();
         }
     }
     for (var i = 0; i < this.spritesE.length; i++) {
-        if (this.spritesE[i].comportar && (Math.hypot(this.spritesE[i].x - this.pc.x, this.spritesE[i].y - this.pc.y) < 256 || this.spritesE[i].provocou)) {
+        if (CombatArena.canContact(this, this.spritesE[i]) && this.spritesE[i].comportar && (Math.hypot(this.spritesE[i].x - this.pc.x, this.spritesE[i].y - this.pc.y) < 256 || this.spritesE[i].provocou)) {
             this.spritesE[i].comportar();
         }
     }
@@ -268,18 +305,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
     var playerPositionX = Math.floor(this.pc.x / this.map.SIZE);
     var playerPositionY = Math.floor(this.pc.y / this.map.SIZE);
     var playerTile = CollisionSystem.tile(this.map, playerPositionX, playerPositionY);
-    if (playerTile?.tipo == 5) {
-        if (this.inventoryItem != null && this.inventoryItem.props.event == "lava") {
-            this.pc.lavaImmunity = true;
-        } else {
-            if (this.pc.imune <= 0) {
-                this.pc.vidas--;
-                this.pc.imune = 2;
-                this.pc.atingido = 0.3;
-                this.assets.play("damage");
-            }
-        }
-    } else { this.pc.lavaImmunity = false }
+    this.updateLavaTerrain(playerTile, dt);
 
     //verifica se o piso é de gelo
     if (playerTile?.tipo == 1) {
@@ -292,7 +318,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
     // acontece depois das interacoes para considerar o trajeto ate a parede.
     for (var i = 0; i < this.spritesE.length; i++) {
         //colisao inimigo com pc
-        if (this.spritesE[i].colidiuCom(this.pc)) {
+        if (CombatArena.canContact(this, this.spritesE[i]) && this.spritesE[i].colidiuCom(this.pc) && ShieldEnemy.canContact(this.spritesE[i])) {
             if (this.pc.imune <= 0) {
                 this.pc.vidas--;
                 this.pc.imune = 2;
@@ -305,10 +331,12 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
 
             //colisao tiro aliado com inimigo
             if (!this.toRemove.includes(this.spritesT[j]) && !this.toRemove.includes(this.spritesE[i]) &&
-                this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0 &&
+                CombatArena.canHit(this, this.spritesE[i], this.spritesT[j]) && this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0 &&
                 !this.spritesT[j]._hitEnemies?.has(this.spritesE[i])) {
                 if (this.spritesT[j].props.modelo === 'espada') {
                     (this.spritesT[j]._hitEnemies ||= new WeakSet()).add(this.spritesE[i]);
+                    // BLUEMOON_SHIELD_ENEMY_V1: golpe bloqueado ja foi registrado neste ataque.
+                    if (ShieldEnemy.blocksSword(this.spritesE[i], this.spritesT[j], this)) continue;
                 } else { this.spritesT[j].imune = 3; }
                 if (this.spritesT[j].props.modelo == "fireball") {
                     this.adicionar(new Animation({ x: this.spritesE[i].x, y: this.spritesE[i].y, imagem: "explosion" }));
@@ -393,27 +421,10 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
                 this.spritesO[k].swCD < 0) {
                 switch (this.spritesO[k].props.subtipo) {
                     case 'colecionavel':
-                        if (this.inventoryItem) {
-                            this.inventoryItem.x = this.spritesO[k].x
-                            this.inventoryItem.y = this.spritesO[k].y
-                            this.spritesO.push(this.inventoryItem)
-                        }
-                        this.dialogo = this.spritesO[k].props.mensagem
-                        this.toRemove.push(this.spritesO[k])
-                        this.inventoryItem = this.spritesO[k]
-                        this.assets.play("quest");
-                        this.spritesO[k].swCD = 0.6;
-                        this.frameCounter = 0
-                        if (this.spritesO[k].onGet) { this.spritesO[k].onGet() }
+                        this.inventory.collect(this, this.spritesO[k]);
                         break;
                     case 'porta':
-                        if (this.inventoryItem != null && this.inventoryItem.keyId == this.spritesO[k].doorId) {
-                            this.map.cells[this.spritesO[k].posX][this.spritesO[k].posY].tipo = 4;
-                            this.toRemove.push(this.spritesO[k])
-                            this.toRemove.push(this.inventoryItem);
-                            this.inventoryItem = null;
-                            this.assets.play("key");
-                        }
+                        this.inventory.tryDoor(this, this.spritesO[k], this.spritesT[j]);
                         break;
                     case 'alavanca':
                         this.spritesO[k].swCD = 0.6;
@@ -469,10 +480,11 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
     }
     CollisionSystem.cleanupProjectiles(this);
 
-    if (this.pc.vidas == 0 && this.pc.atingido > 0) {
+    if (this.pc.vidas <= 0 && this.pc.atingido > 0) {
         this.gamer.tema.pause();
     }
-    if (this.pc.vidas == 0 && this.pc.atingido <= 0) {
+    if (this.pc.vidas <= 0 && this.pc.atingido <= 0) {
+        this.pc.vidas = 0;
         this.pc.mana = 0;
         this.spritesTP = [];
         this.sceneMessages = [];
@@ -497,6 +509,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
 };
 
 Scene.prototype.removeSprites = function () {
+    DungeonMapSystem.removed(this);
     for (var i = 0; i < this.toRemove.length; i++) {
 
         if (this.toRemove[i].props.tipo == "npc") {
@@ -582,6 +595,18 @@ Scene.prototype.desenharHUD = function () {
     ctx.font = "30px Medieval";
     ctx.fillStyle = "white";
     ctx.fillText("Lyra", 24, this.h - 120);
+    this.inventoryHUD.drawPermanents(this);
+    // BM_NOCLIP_V2: indicador de debug, sem interferir nos slots.
+    if (this.pc?.atravessa === 1 && this.pc.vidas > 0) {
+        const nc = this.ctx;
+        nc.save();
+        try {
+            nc.setTransform(1,0,0,1,0,0);
+            nc.globalAlpha = 1; nc.font = 'bold 12px Arial'; nc.textAlign = 'right';
+            nc.fillStyle = '#20232a'; nc.fillRect(this.w-133,8,125,24);
+            nc.fillStyle = '#f2cd81'; nc.fillText('NOCLIP ATIVO',this.w-16,24);
+        } finally { nc.restore(); }
+    }
     ctx.save();
     //desenha as vidas
     var posCoracao = 90;
@@ -608,7 +633,7 @@ Scene.prototype.desenharHUD = function () {
     //this.desenharCaixaDialogo(imgX,imgY);
     var imgX = 1;
     this.desenharCaixaDialogo2(imgX, imgY);
-    this.desenharInventory(this.inventoryItem)
+    this.desenharInventory()
     this.desenharDialogo()
     this.desenharMensagensPersistentes()
 }
@@ -792,25 +817,17 @@ Scene.prototype.desenharCaixaDialogo2 = function (imgX, imgY) {
     );
 }
 
-Scene.prototype.desenharInventory = function (item) {
-    if (this.inventoryItem) {
-        ctx.drawImage(
-            this.assets.img(item.imagem),
-            item.spriteSize * item.imgX,
-            0,
-            item.spriteSize,
-            item.spriteSize,
-            32,
-            this.h - 90,
-            48,
-            48,
-        );
-    }
+Scene.prototype.desenharInventory = function () {
+    this.inventoryHUD.draw(this);
 }
 
 Scene.prototype.desenharDialogo = function () {
     if (this.dialogo != null) {
-        this.frameCounter++
+        // BM_TIMING_60_V1: conta ticks virtuais, sem envelhecer duas vezes no mesmo passo.
+        const bmDialogBefore = Math.floor((this.frameCounter || 0) + 1e-7);
+        this.frameCounter = (this.frameCounter || 0) + (this._bmDialogStepPending || 0) * 60;
+        this._bmDialogStepPending = 0;
+        const bmDialogFadeTicks = Math.max(0, Math.floor(this.frameCounter + 1e-7) - Math.max(179, bmDialogBefore));
         ctx.font = "30px Medieval";
         ctx.fillStyle = this.caution ? `rgba(255, 0, 0, ${this.mensagemOpacity})` : `rgba(255, 255, 255, ${this.mensagemOpacity})`;
         // BlueMoon: separadores de linha do dialogo
@@ -818,8 +835,8 @@ Scene.prototype.desenharDialogo = function () {
         linhasDialogo.forEach((linha, indice) => {
             ctx.fillText(linhasDialogo.length === 1 ? linha : linha.trim(), 90, this.h - 75 + indice * 30);
         });
-        if (this.frameCounter >= 180 && this.stageIndex < 1) {
-            this.mensagemOpacity -= 0.02;
+        if (bmDialogFadeTicks > 0 && this.stageIndex < 1) {
+            this.mensagemOpacity = Math.max(0, this.mensagemOpacity - 0.02 * bmDialogFadeTicks);
         }
         if (this.mensagemOpacity <= 0) {
             this.dialogo = null;
@@ -865,20 +882,52 @@ Scene.prototype.atualizarCamera = function (x, y) {
     this.cameraY = y; // Atualize a posição Y da câmera com a coordenada Y do personagem
 }
 
+// BM_SPIKE_CLOCK_V1: relogio exclusivo dos espinhos, em ticks virtuais de 1/60 s.
+Scene.prototype.bmAdvanceSpikeClock = function (dt) {
+    const old = this._bmSpikeElapsed ?? 0;
+    const step = Number.isFinite(dt) && dt > 0 ? dt : 0;
+    this._bmSpikeElapsed = old + step * 60;
+    this._bmSpikeTickBefore = Math.floor(old + 1e-7);
+    this._bmSpikeTick = Math.floor(this._bmSpikeElapsed + 1e-7);
+};
+Scene.prototype.bmSpikeTransitions = function (period, after = this._bmSpikeTickBefore ?? 0) {
+    if (!Number.isFinite(period) || period <= 0) return 0;
+    return Math.max(0, Math.floor((this._bmSpikeTick ?? 0) / period) - Math.floor(after / period));
+};
 Scene.prototype.passo = function (dt) {
-    this.globalCounter++
+    // BM_DUNGEON_MAP_V1: pausa a simulacao inteira, sem acumular dt.
+    if (DungeonMapSystem.pause(this)) return;
+    // BM_TIMING_60_V1: segundos de simulacao (o limite de dt do loop permanece).
+    this._bmTimingStep = Number.isFinite(dt) && dt > 0 ? dt : 0;
+    this._bmDialogStepPending = this._bmTimingStep;
+    if (!this.paused && this.theEnd <= 0) this.inventoryHUD.update(dt);
+    this.globalCounter++;
+    this.bmAdvanceSpikeClock(dt);
     if (this.theEnd <= 0) {
         this.gameDefiner();
         const currentStage = this.stageIndex;
         this.comportar();
+        const inventoryTrack = currentStage === 0 && this.pc.vidas > 0 && !this.paused;
+        const inventoryFrom = inventoryTrack ? { x: this.pc.x, y: this.pc.y } : null;
+        // BLUEMOON_COMBAT_ARENA_V1: ativar apenas apos o deslocamento real do jogador.
+        const bmArenaMovement = CombatArena.capture(this);
         this.mover(dt);
+        CombatArena.confine(this, bmArenaMovement);
+        if (inventoryTrack) this.inventory.metrics.track(this, dt, inventoryFrom, this.pc);
+        CombatArena.update(this, dt);
         this.checaColisao(dt);
+        if (currentStage === 0 && this.stageIndex !== 0) {
+            this.inventory.metrics.finish(this.stageIndex === 2 ? 'defeat' : 'dungeon_exit');
+        }
         this.removeSprites();
+        CombatArena.afterCombat(this);
         // Em uma troca de fase, gameDefiner carregara o novo mapa no proximo frame.
         if (this.stageIndex === currentStage) {
             this.updateCameraPosition();
+            DungeonMapSystem.observe(this, dt);
             this.limpar();
             this.desenharMapa();
+            CombatArena.draw(this);
             this.desenhar();
             CollisionDebug.draw(this);
             this.desenharHUD();
@@ -903,6 +952,8 @@ Scene.prototype.passo = function (dt) {
 }
 
 Scene.prototype.limparCena = function () {
+    DungeonMapSystem.close(this, this.map?._bmDungeonMap);
+    CombatArena.reset(this);
     this.spritesTP = [];
     this.spritesE = [];
     this.spritesT = [];
@@ -918,3 +969,56 @@ Scene.prototype.limparCena = function () {
     this.sceneMessages = [];
     this.spriteCounter = 0;
 }
+
+// BLUEMOON_LAVA_TERRAIN_V1: parametros de balanceamento em segundos e fracao da velocidade.
+Scene.prototype.lavaTerrainRules = Object.freeze({
+    speedFactor: 0.25,
+    damage: 1,
+    damageInterval: 0.8,
+    hitVisualSeconds: 0.18
+});
+
+Scene.prototype.hasLavaTerrainProtection = function () {
+    return this.inventory.hasPermanent("lavaBoots");
+};
+
+Scene.prototype.updateLavaTerrain = function (tile, dt) {
+    const pc = this.pc;
+    const rules = this.lavaTerrainRules;
+    const elapsed = Number.isFinite(dt) && dt > 0 ? dt : 0;
+    // Reinicia o estado quando o mapa, a partida ou o jogador mudam.
+    if (!this._bmLavaContact || this._bmLavaContact.map !== this.map ||
+        this._bmLavaContact.inventory !== this.inventory || this._bmLavaContact.pc !== pc) {
+        this._bmLavaContact = {map: this.map, inventory: this.inventory, pc, active: false, remaining: 0};
+        pc._bmLavaHit = 0;
+    }
+    const state = this._bmLavaContact;
+    pc._bmLavaHit = Math.max(0, (pc._bmLavaHit || 0) - elapsed);
+    const onLava = Number(tile?.tipo) === 5;
+    const protectedByBoot = this.hasLavaTerrainProtection();
+    pc.lavaImmunity = onLava && protectedByBoot;
+    if (!onLava || protectedByBoot || pc.vidas <= 0) {
+        state.active = false;
+        state.remaining = 0;
+        return;
+    }
+    if (!state.active) {
+        state.active = true;
+        state.remaining = 0; // primeiro contato: dano imediato
+    } else {
+        state.remaining -= elapsed;
+    }
+    // O relogio e independente de pc.imune, e conserva o resto do frame.
+    while (state.remaining <= 1e-9 && pc.vidas > 0) {
+        state.remaining += rules.damageInterval;
+        pc.vidas = Math.max(0, pc.vidas - rules.damage);
+        pc._bmLavaHit = rules.hitVisualSeconds;
+        this.assets.play("damage");
+        // Dano nao letal nao paralisa nem concede imunidade de combate.
+        // A morte continua usando o tempo da animacao original.
+        if (pc.vidas === 0) {
+            pc.atingido = Math.max(pc.atingido || 0, 0.3);
+            pc._bmLavaHit = Math.max(pc._bmLavaHit, pc.atingido);
+        }
+    }
+};

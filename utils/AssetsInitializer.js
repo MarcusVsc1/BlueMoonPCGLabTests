@@ -28,6 +28,10 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("key_5", "assets/key_5.png");
         assetsMng.loadImage("key_6", "assets/key_6.png");
         assetsMng.loadImage("key_7", "assets/key_7.png");
+        assetsMng.loadImage("key_8", "assets/key_8.png");
+        assetsMng.loadImage("key_9", "assets/key_9.png");
+        assetsMng.loadImage("key_10", "assets/key_10.png");
+        assetsMng.loadImage("key_11", "assets/key_11.png");
         assetsMng.loadImage("door_0", "assets/door_0.png");
         assetsMng.loadImage("door_1", "assets/door_1.png");
         assetsMng.loadImage("door_2", "assets/door_2.png");
@@ -36,6 +40,10 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("door_5", "assets/door_5.png");
         assetsMng.loadImage("door_6", "assets/door_6.png");
         assetsMng.loadImage("door_7", "assets/door_7.png");
+        assetsMng.loadImage("door_8", "assets/door_8.png");
+        assetsMng.loadImage("door_9", "assets/door_9.png");
+        assetsMng.loadImage("door_10", "assets/door_10.png");
+        assetsMng.loadImage("door_11", "assets/door_11.png");
         assetsMng.loadImage("gear", "assets/gear.png");
         assetsMng.loadImage("dungeon", "assets/dungeon.png");
         assetsMng.loadImage("switch", "assets/switch.png");
@@ -65,3 +73,10 @@ var assetsMng = new AssetsManager();
         assetsMng.loadAudio("water", "assets/water.ogg")
         assetsMng.loadAudio("spike", "assets/spike.ogg")
         assetsMng.loadAudio("boss", "assets/boss.mp3")
+assetsMng.loadImage("zombie", "assets/zombie.png");
+
+assetsMng.loadAudio("sword3", "assets/sword3.ogg");
+
+assetsMng.loadAudio("combatArenaMagic", "assets/magic.ogg");
+
+assetsMng.loadImage("dungeonMapIcon", "assets/dungeon_map.png"); // BM_DUNGEON_MAP_V1

@@ -22,18 +22,24 @@
             display: block;
         }
     </style>
-    <script src="utils/CollisionSystem.js"></script>
+    <script src="utils/CollisionSystem.js?bmSokobanFloor=1"></script>
     <script src="utils/CollisionDebug.js"></script>
     <script src="Sprite.js"></script>
+    <script src="utils/ShieldEnemy.js"></script>
     <script src="Params.js"></script>
     <script src="model/SokobanSolver.js"></script>
     <script src="model/SokobanDifficulty.js"></script>
+    <!-- BLUEMOON_PERSISTENT_INVENTORY_V1 -->
+    <script src="model/Inventory.js"></script>
+    <script src="utils/InventoryHUD.js"></script>
+    <!-- BM_DUNGEON_MAP_V1 -->
+    <script src="utils/DungeonMap.js"></script>
     <script src="Scene.js"></script>
     <script src="AssetsManager.js"></script>
-    <script src="GameManager.js"></script>
+    <script src="GameManager.js?bmArena=13"></script>
     <script src="SeedGenerator.js"></script>
     <script src="SeedGen.js"></script>
-    <script src="Grid.js"></script>
+    <script src="Grid.js?bmAutotileConnect=2"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
     <script src="InputController.js"></script>
@@ -63,7 +69,9 @@
     <script src="puzzleagents/auxagents/IceRoomAgent.js"></script>
     <script src="puzzleagents/auxagents/SpikeAgent.js"></script>
     <script src="puzzleagents/auxagents/FireballTrapAgent.js"></script>
-    <script src="puzzleagents/commonagents/CombatRoom.js"></script>
+    <script src="utils/CombatArena.js"></script>
+    <script src="puzzleagents/commonagents/CombatArenaAgent.js?bmArena=13"></script>
+    <script src="puzzleagents/commonagents/CombatRoom.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/Hub.js"></script>
 
 </head>
@@ -113,9 +121,16 @@
                     break;
                 case 20:
                     rooms = 3
+                    break;
+                // BLUEMOON_30_40_ROOMS_V1
+                case 30:
+                    rooms = 4;
+                    break;
+                case 40:
+                    rooms = 5;
                     break;             
             }
-            if(rooms >= 0 && rooms <= 3) {
+            if(rooms >= 0 && rooms <= 5) {
                 gerenciador.inicializarDungeonAleatoria(rooms)()
                 cena1.stageIndex = 0;
             }
@@ -139,7 +154,7 @@
                     }
                     if (input.comandos['esquerda'].valor === input.comandos['direita'].valor &&
                     Math.round(input.movimentos['horizontal'].valor) == 0) {
-                        this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0;
+                        this.vx = this.desaceleracao != 1 ? this.vx * Math.pow(this.desaceleracao, (this.scene?._bmTimingStep ?? 0) * 60) : 0;
                     }
                     if (input.comandos['cima'].valor == 1 || input.movimentos['vertical'].valor == -1) {
                         this.vy = -this.standardSpd;
@@ -152,7 +167,7 @@
                     if (input.comandos['cima'].valor === input.comandos['baixo'].valor &&
                     Math.round(input.movimentos['vertical'].valor) == 0
                     ) {
-                        this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0;
+                        this.vy = this.desaceleracao != 1 ? this.vy * Math.pow(this.desaceleracao, (this.scene?._bmTimingStep ?? 0) * 60) : 0;
                     }
                     const diagonalInputX = input.comandos['esquerda'].valor != input.comandos['direita'].valor || Math.abs(input.movimentos['horizontal'].valor) === 1;
                     const diagonalInputY = input.comandos['cima'].valor != input.comandos['baixo'].valor || Math.abs(input.movimentos['vertical'].valor) === 1;
@@ -266,18 +281,25 @@
         }
 
         function ativarEspinho() {
-            if (this.scene.globalCounter >= this.startCd) {
-                this.startCd = 0
-                this.contador = 0
-                this.toggled = !this.toggled
-                this.comportar = comportarEspinho2
+            // BM_SPIKE_CLOCK_V1: mantem o atraso inicial e a fase global dos espinhos.
+            const scene = this.scene;
+            const tick = scene._bmSpikeTick ?? 0;
+            const before = scene._bmSpikeTickBefore ?? 0;
+            if (tick >= this.startCd) {
+                const first = Math.min(tick, Math.max(before + 1, Math.ceil(this.startCd)));
+                this.startCd = 0;
+                this.contador = 0;
+                this.toggled = !this.toggled;
+                this.comportar = comportarEspinho2;
+                // Em FPS baixo, pode haver mais de um tick virtual nesta atualizacao.
+                if (scene.bmSpikeTransitions(this.repeatCd, first) % 2) this.toggled = !this.toggled;
             }
-
         }
 
         function comportarEspinho2() {
-            if (this.scene.globalCounter % this.repeatCd == 0) {
-                this.toggled = !this.toggled
+            // repeatCd = 0 significa espinho permanentemente ativo (salas de gelo).
+            if (this.scene.bmSpikeTransitions(this.repeatCd) % 2) {
+                this.toggled = !this.toggled;
             }
         }
 
@@ -325,10 +347,12 @@
         }
 
         function apagarFogo(){
-            if(this.opacity > 0){
-                this.opacity -= 0.08
-            } else {
-                cena1.toRemove.push(this)
+            // BM_TIMING_60_V1: 0.08 de opacidade por tick a 60 Hz.
+            this.opacity = Math.max(0, this.opacity - 4.8 * (this.scene?._bmTimingStep ?? 0));
+            if (this.opacity <= 1e-9) {
+                this.opacity = 0;
+                const scene = this.scene || cena1;
+                if (!scene.toRemove.includes(this)) scene.toRemove.push(this);
             }
         }
 
@@ -464,7 +488,7 @@
             return function () {
                 this.vx = this.vm * Math.sign(alvo.x - this.x) - Math.sqrt(this.vm) * 2;
                 this.vy = this.vm * Math.sign(alvo.y - this.y) - Math.sqrt(this.vm) * 2;
-                this.vm = this.vm + 0.5;
+                this.vm += 30 * (this.scene?._bmTimingStep ?? 0); // 0.5 por tick a 60 Hz
 
                 if (Math.floor(this.frame) > 20) {
                     this.scene.adicionar(new Animation({ x: this.x, y: this.y, imagem: "explosion" }));
@@ -503,15 +527,21 @@
         }
 
         var keyPressed = {};
+        InventoryHUD.bindControls(cena1, window);
+        DungeonMapSystem.bind(cena1, canvas, window);
         addEventListener('keydown', function(e) {
             keyPressed[e.key + e.location] = true;
-            if (e.ctrlKey && e.shiftKey) pc.atravessa = 1;
+            // BM_NOCLIP_V2: alternar uma vez por pressionamento, sem atalhos de navegador.
+            if (e.code === 'KeyN' && !e.repeat && !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.isComposing && !e.target?.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') && pc.vidas > 0 && !cena1.paused) {
+                e.preventDefault();
+                pc.atravessa = pc.atravessa === 1 ? 0 : 1;
+            }
         }, false);
         addEventListener('keyup', function(e) {
             delete keyPressed[e.key + e.location];
-            if (!e.ctrlKey || !e.shiftKey) pc.atravessa = 0;
+            // Noclip permanece ativo ate o proximo N.
         }, false);
-        addEventListener('blur', function() { keyPressed = {}; pc.atravessa = 0; });
+        addEventListener('blur', function() { keyPressed = {}; });
 
         function passo(t) {
             // Evita saltos enormes em abas suspensas. O sweep protege mesmo com dt elevado.

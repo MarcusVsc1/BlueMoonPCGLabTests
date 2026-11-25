@@ -66,7 +66,8 @@ Sprite.prototype.desenhar = function (ctx) {
     var picX = this.imgX;
     var picY = this.imgY;
 
-    if (this.atingido > 0 && this.imune > 0) {
+    // BLUEMOON_LAVA_TERRAIN_V1: expressao de dano sem parar a movimentacao nem alterar imune.
+    if ((this.atingido > 0 && this.imune > 0) || (this.props.tipo === "pc" && this._bmLavaHit > 0)) {
         d = 0;
         img = "expressoes";
         picX = 0;

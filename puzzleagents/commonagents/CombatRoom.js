@@ -15,7 +15,10 @@ class CombatRoom {
     }
 
     gerarAgenteAuxiliar(room, collectible, level) {
-        this.enemyFactory.createEnemyWithDrop(level, room, collectible)
-        this.enemyFactory.createEnemyWithDrop(level, room, collectible)
+        // BLUEMOON_COMBAT_ARENA_V1: adiar a decisao ate todas as portas estarem posicionadas.
+        CombatArenaAgent.defer(room, collectible, level, () => {
+            this.enemyFactory.createEnemyWithDrop(level, room, collectible);
+            this.enemyFactory.createEnemyWithDrop(level, room, collectible);
+        });
     }
 }

@@ -6,5 +6,8 @@ const KeyColorEnum = {
     4: 'Azul',
     5: 'Cinza',
     6: 'Dourada',
-    7: 'das Trevas'
-}
+    7: 'das Trevas',
+    8: 'de Cristal',
+    9: 'de Cobre',
+    10: 'Rosada',
+    11: 'da Luz'}

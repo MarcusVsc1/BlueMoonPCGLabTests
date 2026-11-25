@@ -100,6 +100,10 @@ class PuzzleAgentsManager {
             var room = sortedRooms[roomIdx];
             if (room.tag != null) {
                 var availableAgents = this.verificarAgentesDisponiveis(room, 'subTipo', this.mainAgents);
+                // BLUEMOON_LAVA_UNICA_SORTEIO: exclui somente do sorteio, preserva o registro do agente.
+                if (this.mainAgents.get('LavaRoomAgent').agent.hasBoots) {
+                    availableAgents.delete('LavaRoomAgent');
+                }
                 while (availableAgents.size > 0) {
                     const agentKey = this.sortearAgente(availableAgents);
                     var agent = this.mainAgents.get(agentKey).agent;

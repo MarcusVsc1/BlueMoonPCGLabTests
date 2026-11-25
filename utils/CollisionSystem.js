@@ -16,7 +16,7 @@ class CollisionSystem {
     }
     static solid(map,x,y,s) {
         const tile = this.tile(map,x,y);
-        return !tile || (s.atravessa != 1 && Number(tile.tipo) >= 6);
+        return !tile || Number(tile.tipo) === 13 || (s.atravessa != 1 && Number(tile.tipo) >= 6); // BLUEMOON_COMBAT_ARENA_V1
     }
     static sync(s,map) { s.mc=Math.floor(s.x/this.size(map)); s.ml=Math.floor(s.y/this.size(map)); }
     // Percorre todas as fronteiras cruzadas pela borda dianteira da AABB.
@@ -61,6 +61,13 @@ class CollisionSystem {
         if(s.props?.tipo==='pc' && s.standardSpd>0) {
             const length=Math.hypot(dx,dy), max=s.standardSpd*dt;
             if(length>max) {dx*=max/length;dy*=max/length;}
+        }
+        // BLUEMOON_LAVA_TERRAIN_V1: reduz apenas o deslocamento do jogador sobre lava.
+        if (s === s.scene.pc && Number(this.tile(map, Math.floor(s.x / z), Math.floor(s.y / z))?.tipo) === 5 &&
+            !s.scene.hasLavaTerrainProtection()) {
+            const factor = s.scene.lavaTerrainRules.speedFactor;
+            dx *= factor;
+            dy *= factor;
         }
         const ax=this.axis(s,map,dx,'x'),ay=this.axis(s,map,dy,'y');
         s.vx=ax/dt; s.vy=ay/dt; this.sync(s,map);
@@ -318,7 +325,7 @@ class CollisionSystem {
         if(puzzle?.room?.cells && !puzzle.room.cells.some(c=>c.x===x+dir.x && c.y===y+dir.y)) return false;
         if(scene.sokobans?.some(p=>p.boxes.some(b=>b!==box && b.posX===x+dir.x && b.posY===y+dir.y))) return false;
         from.tipo=0; box.posX+=dir.x;box.posY+=dir.y;
-        box.x=(box.posX+.5)*z;box.y=(box.posY+.5)*z;dest.tipo=11;
+        box.x=(box.posX+.5)*z;box.y=(box.posY+.5)*z;dest.tipo=7;
         return true;
     }
     static updateBoxes(scene,dt) {
@@ -337,7 +344,7 @@ class CollisionSystem {
         for(const b of puzzle.boxes) this.tile(map,b.posX,b.posY).tipo=0;
         for(const b of puzzle.boxes) {
             b.posX=b.initialX;b.posY=b.initialY;b.x=(b.posX+.5)*z;b.y=(b.posY+.5)*z;
-            this.tile(map,b.posX,b.posY).tipo=11;b.swCD=0;b.props.placed=false;
+            this.tile(map,b.posX,b.posY).tipo=7;b.swCD=0;b.props.placed=false;
         }
         const p=scene.pc;p.x=(puzzle.room.cells[0].x+puzzle.startCell.y+.5)*z;p.y=(puzzle.room.cells[0].y+puzzle.startCell.x+.5)*z;
         p.vx=p.vy=0;this.sync(p,map);puzzle.countDown=.5;
