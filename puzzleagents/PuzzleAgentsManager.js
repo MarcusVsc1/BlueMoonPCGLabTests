@@ -1,5 +1,5 @@
 class PuzzleAgentsManager {
-    constructor(mapGraph) {
+    constructor(mapGraph, deferPopulation = false) { // BM_LOADING_V1
 
         this.mapGraph = mapGraph,
             this.initialRoom = null,
@@ -20,10 +20,11 @@ class PuzzleAgentsManager {
                 ['SwitchAgent', { agent: new SwitchAgent(), chance: 1, factor: 0.5 }]
             ]);
         this.commons = new CommonsFactory();
-        this.populatePuzzles()
+        if(!deferPopulation)this.populatePuzzles()
     }
 
-    populatePuzzles() {
+    populatePuzzles() { for(const _ of this.populatePuzzlesEtapas()){} }
+    *populatePuzzlesEtapas() {
         this.initiate()
 
         console.time("puzzles")
@@ -44,7 +45,11 @@ class PuzzleAgentsManager {
         this.criarTags(sortedRooms);
         var orderedRooms = this.ordenarPorNivel(this.mapGraph)
 
+        let bmRoomIndex=0;
         for(var room of orderedRooms){
+            const bmPuzzle=room.tag?.auxiliar==='SokobanAgent'?' — Sokoban':'';
+            yield {phase:3,label:'Preparando desafios'+bmPuzzle,done:bmRoomIndex,total:orderedRooms.length};
+            bmRoomIndex++;
             if(room.tag.auxiliar != 'ignore' && room.tag.auxiliar != null){
                 var agent = this.auxAgents.get(room.tag.auxiliar) ?? this.mainAgents.get(room.tag.auxiliar)
                 if(agent) {
@@ -53,6 +58,7 @@ class PuzzleAgentsManager {
             }
         }
 
+        yield {phase:3,label:'Distribuindo recompensas e saída',done:bmRoomIndex,total:orderedRooms.length};
         var undefinedAuxOrederedRooms = orderedRooms.filter(room => {return room.tag.auxiliar == null})
         this.commons.posicionarTeleporte(3, undefinedAuxOrederedRooms[undefinedAuxOrederedRooms.length - 1],6,8.9)
         for(var i = undefinedAuxOrederedRooms.length - 2; i >= 0; i --) {

@@ -54,18 +54,19 @@ AssetsManager.prototype.loadAudio = function (key, url) {
     */
 }
 
-AssetsManager.prototype.play = function (key) {
-    if(!this.audios[key]){
-        throw new Error(`Chave de audio inválida: ${key}!`);
-    }
-    for(var i =0; i< this.MAX_CHANNELS; i++){
-        var agora = new Date();
-        if(this.channels[i].fim < agora.getTime()){
-            this.channels[i].audio.src = this.audios[key].src;
-            this.channels[i].fim = agora.getTime()+this.audios[key].duration*1000;
-            BMGameOver.playAudio(this.channels[i].audio, key); /* BM_GAMEOVER_AUDIO_V3 */
+AssetsManager.prototype.play = function (key, volume = 1) { /* BM_PAUSE_AUDIO_V2 */
+    const source = this.audios[key];
+    if (!source) throw new Error('Chave de audio inválida: '+key+'!');
+    const now = Date.now();
+    const duration = Number.isFinite(source.duration) && source.duration > 0 ? source.duration * 1000 : 1000;
+    for (const channel of this.channels) {
+        // Nunca reutiliza um canal que ainda esta tocando. A reserva protege play pendente.
+        if (channel.fim < 0 || channel.audio.ended || (channel.audio.paused && channel.fim < now)) {
+            channel.audio.src = source.src;
+            BMSettings.effect(channel.audio,volume);
+            channel.fim = now + duration;
+            BMGameOver.playAudio(channel.audio, key);
             break;
         }
-
     }
 }

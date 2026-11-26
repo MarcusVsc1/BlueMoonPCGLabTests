@@ -94,7 +94,7 @@ GameManager.prototype.criarEstagios = function () {
             text = 'Roguelike'
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 155, y: 390 })
         }
-        cena1.dialogo = "WASD: Mover | K: Espada | J: Magia | P: Reset | T/Y: Item"
+        cena1.dialogo = BMTutorial.lobbyText(); /* BM_TUTORIAL_V1 */
         /* A lista de mensagens da cena e a fonte de verdade. */}
 
     roomPortals.forEach(portal => {
@@ -169,13 +169,7 @@ GameManager.prototype.criarEstagios = function () {
 
     evento2 = function () {
         if (cena1.spritesE.length == 0) {
-            cena1.dialogo = "";
-            gerenciador.tema.src = "assets/final.ogg";
-            gerenciador.tema.loop = true;
-            gerenciador.tema.play();
-            cena1.dialogo = "Parabéns, você venceu o jogo. Aperte F5 para reiniciar";
-            var idx = cena1.estagio.eventos.indexOf(this);
-            cena1.estagio.eventos.splice(idx, 1);
+            BMGameOver.win(cena1); // BM_VICTORY_V1
         }
 
 
@@ -198,12 +192,14 @@ GameManager.prototype.criarEstagios = function () {
 
 GameManager.prototype.inicializarDungeonAleatoria = function (numero) {
     return function () {
-        gerenciador.criarNovaDungeon(numero);
-        playTheme(numero + 1);
+        BMRun.request(cena1, numero, seedValueURL); // BM_RUN_V1
     };
 }
 
-GameManager.prototype.criarNovaDungeon = function (opcao) {
+GameManager.prototype.criarNovaDungeon = function (opcao) { // BM_LOADING_V1
+    for(const _ of this.criarNovaDungeonEtapas(opcao)){};
+};
+GameManager.prototype.criarNovaDungeonEtapas = function* (opcao) {
     // BM_GAMEOVER_V1: cada geracao comeca no estado inicial da seed e dos IDs.
     random = new SeedGenerator(String(seedValueURL), 'sfc32');
     Room.id = 0; Play.id = 0; Play.boxId = 0;
@@ -240,12 +236,14 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
     var eventoLista = [];
 
     var contador = 0;
+    yield {phase:1,label:'Construindo salas e corredores'};
     console.time('createMap');
     this.dungeonGenerator = new DungeonGenerator(novaDungeon.MAP_SIZE, novaDungeon.NUM_ROOMS);
     var dungeonCriada = this.dungeonGenerator.createMap();
     while (!this.dungeonGenerator.sucesso) {
         console.log("Erro na criação do mapa")
         contador++
+        yield {phase:1,label:`Reconstruindo salas e corredores (tentativa ${contador+1})`};
         Room.id = 0
         this.dungeonGenerator.graph = new Graph();
         var dungeonCriada = this.dungeonGenerator.createMap();
@@ -253,6 +251,7 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
     }
 
     console.timeEnd('createMap');
+    yield {phase:2,label:'Preparando o cenário'};
 
     mapa = new Grid({
         COLUMNS: this.dungeonGenerator.MAP_SIZE, LINES: this.dungeonGenerator.MAP_SIZE,
@@ -263,11 +262,15 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
     this.estagios[0] = estagio
 
     CombatArenaAgent.ensureCombatRoomHook(); // BM_ARENA_INTEGRATION_V13
-    new PuzzleAgentsManager(this.dungeonGenerator.graph);
+    yield {phase:3,label:'Distribuindo puzzles e desafios'};
+    const puzzleManager = new PuzzleAgentsManager(this.dungeonGenerator.graph, true);
+    yield* puzzleManager.populatePuzzlesEtapas();
+    yield {phase:4,label:'Preparando arenas e mapa'};
     // BLUEMOON_COMBAT_ARENA_V1: todos os puzzles, portas e teleportes ja foram posicionados.
     CombatArenaAgent.finalize(this.dungeonGenerator.graph, this.estagios[0].mapa, cena1);
     // BM_DUNGEON_MAP_V1: apos toda a geracao, sem mudar puzzles ou quantidade de chaves.
     DungeonMapSystem.prepare(this.dungeonGenerator.graph, this.estagios[0].mapa, cena1);
+    yield {phase:5,label:'Validando a geração inicial'};
     BMGameOver.prepare(cena1, this.dungeonGenerator.graph);
     this.pc.mana = 5
 

@@ -20,7 +20,7 @@ class DungeonMapSystem {
     }
     static newItem(x,y){
         return new Sprite({x,y,w:32,h:32,spriteSize:32,vm:0,imgX:0,imgY:0,imagem:'dungeonMapIcon',swCD:.6,
-            desenhar:desenharColecionavel,props:{tipo:'objeto',subtipo:'colecionavel',permanentId:this.id,inventoryKind:'permanent',droppable:false,mensagem:'Mapa adquirido! Pressione M para consultar.'}});
+            desenhar:desenharColecionavel,props:{tipo:'objeto',subtipo:'colecionavel',permanentId:this.id,inventoryKind:'permanent',droppable:false,mensagem:'Mapa adquirido! Consulte o comando do mapa nos controles.' /* BM_TUTORIAL_V1 */}});
     }
     static state(scene){return scene.stageIndex===0?scene.map?._bmDungeonMap:null;}
     static owned(scene){return !!scene.inventory?.hasPermanent(this.id);}
@@ -96,7 +96,9 @@ class DungeonMapSystem {
             s.item.x=scene.pc.x;s.item.y=scene.pc.y;scene.adicionar(s.item);
         }
     }
-    static visible(scene,s,x,y){
+    // BM_MAP_KNOWN_HOLES_V1: buracos observados, sem revelar areas novas.
+    static hole(t){return t===-1||t===8||t===9;}
+    static visible(scene,s,x,y,terrainOnly=false){
         const z=s.map.SIZE,pc=scene.pc;
         if(x<scene.cameraX||x>=scene.cameraX+scene.w||y<scene.cameraY||y>=scene.cameraY+Math.max(1,scene.h-120))return false;
         const p=this.cell({x,y},z),room=s.owner.get(this.key(p.x,p.y));
@@ -104,7 +106,7 @@ class DungeonMapSystem {
         // Amostragem conservadora: paredes e grades ocultam objetos atras delas.
         const n=Math.ceil(Math.hypot(x-pc.x,y-pc.y)/(z/4));
         const end=this.key(p.x,p.y),start=this.key(Math.floor(pc.x/z),Math.floor(pc.y/z));
-        for(let i=1;i<n;i++){const a=this.cell({x:pc.x+(x-pc.x)*i/n,y:pc.y+(y-pc.y)*i/n},z),k=this.key(a.x,a.y);if(k!==start&&k!==end&&this.opaque(this.tile(s.map,a.x,a.y)))return false;}
+        for(let i=1;i<n;i++){const a=this.cell({x:pc.x+(x-pc.x)*i/n,y:pc.y+(y-pc.y)*i/n},z),k=this.key(a.x,a.y);if(k!==start&&k!==end&&this.opaque(this.tile(s.map,a.x,a.y))&&!(terrainOnly&&this.hole(this.tile(s.map,a.x,a.y))))return false;}
         return true;
     }
     static classify(o){
@@ -135,9 +137,19 @@ class DungeonMapSystem {
         for(let x=Math.max(0,cx);x<=Math.min(s.map.COLUMNS-1,cx+Math.ceil(scene.w/z));x++)for(let y=Math.max(0,cy);y<=Math.min(s.map.LINES-1,cy+Math.ceil((scene.h-120)/z));y++){
             const q=this.key(x,y),rr=s.owner.get(q),t=this.tile(s.map,x,y);
             const visited=rr&&s.rooms.has(rr),corr=s.walked.has(q),stub=s.corridors.has(q)&&this.neighbors(x,y).some(([a,b])=>s.rooms.has(s.owner.get(this.key(a,b))));
-            if(!(visited||corr||stub||t===5)||!this.visible(scene,s,(x+.5)*z,(y+.5)*z))continue;
+            // Uma celula de buraco no corredor nao pode ser percorrida. Aceitar a
+            // vizinhanca de corredor ja percorrido, somente sob linha de visao.
+            const nearHole=s.corridors.has(q)&&this.hole(t)&&this.neighbors(x,y).some(([a,b])=>s.walked.has(this.key(a,b)));
+            const known=s.terrain.has(q);
+            if(!(visited||corr||stub||nearHole||known||t===5)||!this.visible(scene,s,(x+.5)*z,(y+.5)*z,this.hole(t)))continue;
             if(stub&&!corr)s.stubs.add(q);
-            if(visited||corr||stub||t===5)s.terrain.set(q,t);
+            s.terrain.set(q,t);
+        }
+        // Atualiza o estado 4 <-> 8 das passagens JA descobertas. Nao cria novas entradas.
+        for(const [q,t] of s.terrain){
+            if(t!==4&&t!==8)continue;
+            const [x,y]=q.split(',').map(Number),now=this.tile(s.map,x,y);
+            if(now===4||now===8)s.terrain.set(q,now);
         }
         // Atualiza apenas tiles de lava ja conhecidos quando o dispositivo foi acionado.
         for(const o of scene.spritesO||[]){
@@ -182,7 +194,7 @@ class DungeonMapSystem {
             for(const r of s.rooms)for(const c of r.cells)rect(c.x,c.y,r===s.owner.get(this.key(Math.floor(center.x),Math.floor(center.y)))?'#344d61':'#343b49');
             for(const k of s.walked){const [x,y]=k.split(',').map(Number);rect(x,y,'#858b98');}
             for(const k of s.stubs)if(!s.walked.has(k)){const [x,y]=k.split(',').map(Number);rect(x,y,'#626879');}
-            for(const [k,t] of s.terrain){const [x,y]=k.split(',').map(Number);if(t===5)rect(x,y,'#b7583e');else if(t===1)rect(x,y,'#477e9a');else if(t===8||t===9||t===-1)rect(x,y,'#11151d');else if(t===13)rect(x,y,'#b6554c');else if(t>=6&&t!==10)rect(x,y,'#20252d');}
+            for(const [k,t] of s.terrain){const [x,y]=k.split(',').map(Number);if(t===5)rect(x,y,'#b7583e');else if(t===1)rect(x,y,'#477e9a');else if(this.hole(t))rect(x,y,'#806581');else if(t===4&&!s.owner.has(k)&&!s.walked.has(k)&&!s.stubs.has(k))rect(x,y,'#626879');else if(t===13)rect(x,y,'#b6554c');else if(t>=6&&t!==10)rect(x,y,'#20252d');}
             for(const [r,status] of s.puzzles){if(status==='done')continue;const p=roomPoint(r);text(status==='hazard'?'!':'◇',X(p.x),Y(p.y)+5,16,status==='hazard'?'#f18a6a':'#c2a2eb','center');}
             for(const [r,status] of s.arenaStates){if(status==='cleared')continue;const p=roomPoint(r);text('!',X(p.x),Y(p.y)+5,18,'#ff8c7e','center');}
             const symbols={key:'⚿',door:'▣',boots:'B',map:'M',item:'◆',heart:'♥',mana:'✦',teleport:'⇥',switch:'◇'};
@@ -199,10 +211,10 @@ class DungeonMapSystem {
             }
             ctx.fillStyle='#a8dfff';ctx.strokeStyle='#eef9ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(X(center.x),Y(center.y),Math.max(4,Math.min(8,scale*.5)),0,2*Math.PI);ctx.fill();ctx.stroke();ctx.restore();
             ctx.strokeStyle='#525d6d';ctx.strokeRect(frame.x,frame.y,frame.w,frame.h);
-            text('● Lyra',24,h-70,14,'#a8dfff');text('◆ Itens / portas',110,h-70,14,'#f2d384');text('◇ Mecanismos',253,h-70,14,'#c2a2eb');text('! Perigo',390,h-70,14,'#f18a6a');text('⇥ Teleporte',485,h-70,14,'#8bd6a4');
+            text('● Lyra',24,h-70,14,'#a8dfff');text('◆ Itens / portas',110,h-70,14,'#f2d384');text('◇ Mecanismos',253,h-70,14,'#c2a2eb');text('! Perigo',390,h-70,14,'#f18a6a');text('⇥ Teleporte',485,h-70,14,'#8bd6a4');text('■ Buraco',610,h-70,14,'#bda1c2');
             text('Cinza claro: corredor percorrido  |  Cinza escuro: passagem nao explorada',24,h-50,12,'#b9bfcc');
-            text('WASD / setas: mover | T/Y: zoom | Enter: centralizar | K: reset | M/J/Esc: fechar',24,h-31,12,'#c5c9d2');
-            if(BMMapGamepad.connected())text('Controle: direcional mover | L1/R1 zoom | X centralizar | □ reset | △/○ fechar',24,h-15,12,'#c5c9d2');
+            text('Setas: mover | '+BMControls.keyLabel(BMControls.key('previous'))+'/'+BMControls.keyLabel(BMControls.key('next'))+': zoom | '+BMControls.keyLabel(BMControls.key('confirm'))+'/'+BMControls.keyLabel(BMControls.key('sword'))+': centro | '+BMControls.keyLabel(BMControls.key('resetSokoban'))+': reset | '+BMControls.keyLabel(BMControls.key('map'))+'/Esc: fechar',24,h-31,12,'#c5c9d2');
+            if(BMMapGamepad.connected()){const g=BMControls.preferred(),b=a=>BMControls.padLabel(g,a);text('Direcional: mover | '+b('previous')+'/'+b('next')+': zoom | '+b('confirm')+': centro | '+b('resetSokoban')+': reset | '+b('map')+'/'+b('fire')+': fechar',24,h-15,11,'#c5c9d2');}
         }finally{ctx.restore();}
     }
 }
@@ -213,13 +225,14 @@ const BMMapGamepad = (() => {
     const held = new Set();
     const blocked = new Set();
     const keys = new Set(), captured = new Set(), pending = new Set();
-    const keyActions = {KeyW:'up',ArrowUp:'up',KeyS:'down',ArrowDown:'down',KeyA:'left',ArrowLeft:'left',KeyD:'right',ArrowRight:'right',KeyT:'out',KeyY:'in',Enter:'center',Space:'center',KeyK:'reset',KeyJ:'back',Escape:'back',KeyM:'map',KeyP:'ignore'};
-    const activeKey = name => [...keys].some(k=>keyActions[k]===name);
+    // BM_CONTROLS_V1 / BM_CONTROLS_V2 — mesmas acoes do gameplay.
+    const keyAction=code=>{const a=BMControls.keyAction(code);return ({previous:'out',next:'in',confirm:'center',sword:'center',fire:'back',pause:'back',resetSokoban:'reset'})[a]||a;};
+    const activeKey=name=>[...keys].some(k=>keyAction(k)===name);
     const bound = new WeakSet();
     function bind(scene,target) {
         if(bound.has(target))return;bound.add(target);
         target.addEventListener('keydown',e=>{
-            const code=e.code,name=keyActions[code];
+            const code=e.code,name=keyAction(code);
             if(!name||e.ctrlKey||e.altKey||e.metaKey||e.isComposing||e.target?.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName||''))return;
             const s=DungeonMapSystem.state(scene),open=!!s?.open;
             const canOpen=name==='map'&&DungeonMapSystem.owned(scene)&&s&&scene.pc?.vidas>0&&!(scene.theEnd>0)&&!scene.paused;
@@ -235,30 +248,8 @@ const BMMapGamepad = (() => {
         target.addEventListener('keyup',e=>{keys.delete(e.code);captured.delete(e.code);},true);
         target.addEventListener('blur',()=>{keys.clear();captured.clear();pending.clear();});
     }
-    const deadzone = .35;
-    const PAN_SPEED = 280; // pixels internos do canvas por segundo
-    const ZOOM_SPEED = 1.5; // taxa exponencial por segundo
-    const button = (g,i) => {const b=g?.buttons?.[i];return !!b && (!!b.pressed || b.value>=.5);};
-    function rawPS(g) {return g?.mapping !== 'standard' && /2563.*0575|PS3\/PC Gamepad/i.test(String(g?.id||''));}
-    function profile(g) {return rawPS(g) ? {map:0,back:1,center:2,reset:3} : {map:3,back:1,center:0,reset:2};}
-    function axis(g,i) {const n=Number(g?.axes?.[i]);return Number.isFinite(n)&&Math.abs(n)>=deadzone?Math.max(-1,Math.min(1,n)):0;}
-    function direction(g) {
-        let x=axis(g,0),y=axis(g,1),left=false,right=false,up=false,down=false;
-        if(rawPS(g)) {
-            // Hat HID de 8 direcoes: valores discretos entre -1 e 1;
-            // o repouso (por exemplo 3.2857) nao e uma direcao.
-            const hat=g.axes?.[9];
-            if(Number.isFinite(hat)&&hat>=-1.01&&hat<=1.01) {
-                const i=Math.round((hat+1)*3.5);
-                if(Math.abs(hat-(-1+2*i/7))<.08) {
-                    up=[0,1,7].includes(i);right=[1,2,3].includes(i);down=[3,4,5].includes(i);left=[5,6,7].includes(i);
-                }
-            }
-        } else {up=button(g,12);down=button(g,13);left=button(g,14);right=button(g,15);}
-        if(left||right)x=Number(right)-Number(left);
-        if(up||down)y=Number(down)-Number(up);
-        const len=Math.hypot(x,y);if(len>1){x/=len;y/=len;}return {x,y};
-    }
+    const PAN_SPEED=280,ZOOM_SPEED=1.5;
+    const button=BMControls.button,profile=BMControls.profile,direction=BMControls.direction;
     function update(scene,controller,dt){
         const g=controller.getJoystick(0),p=profile(g),now=new Set();
         if(g)for(const [name,i] of Object.entries(p))if(button(g,i))now.add(name);
@@ -266,6 +257,7 @@ const BMMapGamepad = (() => {
         const s=DungeonMapSystem.state(scene);
         const wasOpen=!!s?.open;
         let consumed=wasOpen;
+        if(typeof BMGameOver!=='undefined'&&BMGameOver.active?.()){held.clear();for(const a of now)held.add(a);pending.clear();return true;}
         if(rising('map')) {DungeonMapSystem.toggle(scene);consumed=true;}
         else if(wasOpen&&rising('back')) {DungeonMapSystem.close(scene,s);consumed=true;}
         else if(wasOpen){
@@ -280,7 +272,7 @@ const BMMapGamepad = (() => {
                 const len=Math.hypot(d.x,d.y);if(len>1){d.x/=len;d.y/=len;}
                 // Direcional move a camera do mapa, nao o desenho em si.
                 s.panX-=d.x*PAN_SPEED*step;s.panY-=d.y*PAN_SPEED*step;
-                const zoom=Number(button(g,5)||activeKey('in'))-Number(button(g,4)||activeKey('out'));
+                const zoom=Number(BMControls.pressed(g,'next')||activeKey('in'))-Number(BMControls.pressed(g,'previous')||activeKey('out'));
                 if(zoom){const old=s.zoom;const next=Math.max(.7,Math.min(8,old*Math.exp(zoom*ZOOM_SPEED*step)));s.zoom=next;s.panX*=next/old;s.panY*=next/old;}
             }
         }
@@ -288,22 +280,23 @@ const BMMapGamepad = (() => {
         // Captura tambem teclas que ja estavam pressionadas ao abrir o mapa.
         if(wasOpen||s?.open)for(const k of keys)captured.add(k);
         // Zera o estado legado de acoes capturadas; keyup continua chegando ao InputController.
-        const legacy={KeyJ:'fireball',KeyK:'espada',KeyP:'resetSokoban'};
+        const legacy={fire:'fireball',sword:'espada',resetSokoban:'resetSokoban'};
         for(const k of captured){
-            const name=legacy[k];if(!name)continue;
+            controller._bmKeys?.delete(k);const name=legacy[BMControls.keyAction(k)];if(!name)continue;
             const c=controller.comandos[name];if(!c)continue;
             if(controller.teclas&&c.tecla)controller.teclas[c.tecla]=false;
             if(controller.teclas&&c.tecla2)controller.teclas[c.tecla2]=false;
-            if(!button(g,c.botao))c.valor=false;
+            if(!BMControls.pressed(g,BMControls.legacy[name]))c.valor=false;
         }
+        controller._bmSyncKeys?.();
         // Impede que o botao usado para sair dispare magia ou espada no primeiro
         // frame de gameplay. So bloqueia o componente do controle; teclado intacto.
         if(wasOpen||s?.open)for(const name of ['espada','fireball','resetSokoban']){
-            const c=controller.comandos[name];if(c&&button(g,c.botao))blocked.add(name);
+            const c=controller.comandos[name];if(c&&BMControls.pressed(g,BMControls.legacy[name]))blocked.add(name);
         }
         for(const name of [...blocked]){
             const c=controller.comandos[name];
-            if(!c||!button(g,c.botao)){blocked.delete(name);continue;}
+            if(!c||!BMControls.pressed(g,BMControls.legacy[name])){blocked.delete(name);continue;}
             c.valor=!!(controller.teclas?.[c.tecla]||controller.teclas?.[c.tecla2]);
         }
         held.clear();for(const name of now)held.add(name);

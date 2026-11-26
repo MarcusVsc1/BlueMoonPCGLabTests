@@ -21,46 +21,50 @@
             margin-right: auto;
             display: block;
         }
+        canvas:fullscreen { width: 100vw; height: 100vh; object-fit: contain; background: black; }
     </style>
-    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1"></script>
+    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1&bmWitchSwordHurtbox=2"></script>
     <script src="utils/CollisionDebug.js"></script>
-    <script src="Sprite.js?bmCameraPixelSprite=2"></script>
+    <script src="Sprite.js?bmCameraPixelSprite=2&bmWitchAI=1&bmWitchSkin=1"></script>
+    <script src="WitchAI.js?bmWitchAI=3.2"></script>
     <script src="utils/ShieldEnemy.js"></script>
     <script src="Params.js"></script>
     <script src="model/SokobanSolver.js"></script>
     <script src="model/SokobanDifficulty.js"></script>
     <!-- BLUEMOON_PERSISTENT_INVENTORY_V1 -->
     <script src="model/Inventory.js"></script>
-    <script src="utils/InventoryHUD.js"></script>
+    <script src="Controls.js?bmControls=2"></script>
+    <script src="utils/InventoryHUD.js?bmControls=2"></script>
     <!-- BM_DUNGEON_MAP_V1 -->
-    <script src="utils/DungeonMap.js?bmMapGamepad=2"></script>
-    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6"></script>
-    <script src="AssetsManager.js?bmGameOver=3"></script>
-    <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1"></script>
+    <script src="utils/DungeonMap.js?bmMapGamepad=2&bmControls=2&bmTutorial=1&bmKnownHoles=1"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1"></script>
+    <script src="Settings.js?bmSettings=1"></script>
+    <script src="AssetsManager.js?bmGameOver=3&bmMenuAudio=2&bmSettings=1"></script>
+    <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1&bmVictory=1&bmRun=1&bmTutorial=1&bmLoading=1"></script>
     <script src="SeedGenerator.js"></script>
     <script src="SeedGen.js?bmGameOver=1"></script>
     <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
-    <script src="InputController.js?bmGamepad=1"></script>
+    <script src="InputController.js?bmGamepad=1&bmControls=2"></script>
     <script src="datastructures/Graph.js"></script>
     <script src="datastructures/Edge.js"></script>
     <script src="model/Room.js"></script>
     <script src="utils/DrawingUtils.js?bmDarkRoom=1"></script>
-    <script src="utils/AssetsInitializer.js"></script>
+    <script src="utils/AssetsInitializer.js?bmWitchSkin=1"></script>
     <script src="utils/EnemyFactory.js"></script>
     <script src="utils/UtilityMethods.js"></script>
     <script src="utils/CommonsFactory.js"></script>
     <script src="utils/InputSetup.js?bmGamepad=1&bmGamepadActions=2"></script>
     <script src="enum/KeyColorEnum.js"></script>
-    <script src="puzzleagents/PuzzleAgentsManager.js"></script>
+    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1"></script>
     <script src="model/Game.js"></script>
     <script src="datastructures/MonteCarlo.js"></script>
     <script src="datastructures/MonteCarloNode.js"></script>
     <script src="model/SokobanState.js"></script>
     <script src="model/Play.js"></script>
     <script src="puzzleagents/collectibleAgents/LavaRoomAgent.js"></script>
-    <script src="puzzleagents/collectibleAgents/LeverAgent.js"></script>
+    <script src="puzzleagents/collectibleAgents/LeverAgent.js?bmLeverDistance=1"></script>
     <script src="puzzleagents/collectibleAgents/KeyAndDoorAgent.js"></script>
     <script src="puzzleagents/auxagents/AuxAgent.js"></script>
     <script src="puzzleagents/auxagents/SwitchAgent.js"></script>
@@ -73,7 +77,9 @@
     <script src="puzzleagents/commonagents/CombatArenaAgent.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/CombatRoom.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/Hub.js"></script>
-    <script src="GameOver.js?bmGameOver=6"></script>
+    <script src="RunManager.js?bmRun=1&bmSeed=1&bmLoading=1"></script>
+    <script src="Tutorial.js?bmTutorial=1"></script>
+<script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1"></script>
 
 </head>
 
@@ -383,6 +389,8 @@
 
         //cria uma caveira, comportamento do necromante
         function necromancia() {
+            // BM_NECROMANCER_ROOM_V1: defesa adicional para chamadas diretas.
+            if (!this.scene?.bmNecromancerSameRoom(this)) return;
             if (this.globalCD <= 0) {
                 this.globalCD = 4.2;
                 this.scene.assets.play("darkness");
@@ -420,47 +428,10 @@
 
         //comportamento da fase 2 da bruxa
         //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
-        function bruxaria() {
-            var angulo = UtilityMethods.calcularAngulo(this.x, this.y, pc.x, pc.y)
-            if (angulo < 135 && angulo >= 45) { this.direcao = 0; }
-            if (angulo < 225 && angulo >= 135) { this.direcao = 1; }
-            if (angulo < 315 && angulo >= 225) { this.direcao = 3; }
-            if (angulo < 45 || angulo >= 315) { this.direcao = 2; }
-            
-            if (this.spCD <= 0 && this.globalCD <= 0) {
-                if (this.mod % 2 == 0) {
-                    var aX = pc.x - this.x;
-                    var aY = pc.y - this.y;
-                    var angulo = Math.atan2(aY, aX)
-
-                    var tiro = new Sprite({
-                        x: this.x, y: this.y,
-                        imagem: "flame", direcao: 0,
-                        vm: 35, w: 12, h: 12, imgX: 1, imgY: 1, vx: 1, vy: 1, imune: 0, mover: moverCircular, a: angulo,
-                        props: { tipo: "tiroE", modelo: "fireball" , bmDamageOrigin: 'witchFireball' }, desenhar: desenhaTiro, atravessa: 1
-                    });
-                    alinharOrigemFireball(tiro, this);
-                    tiro.a = Math.atan2(pc.y - tiro.y, pc.x - tiro.x);
-                    this.scene.adicionar(tiro);
-                    assetsMng.play("shot");
-                } else {
-                    this.scene.assets.play("darkness");
-                    cena1.adicionar(new Sprite({
-                        x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 2, imgY: 1,
-                        imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc", summoned: true , bmDamageOrigin: 'witchSummon' }
-                    }))
-                    this.globalCD = 0.5 + Math.random() * 1.2;
-                }
-                this.spCD = 0.3;
-                this.fireCount++;
-                if (this.fireCount == 6) {
-                    this.globalCD = this.baseCD;
-                    this.fireCount = 0;
-                    this.mod++;
-                }
-            }
-            
+        function bruxaria() { // BM_WITCH_AI_V1
+            BMWitch.update(this, {Sprite, moverCircular, desenhaTiro, alinharOrigemFireball, persegue});
         }
+        
 
         function moverCircular() {
             this.a = this.a + this.va * dt;
@@ -561,12 +532,13 @@
             }
             anterior = t;
             input.update();
-            bmUpdateGamepadActions(cena1, input, dt); 
+            if (!BMGameOver.pauseActive()) bmUpdateGamepadActions(cena1, input, dt); /* BM_PAUSE_V1 */ 
             ctx.fillStyle = "black";
             ctx.font = "10px Arial";
             requestAnimationFrame(passo);
         }
 
+        BMGameOver.bootTitle(cena1); // BM_TITLE_V1
         var dt, anterior = 0;
         requestAnimationFrame(passo);
 
@@ -621,6 +593,7 @@
         function playTheme(themeIdx) {
             gerenciador.tema.src = "assets/tema" + themeIdx+".mp3";
             gerenciador.tema.loop = true;
+            BMSettings.attach(gerenciador.tema);
             BMGameOver.playAudio(gerenciador.tema, 'tema'); /* BM_GAMEOVER_AUDIO_V3 */
 
         }

@@ -289,6 +289,35 @@ class CollisionSystem {
         if(!(feet.w>0&&feet.h>0&&hazard.w>0&&hazard.h>0)) return false;
         return this.overlaps(feet,hazard,false);
     }
+    // BM_WITCH_SWORD_PIXELS_V2: contato da lamina com a silhueta do frame desenhado.
+    static swordHurtBox(target) {
+        if(this.isWitch(target)) return {x:target.x,y:target.y-8.5,w:16,h:17};
+        return this.box(target,'hurtBox');
+    }
+    static isWitch(target) {
+        return target.props?.tipo==='npc' && target.imagem==='bruxa';
+    }
+    static witchSwordRects(target) {
+        const assets=target.scene?.assets;
+        let img=assets?.img?.('bruxa'), d=target.direcao, picX=target.imgX, picY=target.imgY;
+        if(target._bmWitch?.tier===3) {
+            const skin=assets?.img?.('bruxav2');
+            if(skin && skin.complete && skin.naturalWidth>0) img=skin;
+        }
+        if(target.atingido>0 && target.imune>0) {
+            img=assets?.img?.('expressoes'); d=0; picX=0; picY=1;
+        }
+        const f=target.charStop>0?0:Math.floor(target.frame);
+        const mask=this.frameMask(img,144*picX+(f%3)*48,192*picY+d*48+1,48,48);
+        if(!mask) return [this.swordHurtBox(target)];
+        const ro=target.renderOffset||{x:-target.w-3.1,y:-target.h-12};
+        return this.worldRects(mask.runs,target.x+ro.x,target.y+ro.y,30/48);
+    }
+    static witchSwordContact(s,target) {
+        const blade=s._swordBlade?.length?s._swordBlade:this.swordFrame(s)?[]:[this.box(s,'attackBox')];
+        const body=this.witchSwordRects(target);
+        return body.some(r=>blade.some(b=>this.overlaps(b,r,false)));
+    }
     static intersects(a,b) {
         if (!a || !b || a._collisionExpired || b._collisionExpired) return false;
         // Se a parede foi atingida neste frame, so vale o caminho anterior ao impacto.
@@ -302,8 +331,10 @@ class CollisionSystem {
         if(swordB) this.swordPose(b);
         if(swordA && b.props?.subtipo==='alavanca') return this.leverContact(a,b);
         if(swordB && a.props?.subtipo==='alavanca') return this.leverContact(b,a);
-        const aa=this.box(a,swordA?'attackBox':(swordB||this.projectile(b))?'hurtBox':'collisionBox');
-        const bb=this.box(b,swordB?'attackBox':(swordA||this.projectile(a))?'hurtBox':'collisionBox');
+        if(swordA && this.isWitch(b)) return this.witchSwordContact(a,b);
+        if(swordB && this.isWitch(a)) return this.witchSwordContact(b,a);
+        const aa=swordA?this.box(a,'attackBox'):swordB?this.swordHurtBox(a):this.box(a,this.projectile(b)?'hurtBox':'collisionBox');
+        const bb=swordB?this.box(b,'attackBox'):swordA?this.swordHurtBox(b):this.box(b,this.projectile(a)?'hurtBox':'collisionBox');
         if(this.overlaps(aa,bb)) return true;
         if(a._collisionSweep && this.sweep(a._collisionSweep.a,a._collisionSweep.dx,a._collisionSweep.dy,bb)!==null) return true;
         if(b._collisionSweep && this.sweep(b._collisionSweep.a,b._collisionSweep.dx,b._collisionSweep.dy,aa)!==null) return true;

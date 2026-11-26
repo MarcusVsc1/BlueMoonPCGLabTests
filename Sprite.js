@@ -71,6 +71,11 @@ Sprite.prototype.desenhar = function (ctx) {
     if (this.lavaImmunity) { ctx.globalAlpha = 0.5 }
     var d = this.direcao;
     var img = this.imagem;
+    // BM_WITCH_PHASE3_SKIN: somente a textura visual; identidade logica permanece bruxa.
+    if (img === "bruxa" && this._bmWitch?.tier === 3) {
+        const recolor = this.scene.assets.img("bruxav2");
+        if (recolor && recolor.complete && recolor.naturalWidth > 0) img = "bruxav2";
+    }
     var picX = this.imgX;
     var picY = this.imgY;
 
@@ -83,6 +88,8 @@ Sprite.prototype.desenhar = function (ctx) {
     }
 
     if (this.atravessa == 1) { ctx.globalAlpha = 0.5; }
+    // BM_WITCH_AI_V1: fade da chefe, sem modificar a imunidade normal.
+    if (this.imagem === "bruxa" && Number.isFinite(this._bmWitchAlpha)) ctx.globalAlpha = Math.max(0, ctx.globalAlpha) * this._bmWitchAlpha;
 
     var F = Math.floor(this.frame);
     if (this.vx == 0 && this.vy == 0 && this.props.tipo == "pc") { F = 1; }

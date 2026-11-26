@@ -95,6 +95,8 @@ Scene.prototype.adicionar = function (sprite) {
 
 //desenha os sprites. os ifs são para colcoar o sprites em cima ou não do pc
 Scene.prototype.desenhar = function () {
+    // BM_WITCH_AI_V1: marcadores no chao, antes dos sprites.
+    BMWitch.draw(this);
     // LYRA_GAMEOVER_DRAW: tela de derrota independente da lista de objetos e da camera.
     if (this.stageIndex === 2 && this.pc && this.pc.vidas <= 0) {
         const sheet = this.assets.img("expressoes");
@@ -185,8 +187,31 @@ Scene.prototype.bmEnemyAggroExempt = function (enemy) {
     return enemy.imagem === 'flame2' || enemy.imagem === 'bruxa' ||
         enemy === this.boss || enemy === this.bruxa || enemy.props?.boss == 1;
 };
+// BM_NECROMANCER_ROOM_V1: sala real do grafo, sem depender de possuir o mapa.
+Scene.prototype.bmIsNecromancer = function(enemy) {
+    return enemy?.props?.tipo === 'npc' && enemy.imagem === 'monster' && enemy.imgX === 3 && enemy.imgY === 1 && !enemy.props?.summoned;
+};
+Scene.prototype.bmNecromancerSameRoom = function(enemy) {
+    if (this.stageIndex !== 0 || !this.pc || !this.map || !(enemy.vidas > 0) || (this.toRemove || []).includes(enemy)) return false;
+    const graph = this.gamer?.dungeonGenerator?.graph;
+    if (!Array.isArray(graph?.nodes)) return false;
+    let cache = this._bmNecromancerRooms;
+    if (!cache || cache.graph !== graph || cache.map !== this.map) {
+        const owners = new Map();
+        for (const room of graph.nodes) for (const c of room.cells || []) owners.set(`${c.x},${c.y}`, room);
+        cache = this._bmNecromancerRooms = {graph, map:this.map, owners};
+    }
+    const z = this.map.SIZE || 32;
+    const key = e => `${Math.floor(e.x / z)},${Math.floor(e.y / z)}`;
+    const room = cache.owners.get(key(enemy));
+    return !!room && room === cache.owners.get(key(this.pc));
+};
 Scene.prototype.bmEnemyShouldAct = function (enemy) {
     if (!this.pc) return false;
+    if (this.bmIsNecromancer(enemy)) {
+        enemy.provocou = this.bmNecromancerSameRoom(enemy);
+        return enemy.provocou;
+    }
     const d = Math.hypot(enemy.x - this.pc.x, enemy.y - this.pc.y);
     // Excecoes conservam a condicao original, inclusive a primeira ativacao.
     if (this.bmEnemyAggroExempt(enemy)) return d < 256 || !!enemy.provocou;
@@ -230,6 +255,8 @@ Scene.prototype.bmEnemyWait = function (enemy, dt = 0) {
     }
     if (enemy.charStop <= 0 && enemy.atingido <= 0) {
         for (const key of ['spCD','swCD','globalCD']) {
+            // Necromante fora da sala: congelar o relogio de invocacao, sem acumular tentativas.
+            if (key === 'globalCD' && this.bmIsNecromancer(enemy)) continue;
             if (Number.isFinite(enemy[key])) enemy[key] -= dt;
         }
     } else {
@@ -238,16 +265,77 @@ Scene.prototype.bmEnemyWait = function (enemy, dt = 0) {
     }
 };
 
+// BM_ENEMY_SPACING_V2: snapshot de posicoes, uma correcao limitada por inimigo.
+Scene.prototype.bmSeparateEnemies = function(dt, moved) {
+    if ((this.stageIndex !== 0 && this.stageIndex !== 3) || this.paused || this.theEnd > 0 || !(dt > 0) || !Number.isFinite(dt) || !this.map) return;
+    const map = this.map, z = map.SIZE || 32, step = Math.min(dt,.05);
+    const removed = new Set(this.toRemove || []), arena = CombatArena.active(this);
+    const live = this.spritesE.filter(e => e && e.vidas > 0 && !removed.has(e) && Number.isFinite(e.x) && Number.isFinite(e.y) && CombatArena.canContact(this,e));
+    const radius = b => Math.max(1,Math.min(z/4, Math.min(b.w,b.h)/2));
+    const cell = z, buckets = new Map(), key = (x,y) => `${x},${y}`;
+    const entries = live.map((e,i)=>{
+        const b = CollisionSystem.box(e);
+        const movable = moved.has(e) && Number.isFinite(e.vm) && e.vm > 0 && !(e.charStop > 0) && !(e.atingido > 0) &&
+            (e.props?.modelo !== 'escudeiro' || e.moving) && e !== this.boss && e !== this.bruxa && e.imagem !== 'bruxa' && !e.props?.boss;
+        // BM_WITCH_GHOST_SPACING_V1: fantasmas da Bruxa <= 25%; demais <= 50%.
+        const ratio = e.props?.bmDamageOrigin === 'witchSummon' ? .25 : .5;
+        const limit = movable ? Math.min(80, e.vm*ratio) * step : 0;
+        return {e,i,b,r:radius(b),limit,inside:arena?CombatArena.fullInside(arena,e):false,dx:0,dy:0};
+    }).filter(p=>[p.b.x,p.b.y,p.r].every(Number.isFinite));
+    if (!entries.some(p=>p.limit>0)) return;
+    for (const p of entries) {
+        p.gx=Math.floor(p.b.x/cell);p.gy=Math.floor(p.b.y/cell);
+        const k=key(p.gx,p.gy);if(!buckets.has(k))buckets.set(k,[]);buckets.get(k).push(p);
+    }
+    // Todos os pares leem o mesmo snapshot; nenhuma posicao muda nesta fase.
+    for (const p of entries) {
+        for(let gx=p.gx-1;gx<=p.gx+1;gx++)for(let gy=p.gy-1;gy<=p.gy+1;gy++)for(const q of buckets.get(key(gx,gy))||[]) {
+            if(q.i<=p.i||(!p.limit&&!q.limit))continue;
+            const a=p.e,b=q.e;
+            if((a.atravessa==1)!==(b.atravessa==1) || (arena && p.inside!==q.inside))continue;
+            const min=p.r+q.r;
+            let dx=q.b.x-p.b.x,dy=q.b.y-p.b.y,dist=Math.hypot(dx,dy);
+            if(!(dist<min))continue;
+            if(dist<1e-7){
+                dx=(b.vx||0)-(a.vx||0);dy=(b.vy||0)-(a.vy||0);
+                if(Math.hypot(dx,dy)<1e-7 && !!p.limit!==!!q.limit && this.pc){
+                    const mover=p.limit?p.b:q.b, sign=p.limit?-1:1;
+                    dx=(this.pc.x-mover.x)*sign;dy=(this.pc.y-mover.y)*sign;
+                }
+                if(Math.hypot(dx,dy)<1e-7){dx=(q.i-p.i)%2?1:0;dy=dx?0:1;}
+                const n=Math.hypot(dx,dy);dx/=n;dy/=n;
+            }else{dx/=dist;dy/=dist;}
+            const overlap=min-dist, aShare=p.limit?(q.limit?overlap/2:overlap):0,bShare=q.limit?(p.limit?overlap/2:overlap):0;
+            p.dx-=dx*aShare;p.dy-=dy*aShare;q.dx+=dx*bShare;q.dy+=dy*bShare;
+        }
+    }
+    // Uma unica correcao por inimigo; sem redistribuir deslocamento bloqueado,
+    // sem alterar vx/vy, sem impulso transferido para o proximo par.
+    for(const p of entries){
+        const len=Math.hypot(p.dx,p.dy);
+        if(!(p.limit>0&&len>0))continue;
+        const f=Math.min(1,p.limit/len),e=p.e,x=e.x,y=e.y;
+        CollisionSystem.axis(e,map,p.dx*f,'x');
+        CollisionSystem.axis(e,map,p.dy*f,'y');
+        if(arena&&CombatArena.fullInside(arena,e)!==p.inside){e.x=x;e.y=y;}
+        CollisionSystem.sync(e,map);
+    }
+};
+
 Scene.prototype.mover = function (dt) {
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].mover(dt);
     }
+    const bmMovedEnemies = new Set();
     for (var i = 0; i < this.spritesE.length; i++) {
         const enemy = this.spritesE[i];
         if (!CombatArena.canContact(this, enemy)) continue;
-        if (this.bmEnemyAggroExempt(enemy) || this.bmEnemyShouldAct(enemy)) enemy.mover(dt);
-        else this.bmEnemyWait(enemy, dt);
+        if (this.bmEnemyAggroExempt(enemy) || this.bmEnemyShouldAct(enemy)) {
+            enemy.mover(dt);
+            bmMovedEnemies.add(enemy);
+        } else this.bmEnemyWait(enemy, dt);
     }
+    this.bmSeparateEnemies(dt, bmMovedEnemies);
     for (var i = 0; i < this.spritesT.length; i++) {
         if (!CollisionSystem.tickStationaryProjectile(this.spritesT[i], dt)) this.spritesT[i].mover(dt);
     }
@@ -300,7 +388,7 @@ Scene.prototype.bmPlaySpikeTransition = function (rooms) {
     }
     if (!volume) return;
     try {
-        audio.volume = volume;
+        BMSettings.effect(audio,volume);
         audio.currentTime = 0;
         const playing = audio.play();
         if (playing && typeof playing.catch === 'function') playing.catch(() => {});
@@ -388,7 +476,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
     // acontece depois das interacoes para considerar o trajeto ate a parede.
     for (var i = 0; i < this.spritesE.length; i++) {
         //colisao inimigo com pc
-        if (CombatArena.canContact(this, this.spritesE[i]) && this.spritesE[i].colidiuCom(this.pc) && ShieldEnemy.canContact(this.spritesE[i])) {
+        if (!this.spritesE[i]._bmWitchHidden && CombatArena.canContact(this, this.spritesE[i]) && this.spritesE[i].colidiuCom(this.pc) && ShieldEnemy.canContact(this.spritesE[i])) {
             if (this.pc.imune <= 0) {
                 this.pc.vidas--;
                 if (BMGameOver.fatal(this, BMGameOver.enemyName(this.spritesE[i]))) { this.assets.play('damage'); return; }
@@ -402,7 +490,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
 
             //colisao tiro aliado com inimigo
             if (!this.toRemove.includes(this.spritesT[j]) && !this.toRemove.includes(this.spritesE[i]) &&
-                CombatArena.canHit(this, this.spritesE[i], this.spritesT[j]) && this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0 &&
+                !this.spritesE[i]._bmWitchHidden && CombatArena.canHit(this, this.spritesE[i], this.spritesT[j]) && this.spritesE[i].colidiuCom(this.spritesT[j]) && this.spritesT[j].imune == 0 && this.spritesE[i].imune <= 0 &&
                 !this.spritesT[j]._hitEnemies?.has(this.spritesE[i])) {
                 if (this.spritesT[j].props.modelo === 'espada') {
                     (this.spritesT[j]._hitEnemies ||= new WeakSet()).add(this.spritesE[i]);
@@ -450,6 +538,8 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
         }
     }
 
+    // BM_WITCH_AI_V2: resolver area apos movimento e golpes na chefe.
+    if (BMWitch.resolvePulse(this)) return;
     //colisao tiro inimigo com pc
     for (var i = 0; i < this.spritesTE.length; i++) {
         // Limites em coordenadas de mundo verificados por cleanupProjectiles.
@@ -457,7 +547,22 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
             if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
                 this.pc.vidas--;
-                if (BMGameOver.fatal(this, BMGameOver.projectileName(this.spritesTE[i]))) { this.assets.play('damage'); return; }
+                // BM_WITCH_IMPACT_V1: somente o disparo da Bruxa que realmente causa dano.
+                const projectile = this.spritesTE[i];
+                const witchImpact = projectile.props.bmDamageOrigin === 'witchFireball' && projectile.props.modelo === 'fireball';
+                if (witchImpact) {
+                    const explosion = new Animation({ x: this.pc.x, y: this.pc.y, imagem: 'explosion' });
+                    this.adicionar(explosion);
+                    this.assets.play('explosion');
+                    // Golpe fatal retorna antes de removeSprites(); retirar o tiro agora.
+                    if (this.pc.vidas <= 0) {
+                        this.spritesTE.splice(i, 1);
+                        this._bmFatalWitchExplosion = explosion;
+                    } else {
+                        this.toRemove.push(projectile);
+                    }
+                }
+                if (BMGameOver.fatal(this, BMGameOver.projectileName(projectile))) { this.assets.play('damage'); return; }
                 this.pc.imune = 2;
             }
         }
@@ -980,6 +1085,7 @@ Scene.prototype.passo = function (dt) {
     this.bmAdvanceSpikeClock(dt);
     if (this.theEnd <= 0) {
         this.gameDefiner();
+        if (BMGameOver.victoryPending()) return; // BM_VICTORY_V1
         const currentStage = this.stageIndex;
         this.comportar();
         const inventoryTrack = currentStage === 0 && this.pc.vidas > 0 && !this.paused;
@@ -997,6 +1103,7 @@ Scene.prototype.passo = function (dt) {
         }
         this.removeSprites();
         CombatArena.afterCombat(this);
+        if (currentStage === 3 && this.stageIndex === 3 && BMGameOver.win(this)) return; // BM_VICTORY_V1
         // Em uma troca de fase, gameDefiner carregara o novo mapa no proximo frame.
         if (this.stageIndex === currentStage) {
             this.updateCameraPosition();

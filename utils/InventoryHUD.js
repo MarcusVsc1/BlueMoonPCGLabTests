@@ -85,12 +85,13 @@ class InventoryHUD {
     }
     static bindControls(scene, target) {
         const held=new Set();
-        const key=e=>e.code==='KeyT'||e.code==='KeyY'?e.code:null;
+        // BM_CONTROLS_V1
+        const key=e=>['previous','next'].includes(BMControls.keyAction(e.code))?e.code:null;
         target.addEventListener('keydown',e=>{
             const k=key(e); if (!k || e.ctrlKey || e.altKey || e.metaKey || e.isComposing) return;
             if (e.target?.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName||'')) return;
             e.preventDefault(); if (e.repeat||held.has(k)) return; held.add(k);
-            if (scene.pc?.vidas>0 && scene.theEnd<=0 && (scene.stageIndex===0||scene.stageIndex===3) && !scene.paused) scene.inventoryHUD.select(k==='KeyT'?-1:1);
+            if (scene.pc?.vidas>0 && scene.theEnd<=0 && (scene.stageIndex===0||scene.stageIndex===3) && !scene.paused) scene.inventoryHUD.select(BMControls.keyAction(k)==='previous'?-1:1);
         });
         target.addEventListener('keyup',e=>{ const k=key(e); if (k) held.delete(k); });
         target.addEventListener('blur',()=>held.clear());

@@ -13,6 +13,64 @@ class LeverAgent {
         if(this.onGet){this.onGet()}
     }
 
+    // BM_LEVER_DISTANCE_V1: distancias topologicas, sem depender de tempo real.
+    // Corredor incidente na sala = 1; os demais = distancia ate o extremo + 1.
+    _bmChooseLeverPair(mapGraph, room, candidates) {
+        const distances = mapGraph.calculateDistancesFromStart(room);
+        const ends = e => [mapGraph.getNodeById(e.fromRoom), mapGraph.getNodeById(e.toRoom)];
+        const distance = e => 1 + Math.min(...ends(e).map(n => distances.get(n) ?? Infinity));
+        const within = e => distance(e) >= 1 && distance(e) <= 3;
+        // Sorteia primeiro a faixa, depois um corredor nela; renormaliza faixas ausentes.
+        const weights = [0, 20, 55, 25];
+        const choose = list => {
+            const groups = [[], [], [], []];
+            for (const e of list) groups[distance(e)].push(e);
+            const available = [1,2,3].filter(d => groups[d].length);
+            if (!available.length) return null;
+            const total = available.reduce((sum,d) => sum + weights[d], 0);
+            let r = random.nextRandFloat() * total;
+            let d = available[available.length-1];
+            for (const k of available) { if (r < weights[k]) { d = k; break; } r -= weights[k]; }
+            const group = groups[d];
+            return group[Math.floor(random.nextRandFloat() * group.length)];
+        };
+        const local = mapGraph.adjacencyList.filter(within);
+        const firsts = candidates.filter(within);
+        while (firsts.length) {
+            const first = choose(firsts);
+            firsts.splice(firsts.indexOf(first), 1);
+            const fromEnds = ends(first).map(n => mapGraph.calculateDistancesFromStart(n));
+            // Distancia no grafo de corredores: corredores que compartilham sala = 1.
+            const between = e => 1 + Math.min(...ends(e).flatMap(n => fromEnds.map(d => d.get(n) ?? Infinity)));
+            const path1 = mapGraph.findMinimumPathFromRoomToEdge(room, first);
+            if (!path1) continue;
+            const tag1 = {...this.defaultTag, holeNumber: 1};
+            first.tags.push(tag1);
+            try {
+                const seconds = local.filter(e => {
+                    if (e === first || between(e) > 4 || path1.includes(e) || e.tags.some(t => t.subTipo === 'LeverAgent')) return false;
+                    const path2 = mapGraph.findMinimumPathFromRoomToEdge(room, e);
+                    return !!path2 && !path2.includes(first);
+                });
+                // Testa apenas candidatos locais, na ordem sorteada; sem gravar tiles antes da escolha.
+                while (seconds.length) {
+                    const second = choose(seconds);
+                    seconds.splice(seconds.indexOf(second), 1);
+                    const tag2 = {...this.defaultTag, holeNumber: 2};
+                    second.tags.push(tag2);
+                    try {
+                        if (!mapGraph.hasLeverDeadlock()) return [first, second];
+                    } finally {
+                        second.tags.splice(second.tags.indexOf(tag2), 1);
+                    }
+                }
+            } finally {
+                first.tags.splice(first.tags.indexOf(tag1), 1);
+            }
+        }
+        return null;
+    }
+
     gerarTag(mapGraph, room) {
 
         //inicialização da sala
@@ -25,13 +83,11 @@ class LeverAgent {
         var validCorridors = mapGraph.adjacencyList
             .filter(corridor => { return mapGraph.findCollectibleRoomsInPathByCorridor(startRoom, corridor).length == collectibles.length })
             .filter(corridor => { return !corridor.tags.some(tag => tag.subTipo === 'LeverAgent') })
-        //.filter(corridor => {return mapGraph.isCorridorWithinDistance(startRoom, corridor, 3)})
-        if (validCorridors.length == 0) {
-            room.tag = lastTag
-            return false
-        }
-
-        var selectedCorridor = validCorridors[Math.floor(random.nextRandFloat() * validCorridors.length)];
+        let pair;
+        try { pair = this._bmChooseLeverPair(mapGraph, room, validCorridors); }
+        catch (error) { room.tag = lastTag; throw error; }
+        if (!pair) { room.tag = lastTag; return false; }
+        var selectedCorridor = pair[0];
         var newTag = JSON.parse(JSON.stringify(this.defaultTag)) 
         newTag.holeNumber = 1
 
@@ -47,40 +103,7 @@ class LeverAgent {
         var pos1 = { x: x1, y: y1 }
 
         //inicialização do corredor que vai conter o buraco #2
-        const pathToSelectedCorridor = mapGraph.findMinimumPathFromRoomToEdge(room, selectedCorridor);
-
-        validCorridors = mapGraph.adjacencyList
-            .filter(corridor => {
-                const isNotInPathToSelected = !pathToSelectedCorridor.includes(corridor);
-                const pathToCorridorY = mapGraph.findMinimumPathFromRoomToEdge(room, corridor);
-                const notContainsSelectedInPathToY = !pathToCorridorY.includes(selectedCorridor);
-                const doesNotHaveLeverAgentTag = !corridor.tags.some(tag => tag.subTipo === 'LeverAgent');
-                return isNotInPathToSelected && notContainsSelectedInPathToY && doesNotHaveLeverAgentTag;
-            })
-            .filter(corridor => {
-                var newTag = JSON.parse(JSON.stringify(this.defaultTag)) 
-                newTag.holeNumber = 2
-                corridor.tags.push(newTag)
-
-                var deadlock = mapGraph.hasLeverDeadlock()
-
-                var idx = corridor.tags.indexOf(newTag)
-                corridor.tags.splice(idx, 1)
-
-                return !deadlock
-            });
-
-        if (validCorridors.length == 0) {
-            gerenciador.estagios[0].mapa.cells[y1][x1].tipo = 4
-            var idx = selectedCorridor.tags.indexOf(newTag)
-            selectedCorridor.tags.splice(idx, 1)
-            room.tag = lastTag
-            var idRestricao = selectedCorridor.restricoes.indexOf(restricao)
-            selectedCorridor.restricoes.splice(idRestricao, 1)
-            return false
-        }
-
-        var selectedCorridor2 = validCorridors[Math.floor(random.nextRandFloat() * validCorridors.length)];
+        var selectedCorridor2 = pair[1];
 
         var newTag = JSON.parse(JSON.stringify(this.defaultTag)) 
         newTag.holeNumber = 2

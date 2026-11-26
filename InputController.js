@@ -8,46 +8,19 @@ function InputController() {
 }
 
 
-InputController.prototype.setupKeyboard = function (novasTeclas) {
-	for (var t = novasTeclas.length - 1; t >= 0; t--) {
-		const tecla = novasTeclas[t];
-		this.nomes[tecla.codigo] = tecla.nome;
-		this.codigos[tecla.nome] = tecla.codigo;
-		this.teclas[tecla.nome] = false;
-	}
-	var that = this;
-	addEventListener("keydown", function (e) {
-		var nome = that.nomes[e.keyCode];
-		if (nome) {
-			that.teclas[nome] = true;
-			e.preventDefault();
-		}
-	});
-	addEventListener("keyup", function (e) {
-		var nome = that.nomes[e.keyCode];
-		if (nome) {
-			that.teclas[nome] = false;
-			e.preventDefault();
-		}
-	});
-}
-
+// BM_CONTROLS_V1 — os nomes legados continuam sendo usados pela fisica.
+InputController.prototype.setupKeyboard = function(novasTeclas){
+    this._bmKeys=new Set();
+    for(const t of novasTeclas){this.nomes[t.codigo]=t.nome;this.codigos[t.nome]=t.codigo;this.teclas[t.nome]=false;}
+    const sync=()=>{for(const n of Object.values(BMControls.legacyKeys))this.teclas[n]=false;for(const k of this._bmKeys){const n=BMControls.legacyKeys[BMControls.keyAction(k)];if(n)this.teclas[n]=true;}};
+    this._bmSyncKeys=sync;
+    addEventListener('keydown',e=>{if(!BMControls.validEvent(e))return;const n=BMControls.legacyKeys[BMControls.keyAction(e.code)];if(n){this._bmKeys.add(e.code);sync();e.preventDefault();}});
+    addEventListener('keyup',e=>{this._bmKeys.delete(e.code);sync();});
+    addEventListener('blur',()=>{this._bmKeys.clear();sync();});
+};
 // BM_GAMEPAD_V1: teclado e controle usam o mesmo sinal; axes sao digitais para o jogo.
-InputController.prototype.getJoystick = function (index) {
-    const preferred = this.joysticks[index];
-    if (preferred && preferred.connected !== false) return preferred;
-    return Object.values(this.joysticks).find(p => p && p.connected !== false);
-};
-InputController.prototype.updateMovimentos = function () {
-    for (const movimento of Object.values(this.movimentos)) {
-        const pad = this.getJoystick(movimento.joystick);
-        const raw = Number(pad?.axes?.[movimento.eixo]);
-        const jv = Number.isFinite(raw) && Math.abs(raw) >= 0.35 ? Math.sign(raw) : 0;
-        const tv = Number(!!this.teclas[movimento.positivo]) - Number(!!this.teclas[movimento.negativo]);
-        movimento.valor = jv || tv;
-    }
-};
-
+InputController.prototype.getJoystick = function(index){return BMControls.preferred(Object.values(this.joysticks),index);};
+InputController.prototype.updateMovimentos = function(){for(const m of Object.values(this.movimentos)){const d=BMControls.direction(this.getJoystick(m.joystick));const jv=Math.sign(m.eixo===0?d.x:d.y);const tv=Number(!!this.teclas[m.positivo])-Number(!!this.teclas[m.negativo]);m.valor=jv||tv;}};
 InputController.prototype.setupMovimentos = function (novosMovimentos) {
 	for (var c = 0; c < novosMovimentos.length; c++) {
 		var movimento = novosMovimentos[c];
@@ -101,14 +74,7 @@ InputController.prototype.setupComandos = function (novosComandos) {
 	}
 };
 
-InputController.prototype.updateComandos = function () {
-    for (const comando of Object.values(this.comandos)) {
-        const pad = this.getJoystick(comando.joystick);
-        const b = pad?.buttons?.[comando.botao];
-        const jv = !!b && (b.pressed || b.value >= 0.5);
-        comando.valor = !!(this.teclas[comando.tecla] || this.teclas[comando.tecla2] || jv);
-    }
-};
+InputController.prototype.updateComandos = function(){for(const c of Object.values(this.comandos)){const g=this.getJoystick(c.joystick),a=BMControls.legacy[c.comando];const d=BMControls.direction(g);const directions={up:d.y<0,down:d.y>0,left:d.x<0,right:d.x>0};const jv=a in directions?directions[a]:a?BMControls.pressed(g,a):BMControls.button(g,c.botao);c.valor=!!(this.teclas[c.tecla]||this.teclas[c.tecla2]||jv);}};
 InputController.prototype.bmGamepadStatus = function () {
     this.updateJoysticks();
     return Object.values(this.joysticks).map(p => ({
