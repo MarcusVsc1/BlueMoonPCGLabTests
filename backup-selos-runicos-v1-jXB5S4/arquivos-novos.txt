@@ -1,3 +1,0 @@
-assets/runeblock_off.png
-assets/runeblock_on.png
-assets/runeseal.png
