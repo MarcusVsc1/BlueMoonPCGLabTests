@@ -33,10 +33,10 @@
     <script src="model/Inventory.js"></script>
     <script src="utils/InventoryHUD.js"></script>
     <!-- BM_DUNGEON_MAP_V1 -->
-    <script src="utils/DungeonMap.js"></script>
-    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1"></script>
+    <script src="utils/DungeonMap.js?bmMapGamepad=2"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6"></script>
     <script src="AssetsManager.js?bmGameOver=3"></script>
-    <script src="GameManager.js?bmArena=13&bmGameOver=3"></script>
+    <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1"></script>
     <script src="SeedGenerator.js"></script>
     <script src="SeedGen.js?bmGameOver=1"></script>
     <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1"></script>
@@ -73,7 +73,7 @@
     <script src="puzzleagents/commonagents/CombatArenaAgent.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/CombatRoom.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/Hub.js"></script>
-    <script src="GameOver.js?bmGameOver=5"></script>
+    <script src="GameOver.js?bmGameOver=6"></script>
 
 </head>
 
@@ -437,7 +437,7 @@
                         x: this.x, y: this.y,
                         imagem: "flame", direcao: 0,
                         vm: 35, w: 12, h: 12, imgX: 1, imgY: 1, vx: 1, vy: 1, imune: 0, mover: moverCircular, a: angulo,
-                        props: { tipo: "tiroE", modelo: "fireball" }, desenhar: desenhaTiro, atravessa: 1
+                        props: { tipo: "tiroE", modelo: "fireball" , bmDamageOrigin: 'witchFireball' }, desenhar: desenhaTiro, atravessa: 1
                     });
                     alinharOrigemFireball(tiro, this);
                     tiro.a = Math.atan2(pc.y - tiro.y, pc.x - tiro.x);
@@ -447,7 +447,7 @@
                     this.scene.assets.play("darkness");
                     cena1.adicionar(new Sprite({
                         x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 2, imgY: 1,
-                        imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc", summoned: true }
+                        imagem: "monster", atravessa: 1, comportar: persegue(pc), props: { tipo: "npc", summoned: true , bmDamageOrigin: 'witchSummon' }
                     }))
                     this.globalCD = 0.5 + Math.random() * 1.2;
                 }
@@ -537,25 +537,22 @@
         addEventListener('blur', function() { keyPressed = {}; });
 
         // BM_GAMEPAD_ACTIONS_V2: uma acao por pressionamento, inclusive com mapa aberto.
-        const bmGamepadActionsHeld = { mapa: false, itemAnterior: false, itemProximo: false };
-        function bmUpdateGamepadActions(scene, controller) {
-            const rising = {};
-            for (const name of Object.keys(bmGamepadActionsHeld)) {
-                const pressed = !!controller.comandos[name]?.valor;
-                rising[name] = pressed && !bmGamepadActionsHeld[name];
-                bmGamepadActionsHeld[name] = pressed;
+        // BM_MAP_GAMEPAD_V1: mapa usa perfil fisico; inventario conserva bordas de subida.
+        const bmGamepadActionsHeld = { itemAnterior: false, itemProximo: false };
+        function bmUpdateGamepadActions(scene, controller, elapsed) {
+            const rising={};
+            for(const name of Object.keys(bmGamepadActionsHeld)) {
+                const pressed=!!controller.comandos[name]?.valor;
+                rising[name]=pressed&&!bmGamepadActionsHeld[name];
+                bmGamepadActionsHeld[name]=pressed;
             }
-            // Nao execute a troca de itens junto de abrir/fechar o mapa.
-            if (rising.mapa) {
-                DungeonMapSystem.toggle(scene);
-                return;
-            }
-            if (scene.pc?.vidas > 0 && scene.theEnd <= 0 &&
-                (scene.stageIndex === 0 || scene.stageIndex === 3) && !scene.paused) {
-                const direction = Number(rising.itemProximo) - Number(rising.itemAnterior);
-                if (direction) scene.inventoryHUD.select(direction);
+            if(BMMapGamepad.update(scene,controller,elapsed))return;
+            if(scene.pc?.vidas>0&&scene.theEnd<=0&&(scene.stageIndex===0||scene.stageIndex===3)&&!scene.paused) {
+                const direction=Number(rising.itemProximo)-Number(rising.itemAnterior);
+                if(direction)scene.inventoryHUD.select(direction);
             }
         }
+        
         function passo(t) {
             // Evita saltos enormes em abas suspensas. O sweep protege mesmo com dt elevado.
             dt = anterior ? Math.min(Math.max(0, (t - anterior) / 1000), 1/30) : 0;
@@ -564,7 +561,7 @@
             }
             anterior = t;
             input.update();
-            bmUpdateGamepadActions(cena1, input); 
+            bmUpdateGamepadActions(cena1, input, dt); 
             ctx.fillStyle = "black";
             ctx.font = "10px Arial";
             requestAnimationFrame(passo);

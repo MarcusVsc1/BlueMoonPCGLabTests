@@ -95,7 +95,23 @@ const BMGameOver = (() => {
     function observe(scene,dt){const r=scene._bmRun;if(!r||scene.paused||![0,3].includes(scene.stageIndex))return;
         r.seconds+=dt;if(scene.stageIndex===0){const z=scene.map?.SIZE||32;const id=r.owners.get(`${Math.floor(scene.pc.x/z)},${Math.floor(scene.pc.y/z)}`);if(id!==undefined)r.visited.add(id);}}
     function kill(scene){if(scene._bmRun)scene._bmRun.kills++;}
-    function enemyName(e){if(e?.imagem==='bruxa')return 'Bruxa';if(e?.imagem==='flame2')return 'Fogo-fátuo';if(e?.constructor?.name==='ShieldEnemy')return 'Escudeiro';if(e?.imagem==='monster')return ({'0,0':'Morcego','0,1':'Diabinho','1,1':'Caveira','2,0':'Ogro','3,0':'Touro','3,1':'Necromante'})[`${e.imgX},${e.imgY}`]||'Inimigo';return 'Inimigo';}
+    // BM_GAMEOVER_CAUSE_V6: a origem do ataque e registrada na criacao, nao inferida pela sala.
+    function enemyName(e){
+        if(e?.imagem==='bruxa')return 'Bruxa';
+        if(e?.props?.bmDamageOrigin==='witchSummon')return 'Invocação da Bruxa';
+        if(e?.imagem==='flame2')return 'Fogo-fátuo';
+        if(e?.constructor?.name==='ShieldEnemy')return 'Escudeiro';
+        if(e?.imagem==='monster'){
+            // Compatibilidade com invocacoes antigas sem metadado explicito.
+            if(e.imgX===2&&e.imgY===1&&e.props?.summoned)return 'Invocação da Bruxa';
+            return ({'0,0':'Morcego','0,1':'Diabinho','1,1':'Caveira','2,0':'Ogro','3,0':'Touro','3,1':'Necromante'})[`${e.imgX},${e.imgY}`]||'Inimigo';
+        }
+        return 'Inimigo';
+    }
+    function projectileName(e){
+        if(e?.props?.bmDamageOrigin==='witchFireball')return 'Bola de fogo da Bruxa';
+        return e?.props?.modelo==='rocha'?'Rocha':'Projétil / armadilha de fogo';
+    }
     function fatal(scene,cause){if(scene.pc.vidas>0)return false;if(scene._bmRun&&!scene._bmRun.cause)scene._bmRun.cause=cause;return true;}
     // AbortError e esperado quando pause() ou a troca de src interrompem play().
     function playAudio(audio,label='audio'){
@@ -200,5 +216,5 @@ const BMGameOver = (() => {
         if(scene.pc?.vidas<=0){entryFade=null;beginDeath(scene);deathTick(scene,0);return;}
         if(entryFade){black(scene,1-ease(entryFade.elapsed/FADE_IN));entryFade.elapsed+=delta;if(entryFade.elapsed>FADE_IN)entryFade=null;}
     }
-    return {start,prepare,sokoban,kill,fatal,enemyName,tick,playAudio,setConfirmButton,active:()=>!!dying||!!menu||!!entryFade};
+    return {start,prepare,sokoban,kill,fatal,enemyName,projectileName,tick,playAudio,setConfirmButton,active:()=>!!dying||!!menu||!!entryFade};
 })();

@@ -518,14 +518,14 @@ GameManager.prototype.criarEspinho = function (posX, posY, startCd, repeatCd) {
     });
 }
 
-// BM_HAZARDS_V2: raiz tem tempo de reacao; filhos propagam abaixo da velocidade da Lyra.
+// BM_HAZARDS_V2: cadencia da onda definida por nivel (atualizada em BM_FIRE_WAVE_V1).
 function bmFireSpreadSeconds(level) {
     const n = Math.max(1, Math.min(4, Math.trunc(Number(level) || 1)));
-    return [0.40, 0.36, 0.33, 0.30][n - 1];
+    return [0.40, 0.35, 0.30, 0.26][n - 1]; // BM_FIRE_WAVE_V1: mesma cadencia para raiz e filhos.
 }
 GameManager.prototype.criarFireball = function (posX, posY, level, fireplaces) {
     return new Sprite({
-        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: fireplaces == null ? 0.65 : bmFireSpreadSeconds(level), firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
+        x: posX * 32 + 16, y: posY * 32 + 16, posX: posX, posY: posY, w: 32, h: 32, vm: 0, imgX: 0, imgY: 1, globalCD: bmFireSpreadSeconds(level), firePlaces: fireplaces == null ? [{ x: posX, y: posY }] : fireplaces,
         contador: 0, comportar: multiplicarFogo, imagem: "flame", desenhar: desenhaTiro, level: level, toggled: false, props: { tipo: "tiroE" }
     });
 }

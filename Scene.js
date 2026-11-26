@@ -457,7 +457,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
             if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
                 this.pc.vidas--;
-                if (BMGameOver.fatal(this, this.spritesTE[i].props.modelo === 'rocha' ? 'Rocha' : 'Projétil / armadilha de fogo')) { this.assets.play('damage'); return; }
+                if (BMGameOver.fatal(this, BMGameOver.projectileName(this.spritesTE[i]))) { this.assets.play('damage'); return; }
                 this.pc.imune = 2;
             }
         }

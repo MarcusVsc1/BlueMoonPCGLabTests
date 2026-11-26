@@ -164,20 +164,7 @@ class DungeonMapSystem {
     static toggle(scene){const s=this.state(scene);if(!s||!this.owned(scene)||scene.pc?.vidas<=0||scene.theEnd>0)return false;if(s.open){this.close(scene,s);return true;}if(scene.paused)return false;this.observe(scene,0,true);s.open=true;s.previousPaused=scene.paused;scene.paused=true;s.zoom=1;s.panX=0;s.panY=0;return true;}
     static close(scene,s=this.state(scene)){if(s?.open){s.open=false;scene.paused=s.previousPaused;s.drag=null;}}
     static pause(scene){const s=this.state(scene);if(!s?.open)return false;if(!this.owned(scene)||scene.pc.vidas<=0){this.close(scene,s);return false;}this.draw(scene,s);return true;}
-    static bind(scene,canvas,target){
-        const held=new Set();target.addEventListener('keydown',e=>{
-            if(e.code!=='KeyM'&&e.code!=='Escape'||e.ctrlKey||e.altKey||e.metaKey||e.isComposing||e.target?.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName||''))return;
-            if(e.code==='Escape'&&!this.state(scene)?.open)return;
-            if(e.code==='KeyM'&&!this.owned(scene))return;
-            e.preventDefault();if(e.repeat||held.has(e.code))return;held.add(e.code);
-            if(e.code==='Escape')this.close(scene);else this.toggle(scene);
-        });
-        target.addEventListener('keyup',e=>held.delete(e.code));target.addEventListener('blur',()=>{held.clear();const s=this.state(scene);if(s)s.drag=null;});
-        canvas.addEventListener('wheel',e=>{const s=this.state(scene);if(!s?.open)return;e.preventDefault();s.zoom=Math.max(.7,Math.min(8,s.zoom*Math.exp(-e.deltaY*.0015)));},{passive:false});
-        canvas.addEventListener('pointerdown',e=>{const s=this.state(scene);if(!s?.open||e.button!==0)return;e.preventDefault();s.drag={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.setPointerCapture?.(e.pointerId);});
-        canvas.addEventListener('pointermove',e=>{const s=this.state(scene);if(!s?.open||s.drag?.id!==e.pointerId)return;const rect=canvas.getBoundingClientRect();s.panX+=(e.clientX-s.drag.x)*canvas.width/rect.width;s.panY+=(e.clientY-s.drag.y)*canvas.height/rect.height;s.drag.x=e.clientX;s.drag.y=e.clientY;});
-        for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,()=>{const s=this.state(scene);if(s)s.drag=null;});
-    }
+    static bind(scene,canvas,target){BMMapGamepad.bind(scene,target);}
     static draw(scene,s){
         const ctx=scene.ctx,w=scene.w,h=scene.h,z=s.map.SIZE,pc=scene.pc;
         const frame={x:18,y:64,w:w-36,h:h-158},center={x:pc.x/z,y:pc.y/z};
@@ -214,8 +201,114 @@ class DungeonMapSystem {
             ctx.strokeStyle='#525d6d';ctx.strokeRect(frame.x,frame.y,frame.w,frame.h);
             text('● Lyra',24,h-70,14,'#a8dfff');text('◆ Itens / portas',110,h-70,14,'#f2d384');text('◇ Mecanismos',253,h-70,14,'#c2a2eb');text('! Perigo',390,h-70,14,'#f18a6a');text('⇥ Teleporte',485,h-70,14,'#8bd6a4');
             text('Cinza claro: corredor percorrido  |  Cinza escuro: passagem nao explorada',24,h-50,12,'#b9bfcc');
-            text('M / Esc: fechar   •   Roda: zoom   •   Arrastar: mover',24,h-29,14,'#c5c9d2');
+            text('WASD / setas: mover | T/Y: zoom | Enter: centralizar | K: reset | M/J/Esc: fechar',24,h-31,12,'#c5c9d2');
+            if(BMMapGamepad.connected())text('Controle: direcional mover | L1/R1 zoom | X centralizar | □ reset | △/○ fechar',24,h-15,12,'#c5c9d2');
         }finally{ctx.restore();}
     }
 }
 if(typeof module!=='undefined'&&module.exports)module.exports=DungeonMapSystem;
+
+// BM_MAP_KEYBOARD_V2: teclado e joystick compartilham os comandos do mapa.
+const BMMapGamepad = (() => {
+    const held = new Set();
+    const blocked = new Set();
+    const keys = new Set(), captured = new Set(), pending = new Set();
+    const keyActions = {KeyW:'up',ArrowUp:'up',KeyS:'down',ArrowDown:'down',KeyA:'left',ArrowLeft:'left',KeyD:'right',ArrowRight:'right',KeyT:'out',KeyY:'in',Enter:'center',Space:'center',KeyK:'reset',KeyJ:'back',Escape:'back',KeyM:'map',KeyP:'ignore'};
+    const activeKey = name => [...keys].some(k=>keyActions[k]===name);
+    const bound = new WeakSet();
+    function bind(scene,target) {
+        if(bound.has(target))return;bound.add(target);
+        target.addEventListener('keydown',e=>{
+            const code=e.code,name=keyActions[code];
+            if(!name||e.ctrlKey||e.altKey||e.metaKey||e.isComposing||e.target?.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName||''))return;
+            const s=DungeonMapSystem.state(scene),open=!!s?.open;
+            const canOpen=name==='map'&&DungeonMapSystem.owned(scene)&&s&&scene.pc?.vidas>0&&!(scene.theEnd>0)&&!scene.paused;
+            const first=!keys.has(code)&&!e.repeat;
+            keys.add(code);
+            if(!open&&!canOpen&&!captured.has(code))return;
+            e.preventDefault();e.stopImmediatePropagation();captured.add(code);
+            if(!first)return;
+            if(name==='map'){DungeonMapSystem.toggle(scene);pending.clear();}
+            else if(open&&name==='back'){DungeonMapSystem.close(scene,s);pending.clear();}
+            else if(open&&(name==='center'||name==='reset'))pending.add(name);
+        },true);
+        target.addEventListener('keyup',e=>{keys.delete(e.code);captured.delete(e.code);},true);
+        target.addEventListener('blur',()=>{keys.clear();captured.clear();pending.clear();});
+    }
+    const deadzone = .35;
+    const PAN_SPEED = 280; // pixels internos do canvas por segundo
+    const ZOOM_SPEED = 1.5; // taxa exponencial por segundo
+    const button = (g,i) => {const b=g?.buttons?.[i];return !!b && (!!b.pressed || b.value>=.5);};
+    function rawPS(g) {return g?.mapping !== 'standard' && /2563.*0575|PS3\/PC Gamepad/i.test(String(g?.id||''));}
+    function profile(g) {return rawPS(g) ? {map:0,back:1,center:2,reset:3} : {map:3,back:1,center:0,reset:2};}
+    function axis(g,i) {const n=Number(g?.axes?.[i]);return Number.isFinite(n)&&Math.abs(n)>=deadzone?Math.max(-1,Math.min(1,n)):0;}
+    function direction(g) {
+        let x=axis(g,0),y=axis(g,1),left=false,right=false,up=false,down=false;
+        if(rawPS(g)) {
+            // Hat HID de 8 direcoes: valores discretos entre -1 e 1;
+            // o repouso (por exemplo 3.2857) nao e uma direcao.
+            const hat=g.axes?.[9];
+            if(Number.isFinite(hat)&&hat>=-1.01&&hat<=1.01) {
+                const i=Math.round((hat+1)*3.5);
+                if(Math.abs(hat-(-1+2*i/7))<.08) {
+                    up=[0,1,7].includes(i);right=[1,2,3].includes(i);down=[3,4,5].includes(i);left=[5,6,7].includes(i);
+                }
+            }
+        } else {up=button(g,12);down=button(g,13);left=button(g,14);right=button(g,15);}
+        if(left||right)x=Number(right)-Number(left);
+        if(up||down)y=Number(down)-Number(up);
+        const len=Math.hypot(x,y);if(len>1){x/=len;y/=len;}return {x,y};
+    }
+    function update(scene,controller,dt){
+        const g=controller.getJoystick(0),p=profile(g),now=new Set();
+        if(g)for(const [name,i] of Object.entries(p))if(button(g,i))now.add(name);
+        const rising=name=>now.has(name)&&!held.has(name);
+        const s=DungeonMapSystem.state(scene);
+        const wasOpen=!!s?.open;
+        let consumed=wasOpen;
+        if(rising('map')) {DungeonMapSystem.toggle(scene);consumed=true;}
+        else if(wasOpen&&rising('back')) {DungeonMapSystem.close(scene,s);consumed=true;}
+        else if(wasOpen){
+            const step=Number.isFinite(dt)?Math.max(0,Math.min(.05,dt)):0;
+            if(rising('reset')||pending.has('reset')) {s.zoom=1;s.panX=0;s.panY=0;}
+            else if(rising('center')||pending.has('center')) {s.panX=0;s.panY=0;}
+            else {
+                const d=direction(g);
+                const kx=Number(activeKey('right'))-Number(activeKey('left'));
+                const ky=Number(activeKey('down'))-Number(activeKey('up'));
+                d.x=kx||d.x;d.y=ky||d.y;
+                const len=Math.hypot(d.x,d.y);if(len>1){d.x/=len;d.y/=len;}
+                // Direcional move a camera do mapa, nao o desenho em si.
+                s.panX-=d.x*PAN_SPEED*step;s.panY-=d.y*PAN_SPEED*step;
+                const zoom=Number(button(g,5)||activeKey('in'))-Number(button(g,4)||activeKey('out'));
+                if(zoom){const old=s.zoom;const next=Math.max(.7,Math.min(8,old*Math.exp(zoom*ZOOM_SPEED*step)));s.zoom=next;s.panX*=next/old;s.panY*=next/old;}
+            }
+        }
+        pending.clear();
+        // Captura tambem teclas que ja estavam pressionadas ao abrir o mapa.
+        if(wasOpen||s?.open)for(const k of keys)captured.add(k);
+        // Zera o estado legado de acoes capturadas; keyup continua chegando ao InputController.
+        const legacy={KeyJ:'fireball',KeyK:'espada',KeyP:'resetSokoban'};
+        for(const k of captured){
+            const name=legacy[k];if(!name)continue;
+            const c=controller.comandos[name];if(!c)continue;
+            if(controller.teclas&&c.tecla)controller.teclas[c.tecla]=false;
+            if(controller.teclas&&c.tecla2)controller.teclas[c.tecla2]=false;
+            if(!button(g,c.botao))c.valor=false;
+        }
+        // Impede que o botao usado para sair dispare magia ou espada no primeiro
+        // frame de gameplay. So bloqueia o componente do controle; teclado intacto.
+        if(wasOpen||s?.open)for(const name of ['espada','fireball','resetSokoban']){
+            const c=controller.comandos[name];if(c&&button(g,c.botao))blocked.add(name);
+        }
+        for(const name of [...blocked]){
+            const c=controller.comandos[name];
+            if(!c||!button(g,c.botao)){blocked.delete(name);continue;}
+            c.valor=!!(controller.teclas?.[c.tecla]||controller.teclas?.[c.tecla2]);
+        }
+        held.clear();for(const name of now)held.add(name);
+        return consumed||!!s?.open;
+    }
+    function connected(){try{return Array.from(navigator.getGamepads?.()||[]).some(g=>g&&g.connected!==false);}catch(_){return false;}}
+    return Object.freeze({update,connected,profile,direction,bind});
+})();
