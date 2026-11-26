@@ -36,9 +36,11 @@ const BMAutoTile = (() => {
     const dirs = [[0,-1],[1,0],[0,1],[-1,0],[-1,-1],[1,-1],[1,1],[-1,1]];
     const cardinals = dirs.slice(0,4);
     const cornerPairs = [[0,1],[1,2],[2,3],[3,0]];
-    const isHole = t => t === -1 || t === 8 || t === 9;
+    // BM_HOLE_GEOMETRY_V1: buraco movel tem textura propria, mas nao muda a geometria estrutural.
+    const isStructuralVoid = t => t === -1 || t === 9;
+    const isHole = t => t === 8 || isStructuralVoid(t);
     const type = (g,x,y) => g.cells[x]?.[y]?.tipo;
-    const walk = t => [0,1,2,3,3.5,4,5,7,10].includes(t) || (t > 5 && t < 6);
+    const walk = t => [0,1,2,3,3.5,4,5,7,8,10].includes(t) || (t > 5 && t < 6);
     const wallVisual = t => t === 13 ? 6 : (t === 6 || t === 11 ? t : null);
     const has = (mask,i) => (mask & (1 << i)) !== 0;
 
@@ -88,7 +90,7 @@ const BMAutoTile = (() => {
         let mask=0;
         for(let i=0;i<dirs.length;i++){
             const [dx,dy]=dirs[i],n=visualType(g,x+dx,y+dy);
-            if(isHole(t)?(isHole(n)||n===undefined):n===t)mask|=1<<i;
+            if(t===8?n===8:isStructuralVoid(t)?(isStructuralVoid(n)||n===undefined):n===t)mask|=1<<i;
         }
         return mask;
     }

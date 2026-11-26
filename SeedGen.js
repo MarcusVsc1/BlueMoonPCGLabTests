@@ -11,4 +11,5 @@ else {                                           //SEED ALEATÓRIA
     let minValue = 500000;
     seedValueURL = (Math.floor(Math.random() * (maxValue - minValue)) + minValue);
 }
-const random = new SeedGenerator(seedValueURL.toString(), "sfc32");
+// BM_GAMEOVER_V1: reinicializavel
+let random = new SeedGenerator(seedValueURL.toString(), "sfc32");

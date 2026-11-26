@@ -55,7 +55,7 @@ class SokobanAgent {
             startCell.x < 0 || startCell.y < 0 || startCell.x >= room.roomHeight || startCell.y >= room.roomWidth) return fail()
         const game = new Game()
         const state = game.start(startCell, room.roomHeight, room.roomWidth)
-        this.lastGeneration = SokobanDifficulty.generate(game, state, {
+        this.lastGeneration = BMGameOver.sokoban(room, game, state, {
             deadline, totalMoves: this.defaultSearchTotalMoves, maxAttempts: this.defaultMaxAttempts,
             restartEvery: this.defaultRestartEveryAttempts, targetDifficulty: this.targetDifficulty,
             rejectTrivial: this.rejectTrivial, calibration: this.difficultyCalibration, maxExpanded: this.defaultSolverMaxExpanded,

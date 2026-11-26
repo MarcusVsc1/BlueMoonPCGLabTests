@@ -101,8 +101,9 @@ class CollisionSystem {
         const y1=Math.min(n.h,Math.floor((Math.max(a.y,a.y+dy)+a.h/2)/z));
         for(let x=x0;x<=x1;x++) for(let y=y0;y<=y1;y++) {
             const tile=this.tile(map,x,y);
-            // Buraco preto tambem encerra tiros comuns; atravessa=1 preservado.
-            if(!this.solid(map,x,y,s) && !(s.atravessa!=1 && Number(tile?.tipo)===-1)) continue;
+            // BM_PROJECTILE_HOLES_V1: buracos nao bloqueiam projeteis aereos.
+            if(tile && [-1,8,9].includes(Number(tile.tipo))) continue;
+            if(!this.solid(map,x,y,s)) continue;
             const hit=this.sweep(a,dx,dy,{x:(x+.5)*z,y:(y+.5)*z,w:z,h:z});
             const kind=!tile?'bounds':[7,10].includes(Number(tile.tipo))?'barrier':'wall';
             const rank={wall:0,barrier:1,bounds:2};

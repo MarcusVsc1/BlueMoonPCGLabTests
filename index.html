@@ -22,9 +22,9 @@
             display: block;
         }
     </style>
-    <script src="utils/CollisionSystem.js?bmSokobanFloor=1"></script>
+    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1"></script>
     <script src="utils/CollisionDebug.js"></script>
-    <script src="Sprite.js"></script>
+    <script src="Sprite.js?bmCameraPixelSprite=2"></script>
     <script src="utils/ShieldEnemy.js"></script>
     <script src="Params.js"></script>
     <script src="model/SokobanSolver.js"></script>
@@ -34,15 +34,15 @@
     <script src="utils/InventoryHUD.js"></script>
     <!-- BM_DUNGEON_MAP_V1 -->
     <script src="utils/DungeonMap.js"></script>
-    <script src="Scene.js"></script>
-    <script src="AssetsManager.js"></script>
-    <script src="GameManager.js?bmArena=13"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1"></script>
+    <script src="AssetsManager.js?bmGameOver=3"></script>
+    <script src="GameManager.js?bmArena=13&bmGameOver=3"></script>
     <script src="SeedGenerator.js"></script>
-    <script src="SeedGen.js"></script>
-    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1"></script>
+    <script src="SeedGen.js?bmGameOver=1"></script>
+    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
-    <script src="InputController.js"></script>
+    <script src="InputController.js?bmGamepad=1"></script>
     <script src="datastructures/Graph.js"></script>
     <script src="datastructures/Edge.js"></script>
     <script src="model/Room.js"></script>
@@ -51,7 +51,7 @@
     <script src="utils/EnemyFactory.js"></script>
     <script src="utils/UtilityMethods.js"></script>
     <script src="utils/CommonsFactory.js"></script>
-    <script src="utils/InputSetup.js"></script>
+    <script src="utils/InputSetup.js?bmGamepad=1&bmGamepadActions=2"></script>
     <script src="enum/KeyColorEnum.js"></script>
     <script src="puzzleagents/PuzzleAgentsManager.js"></script>
     <script src="model/Game.js"></script>
@@ -65,7 +65,7 @@
     <script src="puzzleagents/auxagents/AuxAgent.js"></script>
     <script src="puzzleagents/auxagents/SwitchAgent.js"></script>
     <script src="puzzleagents/auxagents/MazeAgent.js"></script>
-    <script src="puzzleagents/auxagents/SokobanAgent.js"></script>
+    <script src="puzzleagents/auxagents/SokobanAgent.js?bmGameOver=1"></script>
     <script src="puzzleagents/auxagents/IceRoomAgent.js"></script>
     <script src="puzzleagents/auxagents/SpikeAgent.js"></script>
     <script src="puzzleagents/auxagents/FireballTrapAgent.js"></script>
@@ -73,6 +73,7 @@
     <script src="puzzleagents/commonagents/CombatArenaAgent.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/CombatRoom.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/Hub.js"></script>
+    <script src="GameOver.js?bmGameOver=5"></script>
 
 </head>
 
@@ -140,37 +141,29 @@
         function porTeclasDirecionais(teclas) {
             return function () {
                 if (this.charStop <= 0) {
-                    var joy = input.joysticks[0];
+                    // BM_GAMEPAD_V1: sinal vertical unificado no InputController.
 
-                    if(!joy || !joy.connected){input.movimentos["vertical"].valor*= -1}
-
-                    if (input.comandos['esquerda'].valor == 1 || input.movimentos['horizontal'].valor == -1) {
-                        this.vx = -this.standardSpd;
-                        this.direcao = 1;
-                    }
-                    if (input.comandos['direita'].valor == 1 || input.movimentos['horizontal'].valor == 1) {
-                        this.vx = +this.standardSpd;
-                        this.direcao = 2;
-                    }
-                    if (input.comandos['esquerda'].valor === input.comandos['direita'].valor &&
-                    Math.round(input.movimentos['horizontal'].valor) == 0) {
-                        this.vx = this.desaceleracao != 1 ? this.vx * Math.pow(this.desaceleracao, (this.scene?._bmTimingStep ?? 0) * 60) : 0;
-                    }
-                    if (input.comandos['cima'].valor == 1 || input.movimentos['vertical'].valor == -1) {
-                        this.vy = -this.standardSpd;
-                        this.direcao = 3;
-                    }
-                    if (input.comandos['baixo'].valor == 1 || input.movimentos['vertical'].valor == 1) {
-                        this.vy = +this.standardSpd;
-                        this.direcao = 0;
-                    }
-                    if (input.comandos['cima'].valor === input.comandos['baixo'].valor &&
-                    Math.round(input.movimentos['vertical'].valor) == 0
-                    ) {
-                        this.vy = this.desaceleracao != 1 ? this.vy * Math.pow(this.desaceleracao, (this.scene?._bmTimingStep ?? 0) * 60) : 0;
-                    }
-                    const diagonalInputX = input.comandos['esquerda'].valor != input.comandos['direita'].valor || Math.abs(input.movimentos['horizontal'].valor) === 1;
-                    const diagonalInputY = input.comandos['cima'].valor != input.comandos['baixo'].valor || Math.abs(input.movimentos['vertical'].valor) === 1;
+                    // BM_GAMEPAD_V1: direcoes sem conflito; mantem a desaceleracao original.
+                const left = !!input.comandos.esquerda.valor || input.movimentos.horizontal.valor === -1;
+                const right = !!input.comandos.direita.valor || input.movimentos.horizontal.valor === 1;
+                const up = !!input.comandos.cima.valor || input.movimentos.vertical.valor === -1;
+                const down = !!input.comandos.baixo.valor || input.movimentos.vertical.valor === 1;
+                const horizontal = Number(right) - Number(left);
+                const vertical = Number(down) - Number(up);
+                if (horizontal) {
+                    this.vx = horizontal * this.standardSpd;
+                    this.direcao = horizontal < 0 ? 1 : 2;
+                } else {
+                    this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0;
+                }
+                if (vertical) {
+                    this.vy = vertical * this.standardSpd;
+                    this.direcao = vertical < 0 ? 3 : 0;
+                } else {
+                    this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0;
+                }
+                const diagonalInputX = horizontal !== 0;
+                const diagonalInputY = vertical !== 0;
                     if (diagonalInputX && diagonalInputY) {
                         const length = Math.hypot(this.vx, this.vy);
                         if (length > this.standardSpd && this.standardSpd > 0) {
@@ -543,14 +536,35 @@
         }, false);
         addEventListener('blur', function() { keyPressed = {}; });
 
+        // BM_GAMEPAD_ACTIONS_V2: uma acao por pressionamento, inclusive com mapa aberto.
+        const bmGamepadActionsHeld = { mapa: false, itemAnterior: false, itemProximo: false };
+        function bmUpdateGamepadActions(scene, controller) {
+            const rising = {};
+            for (const name of Object.keys(bmGamepadActionsHeld)) {
+                const pressed = !!controller.comandos[name]?.valor;
+                rising[name] = pressed && !bmGamepadActionsHeld[name];
+                bmGamepadActionsHeld[name] = pressed;
+            }
+            // Nao execute a troca de itens junto de abrir/fechar o mapa.
+            if (rising.mapa) {
+                DungeonMapSystem.toggle(scene);
+                return;
+            }
+            if (scene.pc?.vidas > 0 && scene.theEnd <= 0 &&
+                (scene.stageIndex === 0 || scene.stageIndex === 3) && !scene.paused) {
+                const direction = Number(rising.itemProximo) - Number(rising.itemAnterior);
+                if (direction) scene.inventoryHUD.select(direction);
+            }
+        }
         function passo(t) {
             // Evita saltos enormes em abas suspensas. O sweep protege mesmo com dt elevado.
             dt = anterior ? Math.min(Math.max(0, (t - anterior) / 1000), 1/30) : 0;
             if (assetsMng.progresso() === 100) {
-                cena1.passo(dt);
+                BMGameOver.tick(cena1, dt); /* BM_GAMEOVER_V1 */
             }
             anterior = t;
-            input.update(); 
+            input.update();
+            bmUpdateGamepadActions(cena1, input); 
             ctx.fillStyle = "black";
             ctx.font = "10px Arial";
             requestAnimationFrame(passo);
@@ -610,7 +624,7 @@
         function playTheme(themeIdx) {
             gerenciador.tema.src = "assets/tema" + themeIdx+".mp3";
             gerenciador.tema.loop = true;
-            gerenciador.tema.play();
+            BMGameOver.playAudio(gerenciador.tema, 'tema'); /* BM_GAMEOVER_AUDIO_V3 */
 
         }
 

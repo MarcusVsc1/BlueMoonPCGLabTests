@@ -56,7 +56,15 @@ Sprite.prototype.desenhar = function (ctx) {
     this.cameraX = this.x - this.scene.cameraX
     this.cameraY = this.y - this.scene.cameraY
     ctx.save();
-    ctx.translate(this.cameraX, this.cameraY);
+    // BM_CAMERA_PIXEL_V2: quantizar a ancora visual no mesmo referencial da camera.
+    // Preserva x/y fisicos, cameraX/Y legados do sprite e offsets do desenho.
+    if (this.props.tipo === "pc" && Number.isFinite(this.scene.w) && Number.isFinite(this.scene.h) && Number.isInteger(this.scene.cameraX) && Number.isInteger(this.scene.cameraY)) {
+        const cx = this.scene.w / 2, cy = this.scene.h / 2;
+        ctx.translate(cx + (Math.round(this.x - cx) - this.scene.cameraX),
+                      cy + (Math.round(this.y - cy) - this.scene.cameraY));
+    } else {
+        ctx.translate(this.cameraX, this.cameraY);
+    }
     if (this.imune > 0 && this.atingido <= 0) {
         ctx.globalAlpha = 0.5 * Math.cos(60 * this.imune);
     }

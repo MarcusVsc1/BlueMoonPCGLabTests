@@ -63,7 +63,7 @@ AssetsManager.prototype.play = function (key) {
         if(this.channels[i].fim < agora.getTime()){
             this.channels[i].audio.src = this.audios[key].src;
             this.channels[i].fim = agora.getTime()+this.audios[key].duration*1000;
-            this.channels[i].audio.play();
+            BMGameOver.playAudio(this.channels[i].audio, key); /* BM_GAMEOVER_AUDIO_V3 */
             break;
         }
 

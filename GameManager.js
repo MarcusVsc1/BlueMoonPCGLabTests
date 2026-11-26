@@ -76,7 +76,7 @@ GameManager.prototype.criarEstagios = function () {
         { rooms: 40, option: 5, x: 1.5,  y: 4.5 }
     ];
     var eventoInicial = function () {
-        if (!this.preencheu) {
+        if (!cena1.sceneMessages.some(message => message.text === 'Blue Moon')) { /* BM_GAMEOVER_LOBBY_V3 */
             var fillStyle = 'rgba(255, 255, 255, 1)';
             var font = '15px Tahoma';
             var text;
@@ -95,8 +95,7 @@ GameManager.prototype.criarEstagios = function () {
             cena1.sceneMessages.push({ fillStyle: fillStyle, font: font, text: text, x: 155, y: 390 })
         }
         cena1.dialogo = "WASD: Mover | K: Espada | J: Magia | P: Reset | T/Y: Item"
-        this.preencheu = true
-    }
+        /* A lista de mensagens da cena e a fonte de verdade. */}
 
     roomPortals.forEach(portal => {
         spriteLista.push(this.criarTeleporte(portal.x, portal.y, 2, 2, 0,
@@ -205,6 +204,10 @@ GameManager.prototype.inicializarDungeonAleatoria = function (numero) {
 }
 
 GameManager.prototype.criarNovaDungeon = function (opcao) {
+    // BM_GAMEOVER_V1: cada geracao comeca no estado inicial da seed e dos IDs.
+    random = new SeedGenerator(String(seedValueURL), 'sfc32');
+    Room.id = 0; Play.id = 0; Play.boxId = 0;
+    BMGameOver.start(cena1, opcao, seedValueURL);
     this.pc.atravessa = 0; // BM_NOCLIP_V2: nova partida sempre normal.
 
     // BLUEMOON_PERSISTENT_INVENTORY_V1: cada nova masmorra e uma nova partida.
@@ -265,6 +268,7 @@ GameManager.prototype.criarNovaDungeon = function (opcao) {
     CombatArenaAgent.finalize(this.dungeonGenerator.graph, this.estagios[0].mapa, cena1);
     // BM_DUNGEON_MAP_V1: apos toda a geracao, sem mudar puzzles ou quantidade de chaves.
     DungeonMapSystem.prepare(this.dungeonGenerator.graph, this.estagios[0].mapa, cena1);
+    BMGameOver.prepare(cena1, this.dungeonGenerator.graph);
     this.pc.mana = 5
 
 }

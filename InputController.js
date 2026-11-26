@@ -32,16 +32,20 @@ InputController.prototype.setupKeyboard = function (novasTeclas) {
 	});
 }
 
+// BM_GAMEPAD_V1: teclado e controle usam o mesmo sinal; axes sao digitais para o jogo.
+InputController.prototype.getJoystick = function (index) {
+    const preferred = this.joysticks[index];
+    if (preferred && preferred.connected !== false) return preferred;
+    return Object.values(this.joysticks).find(p => p && p.connected !== false);
+};
 InputController.prototype.updateMovimentos = function () {
-	for (m in this.movimentos) {
-		var movimento = this.movimentos[m];
-		var jv = 0;
-		if (this.joysticks[movimento.joystick]) {
-			jv = this.joysticks[movimento.joystick].axes[movimento.eixo];
-		}
-		var tv = 1 * this.teclas[movimento.positivo] - 1 * this.teclas[movimento.negativo];
-		movimento.valor = jv || tv || 0.0;
-	}
+    for (const movimento of Object.values(this.movimentos)) {
+        const pad = this.getJoystick(movimento.joystick);
+        const raw = Number(pad?.axes?.[movimento.eixo]);
+        const jv = Number.isFinite(raw) && Math.abs(raw) >= 0.35 ? Math.sign(raw) : 0;
+        const tv = Number(!!this.teclas[movimento.positivo]) - Number(!!this.teclas[movimento.negativo]);
+        movimento.valor = jv || tv;
+    }
 };
 
 InputController.prototype.setupMovimentos = function (novosMovimentos) {
@@ -73,13 +77,13 @@ InputController.prototype.setupJoysticks = function () {
 }
 
 InputController.prototype.updateJoysticks = function () {
-	var gamepads = navigator.getGamepads();
-	for (var g = 0; g < gamepads.length; g++) {
-		var gamepad = gamepads[g];
-		if (gamepad) { this.joysticks[gamepad.index] = gamepad; }
-
-	}
-
+    let pads = [];
+    try { if (typeof navigator.getGamepads === 'function') pads = navigator.getGamepads(); }
+    catch (_) { /* API indisponivel: teclado continua funcionando. */ }
+    this.joysticks = {};
+    for (const pad of pads || []) {
+        if (pad && pad.connected !== false) this.joysticks[pad.index] = pad;
+    }
 }
 
 InputController.prototype.setupComandos = function (novosComandos) {
@@ -98,15 +102,20 @@ InputController.prototype.setupComandos = function (novosComandos) {
 };
 
 InputController.prototype.updateComandos = function () {
-	this.updateJoysticks();
-	for (c in this.comandos) {
-		var comando = this.comandos[c];
-		var jv = false;
-		if (this.joysticks[comando.joystick] && this.joysticks[comando.joystick].buttons[comando.botao]) {
-			jv = this.joysticks[comando.joystick].buttons[comando.botao].pressed;
-		}
-		comando.valor = this.teclas[comando.tecla] || this.teclas[comando.tecla2] || jv || false;
-	}
+    for (const comando of Object.values(this.comandos)) {
+        const pad = this.getJoystick(comando.joystick);
+        const b = pad?.buttons?.[comando.botao];
+        const jv = !!b && (b.pressed || b.value >= 0.5);
+        comando.valor = !!(this.teclas[comando.tecla] || this.teclas[comando.tecla2] || jv);
+    }
+};
+InputController.prototype.bmGamepadStatus = function () {
+    this.updateJoysticks();
+    return Object.values(this.joysticks).map(p => ({
+        id: p.id, index: p.index, mapping: p.mapping,
+        axes: Array.from(p.axes || []),
+        buttons: Array.from(p.buttons || [], (b, i) => ({index: i, pressed: b.pressed, value: b.value}))
+    }));
 };
 
 InputController.prototype.update = function () {

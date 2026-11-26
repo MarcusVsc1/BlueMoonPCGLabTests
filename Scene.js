@@ -177,12 +177,76 @@ Scene.prototype.desenhar = function () {
 
 
 //move os sprites
+// BM_ENEMY_AGGRO_V1: distancias em tiles, medidas em coordenadas de mundo.
+Scene.prototype.bmEnemyAggroRules = Object.freeze({ activation: 8, release: 20 });
+Scene.prototype.bmEnemyAggroExempt = function (enemy) {
+    // Identificadores reais da fabrica. Nao usar atravessa: a bruxa tambem invoca
+    // outros NPCs que atravessam paredes, e a excecao solicitada e o fogo-fatuo.
+    return enemy.imagem === 'flame2' || enemy.imagem === 'bruxa' ||
+        enemy === this.boss || enemy === this.bruxa || enemy.props?.boss == 1;
+};
+Scene.prototype.bmEnemyShouldAct = function (enemy) {
+    if (!this.pc) return false;
+    const d = Math.hypot(enemy.x - this.pc.x, enemy.y - this.pc.y);
+    // Excecoes conservam a condicao original, inclusive a primeira ativacao.
+    if (this.bmEnemyAggroExempt(enemy)) return d < 256 || !!enemy.provocou;
+    const z = this.map?.SIZE || 32;
+    const rules = this.bmEnemyAggroRules;
+    if (enemy.provocou) {
+        if (d <= rules.release * z) return true;
+        enemy.provocou = false;
+    } else if (d < rules.activation * z) {
+        enemy.provocou = true;
+        return true;
+    }
+    return false;
+};
+Scene.prototype.bmEnemyWait = function (enemy, dt = 0) {
+    enemy.vx = 0;
+    enemy.vy = 0;
+    // Escudeiro: a perseguicao reside no proprio mover(). Cancela a virada
+    // pendente e conserva os relogios que ele atualiza nesse metodo.
+    if (ShieldEnemy.is(enemy)) {
+        enemy.frame = 1;
+        enemy.moving = false;
+        enemy.pendingDirection = null;
+        enemy.turnRemaining = 0;
+        if (Number.isFinite(dt) && dt > 0) {
+            for (const key of ['blockFlash','turnCooldown','imune','blockRemaining']) {
+                enemy[key] = Math.max(0, (enemy[key] || 0) - dt);
+            }
+        }
+        return;
+    }
+    if (!(Number.isFinite(dt) && dt > 0)) return;
+    // Replica apenas os relogios de Sprite.mover/Ortogonal, sem deslocamento,
+    // aceleracao circular, IA ou novas invocacoes.
+    if (enemy.imune > 0 && enemy.atingido <= 0) enemy.imune -= dt;
+    // BM_ENEMY_AGGRO_ANIMATION_V2: replica o relogio de Sprite.moverOrtogonal, sem mover ou atacar.
+    // A chamada de comportar() sem dt nao avanca nem reinicia a animacao.
+    const normal = enemy.charStop <= 0 && enemy.atingido <= 0;
+    if ((normal && enemy.ortogonal == 0) || (!normal && enemy.imune <= 0)) {
+        enemy.frame = (Number.isFinite(enemy.frame) ? enemy.frame : 0) + 8 * dt;
+    }
+    if (enemy.charStop <= 0 && enemy.atingido <= 0) {
+        for (const key of ['spCD','swCD','globalCD']) {
+            if (Number.isFinite(enemy[key])) enemy[key] -= dt;
+        }
+    } else {
+        if (enemy.atingido > 0) enemy.atingido -= dt;
+        if (enemy.charStop > 0) enemy.charStop -= dt;
+    }
+};
+
 Scene.prototype.mover = function (dt) {
     for (var i = 0; i < this.spritesSpike.length; i++) {
         this.spritesSpike[i].mover(dt);
     }
     for (var i = 0; i < this.spritesE.length; i++) {
-        if (CombatArena.canContact(this, this.spritesE[i])) this.spritesE[i].mover(dt);
+        const enemy = this.spritesE[i];
+        if (!CombatArena.canContact(this, enemy)) continue;
+        if (this.bmEnemyAggroExempt(enemy) || this.bmEnemyShouldAct(enemy)) enemy.mover(dt);
+        else this.bmEnemyWait(enemy, dt);
     }
     for (var i = 0; i < this.spritesT.length; i++) {
         if (!CollisionSystem.tickStationaryProjectile(this.spritesT[i], dt)) this.spritesT[i].mover(dt);
@@ -261,8 +325,12 @@ Scene.prototype.comportar = function () {
         }
     }
     for (var i = 0; i < this.spritesE.length; i++) {
-        if (CombatArena.canContact(this, this.spritesE[i]) && this.spritesE[i].comportar && (Math.hypot(this.spritesE[i].x - this.pc.x, this.spritesE[i].y - this.pc.y) < 256 || this.spritesE[i].provocou)) {
-            this.spritesE[i].comportar();
+        const enemy = this.spritesE[i];
+        if (!CombatArena.canContact(this, enemy)) continue;
+        if (this.bmEnemyShouldAct(enemy)) {
+            if (enemy.comportar) enemy.comportar();
+        } else if (!this.bmEnemyAggroExempt(enemy)) {
+            this.bmEnemyWait(enemy);
         }
     }
     for (var i = 0; i < this.spritesT.length; i++) {
@@ -306,6 +374,8 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
     var playerPositionY = Math.floor(this.pc.y / this.map.SIZE);
     var playerTile = CollisionSystem.tile(this.map, playerPositionX, playerPositionY);
     this.updateLavaTerrain(playerTile, dt);
+    // BM_GAMEOVER_V1: a morte e definitiva, antes de curas/teleportes no mesmo tick.
+    if (BMGameOver.fatal(this, 'Lava')) return;
 
     //verifica se o piso é de gelo
     if (playerTile?.tipo == 1) {
@@ -321,6 +391,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
         if (CombatArena.canContact(this, this.spritesE[i]) && this.spritesE[i].colidiuCom(this.pc) && ShieldEnemy.canContact(this.spritesE[i])) {
             if (this.pc.imune <= 0) {
                 this.pc.vidas--;
+                if (BMGameOver.fatal(this, BMGameOver.enemyName(this.spritesE[i]))) { this.assets.play('damage'); return; }
                 this.pc.imune = 2;
                 this.pc.atingido = 0.3;
                 this.assets.play("damage");
@@ -350,6 +421,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
                 }
                 this.spritesE[i].vidas--;
                 if (this.spritesE[i].vidas == 0) {
+                    BMGameOver.kill(this);
                     this.toRemove.push(this.spritesE[i]);
                     if (this.spritesE[i].drop != null) {
                         this.spritesE[i].drop.x = this.spritesE[i].x
@@ -385,6 +457,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
             if (this.pc.imune <= 0) {
                 this.pc.atingido = 0.3;
                 this.pc.vidas--;
+                if (BMGameOver.fatal(this, this.spritesTE[i].props.modelo === 'rocha' ? 'Rocha' : 'Projétil / armadilha de fogo')) { this.assets.play('damage'); return; }
                 this.pc.imune = 2;
             }
         }
@@ -442,6 +515,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
         if (this.spritesSpike[k].colidiuCom(this.pc) && this.spritesSpike[k].toggled) {
             if (this.pc.imune <= 0) {
                 this.pc.vidas--;
+                if (BMGameOver.fatal(this, 'Espinhos')) { this.assets.play('damage'); return; }
                 this.pc.imune = 2;
                 this.pc.atingido = 0.3;
                 this.assets.play("damage");
@@ -856,6 +930,7 @@ Scene.prototype.desenharMensagensPersistentes = function () {
 }
 
 Scene.prototype.updateCameraPosition = function () {
+    // BM_CAMERA_PIXEL_V1: alinhar a camera visual ao pixel interno do Canvas, sem arredondar o jogador.
     // Ajuste a posição da câmera conforme a movimentação do elemento central
     const cameraCenterX = this.pc.x;
     const cameraCenterY = this.pc.y;
@@ -869,8 +944,8 @@ Scene.prototype.updateCameraPosition = function () {
     const maxCameraY = this.map.LINES * this.map.SIZE - this.h;
 
     // Ajuste a posição da câmera para manter o elemento centralizado na tela
-    this.cameraX = Math.max(0, Math.min(cameraCenterX - halfScreenWidth, maxCameraX));
-    this.cameraY = Math.max(0, Math.min(cameraCenterY - halfScreenHeight, maxCameraY));
+    this.cameraX = Math.round(Math.max(0, Math.min(cameraCenterX - halfScreenWidth, maxCameraX)));
+    this.cameraY = Math.round(Math.max(0, Math.min(cameraCenterY - halfScreenHeight, maxCameraY)));
 };
 
 Scene.prototype.mapXY = function () {
@@ -878,8 +953,8 @@ Scene.prototype.mapXY = function () {
 }
 
 Scene.prototype.atualizarCamera = function (x, y) {
-    this.cameraX = x; // Atualize a posição X da câmera com a coordenada X do personagem
-    this.cameraY = y; // Atualize a posição Y da câmera com a coordenada Y do personagem
+    this.cameraX = Math.round(x); // Atualize a posição X da câmera com a coordenada X do personagem
+    this.cameraY = Math.round(y); // Atualize a posição Y da câmera com a coordenada Y do personagem
 }
 
 // BM_SPIKE_CLOCK_V1: relogio exclusivo dos espinhos, em ticks virtuais de 1/60 s.
@@ -916,6 +991,7 @@ Scene.prototype.passo = function (dt) {
         if (inventoryTrack) this.inventory.metrics.track(this, dt, inventoryFrom, this.pc);
         CombatArena.update(this, dt);
         this.checaColisao(dt);
+        if (this.pc.vidas <= 0) return;
         if (currentStage === 0 && this.stageIndex !== 0) {
             this.inventory.metrics.finish(this.stageIndex === 2 ? 'defeat' : 'dungeon_exit');
         }
