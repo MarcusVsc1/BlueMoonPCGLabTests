@@ -345,7 +345,28 @@ class CollisionSystem {
         s.frame+=20*Math.max(0,dt||0);
         if(Math.floor(s.frame)>4.2) {s._collisionExpired=true;s.scene.toRemove.push(s);}
     }
-    static pushBox(box,pc,dirIndex=pc.direcao) {
+    // BM_RUNE_SLIDE_V2: destino logico imediato, interpolacao apenas visual.
+    static runeSlideDuration(pc,sword) {
+        let duration=.2;
+        if(Number.isFinite(sword?.frame)) duration=Math.min(duration,Math.max(0,(5-sword.frame)/20));
+        if(Number.isFinite(pc.charStop) && pc.charStop>0) duration=Math.min(duration,pc.charStop);
+        return Math.max(0,duration);
+    }
+    static runeSlidePosition(box) {
+        const slide=box._bmRuneSlide;
+        if(!slide) return {x:box.x,y:box.y};
+        const t=Math.min(1,Math.max(0,slide.elapsed/slide.duration));
+        const eased=1-(1-t)*(1-t);
+        return {x:slide.x+(box.x-slide.x)*eased,y:slide.y+(box.y-slide.y)*eased};
+    }
+    static tickRuneSlide(box,dt) {
+        const slide=box._bmRuneSlide;
+        if(!slide) return;
+        slide.elapsed+=Number.isFinite(dt)?Math.max(0,dt):0;
+        if(slide.elapsed+this.eps>=slide.duration) delete box._bmRuneSlide;
+    }
+    static pushBox(box,pc,dirIndex=pc.direcao,sword=null) {
+        if(box._bmRuneSlide) return false;
         const scene=box.scene||pc.scene, map=scene?.map,dir=this.direction(dirIndex);
         if(!map || pc.scene!==scene || !dir) return false;
         const z=this.size(map), x=box.posX,y=box.posY;
@@ -354,22 +375,41 @@ class CollisionSystem {
         if(Math.floor(player.x/z)!==x-dir.x || Math.floor(player.y/z)!==y-dir.y) return false;
         if(!from || ![7,11].includes(from.tipo) || !dest || dest.tipo!==0) return false;
         const puzzle=scene.sokobans?.find(p=>p.boxes.includes(box));
+        if(puzzle?._bmRuneComplete) return false; // BM_RUNE_COMPLETE_V4
         if(puzzle?.room?.cells && !puzzle.room.cells.some(c=>c.x===x+dir.x && c.y===y+dir.y)) return false;
         if(scene.sokobans?.some(p=>p.boxes.some(b=>b!==box && b.posX===x+dir.x && b.posY===y+dir.y))) return false;
+        const duration=this.runeSlideDuration(pc,sword);
+        const start={x:box.x,y:box.y,elapsed:0,duration};
         from.tipo=0; box.posX+=dir.x;box.posY+=dir.y;
         box.x=(box.posX+.5)*z;box.y=(box.posY+.5)*z;dest.tipo=7;
+        if(duration>0) box._bmRuneSlide=start;
+        box.props.placed=false;
+        // BM_RUNE_FX_V3: somente movimentos validados; estado inicial e reset silenciosos.
+        box._bmRunePending=true;
+        box._bmRunePulse=0;
+        scene.assets.play('stoneslide');
+        if(puzzle?.goals.some(g=>g.posX===x && g.posY===y)) scene.assets.play('runeoff');
         return true;
     }
     static updateBoxes(scene,dt) {
+        // Avanca animacoes existentes antes de avaliar novos golpes. A animacao
+        // iniciada neste tick comeca em zero, sem consumir um frame indevido.
+        for(const puzzle of scene.sokobans) for(const box of puzzle.boxes) {
+            this.tickRuneSlide(box,dt);
+            const step=Number.isFinite(dt)?Math.max(0,dt):0;
+            box._bmRunePulse=box.props.placed && !box._bmRuneSlide ? ((box._bmRunePulse||0)+step)%2.4 : 0;
+        }
         for(const puzzle of scene.sokobans) for(const box of puzzle.boxes) {
             box.swCD=Math.max(0,(box.swCD||0)-dt);
+            if(box._bmRuneSlide) continue;
             for(const sword of scene.spritesT) {
                 if(box.swCD>0 || sword.props?.modelo!=='espada' || sword._pushedBox || sword._collisionExpired) continue;
-                if(this.intersects(sword,box) && this.pushBox(box,scene.pc,sword.direcao)) {box.swCD=.4;sword._pushedBox=true;break;}
+                if(this.intersects(sword,box) && this.pushBox(box,scene.pc,sword.direcao,sword)) {box.swCD=.4;sword._pushedBox=true;break;}
             }
         }
     }
     static resetPuzzle(puzzle,scene) {
+        if(puzzle._bmRuneComplete) return false; // BM_RUNE_COMPLETE_V4
         const map=scene.map,z=this.size(map);
         // Limpa TODAS as origens antes de marcar os destinos do reset.
         for(const b of puzzle.boxes) if(!this.tile(map,b.posX,b.posY)||!this.tile(map,b.initialX,b.initialY)) return false;
@@ -377,6 +417,9 @@ class CollisionSystem {
         for(const b of puzzle.boxes) {
             b.posX=b.initialX;b.posY=b.initialY;b.x=(b.posX+.5)*z;b.y=(b.posY+.5)*z;
             this.tile(map,b.posX,b.posY).tipo=7;b.swCD=0;b.props.placed=false;
+            delete b._bmRuneSlide;
+            delete b._bmRunePending;
+            delete b._bmRunePulse;
         }
         const p=scene.pc;p.x=(puzzle.room.cells[0].x+puzzle.startCell.y+.5)*z;p.y=(puzzle.room.cells[0].y+puzzle.startCell.x+.5)*z;
         p.vx=p.vy=0;this.sync(p,map);puzzle.countDown=.5;

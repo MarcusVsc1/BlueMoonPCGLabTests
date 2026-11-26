@@ -235,7 +235,7 @@ const BMGameOver = (() => {
     function controlRows(){const g=preferredPad();return [
         [['up','left','down','right'].map(a=>BMControls.keyLabel(BMControls.key(a))).join('/')+' / direcional','Movimentar'],
         [BMControls.combo('sword',g),'Espada'],[BMControls.combo('fire',g),'Magia'],
-        [BMControls.combo('previous',g)+' e '+BMControls.combo('next',g),'Trocar item'],[BMControls.combo('map',g),'Mapa'],[BMControls.combo('resetSokoban',g),'Resetar Sokoban'],[BMControls.combo('pause',g),'Pausar'],[BMControls.keyLabel(BMControls.key('sword'))+'/'+BMControls.combo('confirm',g),'Confirmar nos menus']];}
+        [BMControls.combo('previous',g)+' e '+BMControls.combo('next',g),'Trocar item'],[BMControls.combo('map',g),'Mapa'],[BMControls.combo('resetSokoban',g),'Restaurar selos'],[BMControls.combo('pause',g),'Pausar'],[BMControls.keyLabel(BMControls.key('sword'))+'/'+BMControls.combo('confirm',g),'Confirmar nos menus']];}
     function menuHint(){return '↑ ↓ / direcional: navegar  •  '+BMControls.keyLabel(BMControls.key('sword'))+'/'+BMControls.combo('confirm')+': confirmar  •  Esc / '+BMControls.padLabel(preferredPad(),'fire')+': voltar';}
     const pauseEligible=s=>!loading&&!!s&&!!s._bmRun&&[0,3].includes(s.stageIndex)&&s.pc?.vidas>0&&!(s.theEnd>0)&&!menu&&!dying&&!entryFade&&!resumeBlocked;
     function preferredPad(){return BMControls.preferred();}

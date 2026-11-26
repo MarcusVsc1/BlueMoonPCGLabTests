@@ -6,7 +6,7 @@ const BMControls=(()=>{
  const fixed={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',Enter:'confirm',Space:'confirm',Escape:'pause'};
  const standard={sword:0,fire:1,previous:4,next:5,map:3,resetSokoban:7,confirm:0,pause:9};
  const raw={...standard,sword:2,map:0,confirm:2};
- const labels={up:'Cima',down:'Baixo',left:'Esquerda',right:'Direita',sword:'Espada / confirmar' ,fire:'Magia / voltar',previous:'Item anterior / zoom −',next:'Próximo item / zoom +',map:'Abrir / fechar mapa',resetSokoban:'Resetar Sokoban / mapa',confirm:'Confirmar / centralizar',pause:'Pausar / voltar'};
+ const labels={up:'Cima',down:'Baixo',left:'Esquerda',right:'Direita',sword:'Espada / confirmar' ,fire:'Magia / voltar',previous:'Item anterior / zoom −',next:'Próximo item / zoom +',map:'Abrir / fechar mapa',resetSokoban:'Restaurar selos / mapa',confirm:'Confirmar / centralizar',pause:'Pausar / voltar'};
  const keyNames=Object.keys(defaults),padNames=Object.keys(standard).filter(a=>a!=='confirm');
  const allowedKey=k=>typeof k==='string'&&(/^(Key[A-Z]|Digit[0-9]|Numpad[0-9]|Enter|Space|Escape|Arrow(?:Up|Down|Left|Right))$/.test(k))&&k!=='KeyN';
  const rawPS=g=>g?.mapping!=='standard'&&/2563.*0575|PS3\/PC Gamepad/i.test(String(g?.id||''));

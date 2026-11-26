@@ -51,6 +51,10 @@ var assetsMng = new AssetsManager();
         assetsMng.loadImage("gargoyle", "assets/gargoyle.png");
         assetsMng.loadImage("box_false", "assets/box_false.png");
         assetsMng.loadImage("box_true", "assets/box_true.png");
+// BM_RUNE_SEALS_V1
+assetsMng.loadImage("runeBlockOff", "assets/runeblock_off.png");
+assetsMng.loadImage("runeBlockOn", "assets/runeblock_on.png");
+assetsMng.loadImage("runeSeal", "assets/runeseal.png");
         assetsMng.loadAudio("sword", "assets/sword.ogg");
         assetsMng.loadAudio("sword2", "assets/sword2.ogg");
         assetsMng.loadAudio("explosion", "assets/explosion.mp3");
@@ -70,7 +74,13 @@ var assetsMng = new AssetsManager();
         assetsMng.loadAudio("key", "assets/key.ogg")
         assetsMng.loadAudio("switchOn", "assets/switch.ogg")
         assetsMng.loadAudio("switchOn2", "assets/switch2.ogg")
-        assetsMng.loadAudio("magic", "assets/magic.ogg")
+        assetsMng.loadAudio("magic", "assets/magic.ogg");
+// BM_RUNE_FX_V3
+assetsMng.loadAudio("stoneslide", "assets/stoneslide.ogg");
+assetsMng.loadAudio("runeon", "assets/runeon.ogg");
+assetsMng.loadAudio("runeoff", "assets/runeoff.ogg");
+assetsMng.loadAudio("runecomplete", "assets/runecomplete.ogg");
+assetsMng.loadAudio("runereset", "assets/runereset.ogg");
         assetsMng.loadAudio("cancel", "assets/cancel.ogg")
         assetsMng.loadAudio("water", "assets/water.ogg")
         assetsMng.loadAudio("spike", "assets/spike.ogg")

@@ -121,14 +121,8 @@ Scene.prototype.desenhar = function () {
         if (!CollisionSystem.isLavaDevice(this.spritesO[i]) && (this.spritesO[i].y < this.pc.y || this.spritesO[i].switchId))
             this.spritesO[i].desenhar(this.ctx);
     }
-    for (var sokoban of this.sokobans) {
-        for (var i = 0; i < sokoban.goals.length; i++) {
-            sokoban.goals[i].desenhar(this.ctx);
-        }
-        for (var i = 0; i < sokoban.boxes.length; i++) {
-            sokoban.boxes[i].desenhar(this.ctx);
-        }
-    }
+    // BM_RUNE_COMPLETE_V4: renderiza o puzzle e a previa da recompensa, sem registrar objeto coletavel.
+    for (var sokoban of this.sokobans) BMRuneComplete.draw(this,sokoban);
     for (var i = 0; i < this.spritesE.length; i++) {
         if (this.spritesE[i].y <= this.pc.y) this.spritesE[i].desenhar(this.ctx);
     }

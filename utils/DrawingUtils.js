@@ -233,54 +233,60 @@ function preencherComPreto(room) {
     BMDarkRoom.draw(room, cena1);
 }
 
+// BM_RUNE_SEALS_V1: apenas renderização; os identificadores e as coordenadas lógicas são mantidos.
+function bmDrawRuneTile(sprite, ctx, key, offset) {
+    const scene = sprite.scene;
+    const img = scene.assets.img(key);
+    ctx.save();
+    try {
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, Math.round(sprite.x - scene.cameraX - offset), Math.round(sprite.y - scene.cameraY - offset), 32, 32);
+    } finally { ctx.restore(); }
+}
 function desenharQuadradoComX(ctx) {
-    var tamanho = 32
-    // Salve o estado atual do contexto
-    ctx.save();
-
-    // Translade o contexto para as coordenadas x e y
-    ctx.translate(this.x - cena1.cameraX, this.y - cena1.cameraY);
-
-    // Deixa a linha mais grossa
-    ctx.lineWidth = 2;
-
-    // Defina a cor do traço (contorno) para vermelho
-    ctx.strokeStyle = "red";
-
-    // Desenhe o quadrado sem preenchimento
-    ctx.strokeRect(0, 0, tamanho, tamanho);
-
-    // Desenhe o "X" no meio do quadrado
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(tamanho, tamanho);
-    ctx.moveTo(0, tamanho);
-    ctx.lineTo(tamanho, 0);
-    ctx.stroke();
-    ctx.closePath();
-
-    // Restaure o estado do contexto para não afetar outros desenhos
-    ctx.restore();
+    bmDrawRuneTile(this, ctx, 'runeSeal', 0);
 }
-
+// BM_RUNE_SLIDE_V2: posicao visual nao modifica o sprite nem o mapa.
 function desenharCaixa(ctx) {
+    const pos=CollisionSystem.runeSlidePosition(this);
+    const scene=this.scene;
+    const key=!this._bmRuneSlide && this.props.placed ? 'runeBlockOn' : 'runeBlockOff';
     ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.drawImage(
-        this.scene.assets.img(this.imagem + this.props.placed),
-        0,
-        0,
-        255,
-        256,
-        -this.w / 2 - cena1.cameraX,
-        -this.h / 2 - cena1.cameraY,
-        32,
-        32
-    );
-
-    ctx.restore();
+    try {
+        ctx.imageSmoothingEnabled=false;
+        // BM_RUNE_FX_V3: efeitos em coordenadas da camera, sem RNG ou estado de colisao.
+        const px=Math.round(pos.x-scene.cameraX), py=Math.round(pos.y-scene.cameraY);
+        const slide=this._bmRuneSlide;
+        const alpha=ctx.globalAlpha;
+        if(slide) {
+            const t=Math.min(1,Math.max(0,slide.elapsed/slide.duration));
+            const dx=Math.sign(this.x-slide.x),dy=Math.sign(this.y-slide.y);
+            ctx.fillStyle='#a7a5a0';
+            for(let i=0;i<6;i++) {
+                const spread=(i-2.5)*4;
+                const back=13+7*t+(i%3)*2;
+                ctx.globalAlpha=alpha*.34*Math.sin(Math.PI*t)*(1-i*.08);
+                ctx.fillRect(Math.round(px-dx*back-dy*spread),Math.round(py-dy*back+dx*spread+5),i%2+1,i%2+1);
+            }
+        } else if(this.props.placed) {
+            const pulse=.5+.5*Math.sin((this._bmRunePulse||0)*Math.PI*2/2.4);
+            const glow=ctx.createRadialGradient(px,py,4,px,py,21);
+            glow.addColorStop(0,'rgba(90,190,255,0.30)');
+            glow.addColorStop(.68,'rgba(90,190,255,0.15)');
+            glow.addColorStop(1,'rgba(90,190,255,0)');
+            ctx.globalAlpha=alpha*(.6+.4*pulse);ctx.fillStyle=glow;
+            ctx.fillRect(px-21,py-21,42,42);
+        }
+        ctx.globalAlpha=alpha;
+        ctx.drawImage(scene.assets.img(key),px-16,py-16,32,32);
+        if(!slide && this.props.placed) {
+            const pulse=.5+.5*Math.sin((this._bmRunePulse||0)*Math.PI*2/2.4);
+            ctx.globalAlpha=alpha*(.15+.20*pulse);ctx.fillStyle='#a0e6ff';
+            ctx.fillRect(px-1,py-17,2,2);ctx.fillRect(px-17,py-1,2,2);
+            ctx.fillRect(px+15,py-1,2,2);ctx.fillRect(px-1,py+15,2,2);
+        }
+    } finally {ctx.restore();}
 }
-
 function desenharEspinho() {
     ctx.save();
     ctx.translate(this.x, this.y);
@@ -298,3 +304,98 @@ function desenharEspinho() {
 
     ctx.restore();
 }
+// BM_RUNE_COMPLETE_V4: estado pertence ao puzzle; nenhuma entidade temporaria nem RNG.
+const BMRuneComplete = (() => {
+    const duration=1.5, dissolveEnd=1;
+    const clamp=t=>Math.max(0,Math.min(1,t));
+    const smooth=t=>{t=clamp(t);return t*t*(3-2*t);};
+    function begin(scene,puzzle) {
+        if(puzzle._bmRuneComplete) return;
+        puzzle._bmRuneComplete={age:0,released:false};
+        scene.assets.play('runecomplete');
+    }
+    function advance(scene,puzzle,dt) {
+        const state=puzzle._bmRuneComplete;
+        state.age=Math.min(duration,state.age+(Number.isFinite(dt)?Math.max(0,dt):0));
+        if(!state.released && state.age+1e-7>=dissolveEnd) {
+            // Mesma limpeza da sala feita pela V3; agora coincide com a dissipacao.
+            for(const cell of puzzle.room.cells) {
+                const tile=CollisionSystem.tile(scene.map,cell.x,cell.y);
+                if(tile) tile.tipo=0;
+            }
+            state.released=true;
+        }
+        return state.age+1e-7>=duration;
+    }
+    function wallFades(scene) {
+        const fades=new Map();
+        for(const puzzle of scene.sokobans || []) {
+            const state=puzzle._bmRuneComplete;
+            if(!state || state.released || state.age<.6) continue;
+            const fade=1-smooth((state.age-.6)/.4);
+            for(const cell of puzzle.room.cells) {
+                const tile=CollisionSystem.tile(scene.map,cell.x,cell.y);
+                if(tile && [6,11,12].includes(tile.tipo)) fades.set(tile,fade);
+            }
+        }
+        return fades;
+    }
+    function draw(scene,puzzle) {
+        const ctx=scene.ctx, state=puzzle._bmRuneComplete;
+        if(!state) {
+            for(const goal of puzzle.goals) goal.desenhar(ctx);
+            for(const box of puzzle.boxes) box.desenhar(ctx);
+            return;
+        }
+        const t=state.age, alpha=ctx.globalAlpha;
+        const fade=1-smooth((t-.6)/.4);
+        const reward=puzzle.collectible;
+        const rx=reward?.x-scene.cameraX,ry=reward?.y-scene.cameraY;
+        ctx.save();
+        try {
+            if(fade>0) {
+                ctx.globalAlpha=alpha*fade;
+                for(const goal of puzzle.goals) goal.desenhar(ctx);
+                for(const box of puzzle.boxes) box.desenhar(ctx);
+                // Pulsacao comum a todos os blocos, sem alterar o desenho normal.
+                const pulse=t<.3 ? smooth(t/.3) : .55+.45*Math.cos((t-.3)*Math.PI/.3);
+                ctx.globalAlpha=alpha*fade*(.18+.32*pulse);
+                ctx.fillStyle='#9ee8ff';
+                for(const box of puzzle.boxes) {
+                    const x=Math.round(box.x-scene.cameraX),y=Math.round(box.y-scene.cameraY);
+                    const r=16+Math.round(3*pulse);
+                    ctx.fillRect(x-r,y-r,r*2,2);ctx.fillRect(x-r,y+r-2,r*2,2);
+                    ctx.fillRect(x-r,y-r,2,r*2);ctx.fillRect(x+r-2,y-r,2,r*2);
+                }
+            }
+            // Particulas com trajetorias deterministicas: saem dos blocos e convergem.
+            if(t>=.6 && t<1.45 && Number.isFinite(rx) && Number.isFinite(ry)) {
+                ctx.fillStyle='#9ee8ff';
+                puzzle.boxes.forEach((box,i)=>{
+                    const x=box.x-scene.cameraX,y=box.y-scene.cameraY;
+                    for(let j=0;j<8;j++) {
+                        const u=clamp((t-.6-j*.021)/.69);
+                        const a=(i*8+j)*2.39996323;
+                        const spread=Math.sin(Math.PI*u)*22;
+                        const q=smooth(u);
+                        ctx.globalAlpha=alpha*Math.sin(Math.PI*u)*.86;
+                        ctx.fillRect(Math.round(x+(rx-x)*q+Math.cos(a)*spread),Math.round(y+(ry-y)*q+Math.sin(a)*spread),j%3===0?3:2,j%3===0?3:2);
+                    }
+                });
+            }
+            if(t>=1 && reward && Number.isFinite(rx) && Number.isFinite(ry)) {
+                const p=smooth((t-1)/.5);
+                const glow=ctx.createRadialGradient(rx,ry,2,rx,ry,25);
+                glow.addColorStop(0,'rgba(156,230,255,.65)');glow.addColorStop(1,'rgba(156,230,255,0)');
+                ctx.globalAlpha=alpha*Math.sin(Math.PI*p)*.7;ctx.fillStyle=glow;
+                ctx.fillRect(rx-25,ry-25,50,50);
+                // Cópia somente para desenhar: preserva identidade e inventario do original.
+                const preview=Object.create(reward);
+                preview.scene=scene;
+                ctx.globalAlpha=alpha*p;
+                if(typeof preview.desenhar==='function') preview.desenhar(ctx);
+            }
+        } finally {ctx.restore();}
+    }
+    return Object.freeze({begin,advance,draw,wallFades});
+})();

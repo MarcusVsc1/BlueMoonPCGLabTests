@@ -169,6 +169,7 @@ const BMAutoTile = (() => {
 })();;
 
 Grid.prototype.desenhar = function (ctx, scene) {
+    const bmRuneWallFades=BMRuneComplete.wallFades(scene); // BM_RUNE_COMPLETE_V4
     //x e y na imagem
     var y = 0;
     var x = 0;
@@ -182,6 +183,20 @@ Grid.prototype.desenhar = function (ctx, scene) {
             var positionX = 0;
             var positionY = 0;
             // BM_AUTOTILE_V1: desenho apenas; as celulas continuam intactas.
+            // BM_RUNE_COMPLETE_V4: piso aparece sob paredes internas, sem alterar autotile ou mapa durante o fade.
+            const wallFade=bmRuneWallFades.get(this.cells[c][l]);
+            if(wallFade!==undefined) {
+                const dx=c*this.SIZE-scene.cameraX,dy=l*this.SIZE-scene.cameraY,z=this.SIZE;
+                ctx.save();
+                try {
+                    const alpha=ctx.globalAlpha;
+                    ctx.drawImage(standardTileset,96,144,48,48,dx,dy,z,z);
+                    ctx.globalAlpha=alpha*wallFade;
+                    if(this.cells[c][l].tipo===12) ctx.drawImage(standardTileset,408,48,48,48,dx,dy,z,z);
+                    else BMAutoTile.draw(this,ctx,scene,c,l,standardTileset);
+                } finally {ctx.restore();}
+                continue;
+            }
             if (BMAutoTile.draw(this, ctx, scene, c, l, standardTileset)) continue;
             switch (this.cells[c][l].tipo) {
                 case -1:

@@ -17,7 +17,7 @@ const BMTutorial=(()=>{
  door:()=>['Porta trancada','Selecione a chave correspondente e golpeie a porta com a espada.'],
  lever:()=>['Alavanca','Use a espada ('+label('sword')+') para acionar o mecanismo.','Observe o que muda no cenário.'],
  switch:()=>['Interruptores','Golpeie os interruptores com a espada para ativá-los.','Experimente combinações e observe a resposta do mecanismo.'],
- sokoban:()=>['Sokoban','Empurre as caixas com a espada até os alvos marcados.','Se ficar sem saída, use '+label('resetSokoban')+' para restaurar o puzzle.'],
+ sokoban:()=>['Selos Rúnicos','Golpeie os blocos de pedra com a espada para alinhá-los aos selos.','Se ficar sem saída, use '+label('resetSokoban')+' para restaurar os blocos.'],
  spike:()=>['Espinhos','Observe o ritmo dos espinhos e atravesse enquanto estiverem recolhidos.'],
  fire:()=>['Onda de fogo','A onda avança pelo piso. Planeje uma rota de fuga e não fique parado.'],
  lava:()=>['Lava','A lava reduz sua velocidade e causa dano. Evite atravessá-la sem proteção.'],

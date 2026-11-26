@@ -47,7 +47,7 @@ class PuzzleAgentsManager {
 
         let bmRoomIndex=0;
         for(var room of orderedRooms){
-            const bmPuzzle=room.tag?.auxiliar==='SokobanAgent'?' — Sokoban':'';
+            const bmPuzzle=room.tag?.auxiliar==='SokobanAgent'?' — Selos Rúnicos':'';
             yield {phase:3,label:'Preparando desafios'+bmPuzzle,done:bmRoomIndex,total:orderedRooms.length};
             bmRoomIndex++;
             if(room.tag.auxiliar != 'ignore' && room.tag.auxiliar != null){

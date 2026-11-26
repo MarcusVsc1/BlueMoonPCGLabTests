@@ -23,7 +23,7 @@
         }
         canvas:fullscreen { width: 100vw; height: 100vh; object-fit: contain; background: black; }
     </style>
-    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1&bmWitchSwordHurtbox=2"></script>
+    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1&bmWitchSwordHurtbox=2&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4"></script>
     <script src="utils/CollisionDebug.js"></script>
     <script src="Sprite.js?bmCameraPixelSprite=2&bmWitchAI=1&bmWitchSkin=1"></script>
     <script src="WitchAI.js?bmWitchAI=3.2"></script>
@@ -33,31 +33,31 @@
     <script src="model/SokobanDifficulty.js"></script>
     <!-- BLUEMOON_PERSISTENT_INVENTORY_V1 -->
     <script src="model/Inventory.js"></script>
-    <script src="Controls.js?bmControls=2"></script>
+    <script src="Controls.js?bmControls=2&bmRuneSeals=1"></script>
     <script src="utils/InventoryHUD.js?bmControls=2"></script>
     <!-- BM_DUNGEON_MAP_V1 -->
     <script src="utils/DungeonMap.js?bmMapGamepad=2&bmControls=2&bmTutorial=1&bmKnownHoles=1"></script>
-    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1&bmRuneComplete=4"></script>
     <script src="Settings.js?bmSettings=1"></script>
     <script src="AssetsManager.js?bmGameOver=3&bmMenuAudio=2&bmSettings=1"></script>
     <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1&bmVictory=1&bmRun=1&bmTutorial=1&bmLoading=1"></script>
     <script src="SeedGenerator.js"></script>
     <script src="SeedGen.js?bmGameOver=1"></script>
-    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1"></script>
+    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1&bmRuneComplete=4"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
     <script src="InputController.js?bmGamepad=1&bmControls=2"></script>
     <script src="datastructures/Graph.js"></script>
     <script src="datastructures/Edge.js"></script>
     <script src="model/Room.js"></script>
-    <script src="utils/DrawingUtils.js?bmDarkRoom=1"></script>
-    <script src="utils/AssetsInitializer.js?bmWitchSkin=1"></script>
+    <script src="utils/DrawingUtils.js?bmDarkRoom=1&bmRuneSeals=1&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4"></script>
+    <script src="utils/AssetsInitializer.js?bmWitchSkin=1&bmRuneSeals=1&bmRuneFX=3"></script>
     <script src="utils/EnemyFactory.js"></script>
     <script src="utils/UtilityMethods.js"></script>
     <script src="utils/CommonsFactory.js"></script>
     <script src="utils/InputSetup.js?bmGamepad=1&bmGamepadActions=2"></script>
     <script src="enum/KeyColorEnum.js"></script>
-    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1"></script>
+    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1&bmRuneSeals=1"></script>
     <script src="model/Game.js"></script>
     <script src="datastructures/MonteCarlo.js"></script>
     <script src="datastructures/MonteCarloNode.js"></script>
@@ -78,8 +78,8 @@
     <script src="puzzleagents/commonagents/CombatRoom.js?bmArena=13"></script>
     <script src="puzzleagents/commonagents/Hub.js"></script>
     <script src="RunManager.js?bmRun=1&bmSeed=1&bmLoading=1"></script>
-    <script src="Tutorial.js?bmTutorial=1"></script>
-<script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1"></script>
+    <script src="Tutorial.js?bmTutorial=1&bmRuneSeals=1"></script>
+<script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1&bmRuneSeals=1"></script>
 
 </head>
 
@@ -220,8 +220,8 @@
         function verificarResetSokoban() {
             for (const sokoban of cena1.sokobans) {
                 if (isPlayerInsideRoom(sokoban.room) && CollisionSystem.resetPuzzle(sokoban, cena1)) {
-                    cena1.dialogo = "Sokoban resetado!";
-                    assetsMng.play("cancel");
+                    cena1.dialogo = "Selos restaurados!";
+                    assetsMng.play("runereset");
                 }
             }
         }
@@ -473,21 +473,26 @@
         }
         function comportarSokoban(sokoban, step = 1/60) {
             for (const box of sokoban.boxes) {
-                box.props.placed = sokoban.goals.some(goal => box.posX === goal.posX && box.posY === goal.posY);
+                box.props.placed = !box._bmRuneSlide && sokoban.goals.some(goal => box.posX === goal.posX && box.posY === goal.posY); // BM_RUNE_SLIDE_V2
             }
             const all = sokoban.boxes.length >= 2 && sokoban.boxes.length === sokoban.goals.length && sokoban.boxes.every(box => box.props.placed);
+            // BM_RUNE_FX_V3: encaixe somente apos deslizar; ultimo bloco usa som de conclusao.
+            for (const box of sokoban.boxes) {
+                if (!box._bmRunePending || box._bmRuneSlide) continue;
+                delete box._bmRunePending;
+                if (box.props.placed && !all) assetsMng.play("runeon");
+            }
             if (!all) { sokoban.countDown = .5; return; }
-            sokoban.countDown = (sokoban.countDown ?? .5) - step;
-            if (sokoban.countDown > 0) return;
+            // BM_RUNE_COMPLETE_V4: ultimo encaixe inicia a sequencia; nenhum tempo e consumido neste tick.
+            if (!sokoban._bmRuneComplete) { BMRuneComplete.begin(cena1, sokoban); return; }
+            if (!BMRuneComplete.advance(cena1, sokoban, step)) return;
+            
             const idx = cena1.sokobans.indexOf(sokoban);
             if (idx < 0) return;
             cena1.adicionar(sokoban.collectible);
             cena1.sokobans.splice(idx, 1);
-            assetsMng.play("magic");
-            sokoban.room.cells.forEach(cell => {
-                const tile = CollisionSystem.tile(cena1.map, cell.x, cell.y);
-                if (tile) tile.tipo = 0;
-            });
+            
+            
         }
 
         var keyPressed = {};
