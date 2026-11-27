@@ -142,7 +142,44 @@ const BMAutoTile = (() => {
         parts:r.map(([sx,sy],i)=>[ox+sx,oy+sy,24,(i%2)*24,(i>>1)*24])
     })));
 
+    // BM_ABYSS_AUTOTILE_V1: metadados exclusivamente visuais. Nao modifica tipo ou colisao.
+    // O gerador futuro deve marcar as celulas com bmAbyssTerrain = 'floor' ou 'pit'.
+    const abyssTerrain=(g,x,y)=>g.cells[x]?.[y]?.bmAbyssTerrain;
+    function abyssMask(g,x,y){
+        let mask=0;
+        for(let i=0;i<dirs.length;i++){
+            const [ox,oy]=dirs[i];
+            if(abyssTerrain(g,x+ox,y+oy)==='pit') mask|=1<<i;
+        }
+        return mask;
+    }
+    const abyssFloorParts=[[96,288,48,0,0]];
+    const abyssIsolatedParts=[[384,288,48,0,0]];
+    const abyssRecipes=recipes.map(r=>({
+        key:'abyss:q:'+r.map(q=>q.join(',')).join(';'),
+        parts:r.map(([sx,sy],i)=>[384+sx,288+sy,24,(i%2)*24,(i>>1)*24])
+    }));
+    function drawAbyss(g,ctx,scene,x,y,img){
+        const terrain=abyssTerrain(g,x,y);
+        if(terrain!=='floor' && terrain!=='pit') return false;
+        const z=g.SIZE,dx=x*z-scene.cameraX,dy=y*z-scene.cameraY;
+        if(Number.isFinite(scene.w)&&Number.isFinite(scene.h)&&scene.w>0&&scene.h>0&&
+            (dx+z<=0||dy+z<=0||dx>=scene.w||dy>=scene.h)) return true;
+        // O piso permanece sob as bordas transparentes do abismo, nao sob o vazio opaco.
+        // Isolado usa o quadro completo; os demais usam os quadrantes canonicos A2.
+        paintTexture(ctx,img,'abyss:floor',abyssFloorParts,dx,dy,z);
+        if(terrain==='pit'){
+            const mask=abyssMask(g,x,y);
+            if((mask&15)===0) paintTexture(ctx,img,'abyss:isolated',abyssIsolatedParts,dx,dy,z);
+            else {
+                const recipe=abyssRecipes[mask];
+                paintTexture(ctx,img,recipe.key,recipe.parts,dx,dy,z);
+            }
+        }
+        return true;
+    }
     function draw(g,ctx,scene,x,y,img){
+        if(drawAbyss(g,ctx,scene,x,y,img)) return true;
         const raw=type(g,x,y);
         if(raw!==6&&raw!==11&&raw!==13&&!isHole(raw))return false;
         const z=g.SIZE,dx=x*z-scene.cameraX,dy=y*z-scene.cameraY;

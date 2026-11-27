@@ -15,6 +15,7 @@ class CollisionSystem {
         return touching ? dx <= (a.w+b.w)/2 && dy <= (a.h+b.h)/2 : dx < (a.w+b.w)/2 && dy < (a.h+b.h)/2;
     }
     static solid(map,x,y,s) {
+        if(BMAbyss.isPit(this.tile(map,x,y)) && BMAbyss.allowsPit(s,map)) return false; // BM_ABYSS_FALL_V2
         const tile = this.tile(map,x,y);
         return !tile || Number(tile.tipo) === 13 || (s.atravessa != 1 && Number(tile.tipo) >= 6); // BLUEMOON_COMBAT_ARENA_V1
     }
@@ -22,6 +23,7 @@ class CollisionSystem {
     // Percorre todas as fronteiras cruzadas pela borda dianteira da AABB.
     // O eixo transversal usa a posicao ja resolvida pelo eixo anterior.
     static axis(s,map,delta,axis) {
+        if(BMAbyss.isFalling(s)) return 0;
         if (!Number.isFinite(delta) || delta === 0) return 0;
         const b=this.box(s), z=this.size(map), e=this.eps, n=this.bounds(map);
         const horizontal=axis==='x', p=horizontal?b.x:b.y, q=horizontal?b.y:b.x;
@@ -48,7 +50,7 @@ class CollisionSystem {
             }
         }
         s[axis]+=actual;
-        return actual;
+        return BMAbyss.afterAxis(s,map,axis,actual);
     }
     static move(s,dt) {
         const map=s.scene?.map;
@@ -319,6 +321,7 @@ class CollisionSystem {
         return body.some(r=>blade.some(b=>this.overlaps(b,r,false)));
     }
     static intersects(a,b) {
+        if(BMAbyss.isFalling(a)||BMAbyss.isFalling(b)) return false;
         if (!a || !b || a._collisionExpired || b._collisionExpired) return false;
         // Se a parede foi atingida neste frame, so vale o caminho anterior ao impacto.
         if(a._collisionWall && this.projectile(a)) return this.preWallContact(a,b);

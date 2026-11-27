@@ -23,9 +23,9 @@
         }
         canvas:fullscreen { width: 100vw; height: 100vh; object-fit: contain; background: black; }
     </style>
-    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1&bmWitchSwordHurtbox=2&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4"></script>
+    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1&bmWitchSwordHurtbox=2&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4&bmAbyssFall=2"></script>
     <script src="utils/CollisionDebug.js"></script>
-    <script src="Sprite.js?bmCameraPixelSprite=2&bmWitchAI=1&bmWitchSkin=1"></script>
+    <script src="Sprite.js?bmCameraPixelSprite=2&bmWitchAI=1&bmWitchSkin=1&bmAbyssFall=2"></script>
     <script src="WitchAI.js?bmWitchAI=3.2"></script>
     <script src="utils/ShieldEnemy.js"></script>
     <script src="Params.js"></script>
@@ -36,14 +36,14 @@
     <script src="Controls.js?bmControls=2&bmRuneSeals=1"></script>
     <script src="utils/InventoryHUD.js?bmControls=2"></script>
     <!-- BM_DUNGEON_MAP_V1 -->
-    <script src="utils/DungeonMap.js?bmMapGamepad=2&bmControls=2&bmTutorial=1&bmKnownHoles=1"></script>
-    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1&bmRuneComplete=4"></script>
+    <script src="utils/DungeonMap.js?bmMapGamepad=2&bmControls=2&bmTutorial=1&bmKnownHoles=1&bmAbyssAgent=4"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1&bmRuneComplete=4&bmAbyssFall=2&bmAbyssCombat=5.1"></script>
     <script src="Settings.js?bmSettings=1"></script>
     <script src="AssetsManager.js?bmGameOver=3&bmMenuAudio=2&bmSettings=1"></script>
     <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1&bmVictory=1&bmRun=1&bmTutorial=1&bmLoading=1"></script>
     <script src="SeedGenerator.js"></script>
     <script src="SeedGen.js?bmGameOver=1"></script>
-    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1&bmRuneComplete=4"></script>
+    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1&bmRuneComplete=4&bmAbyss=1"></script>
     <script src="Animation.js"></script>
     <script src="DungeonGenerator.js"></script>
     <script src="InputController.js?bmGamepad=1&bmControls=2"></script>
@@ -51,13 +51,14 @@
     <script src="datastructures/Edge.js"></script>
     <script src="model/Room.js"></script>
     <script src="utils/DrawingUtils.js?bmDarkRoom=1&bmRuneSeals=1&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4"></script>
-    <script src="utils/AssetsInitializer.js?bmWitchSkin=1&bmRuneSeals=1&bmRuneFX=3"></script>
+    <script src="utils/AssetsInitializer.js?bmWitchSkin=1&bmRuneSeals=1&bmRuneFX=3&bmAbyssFall=2"></script>
     <script src="utils/EnemyFactory.js"></script>
     <script src="utils/UtilityMethods.js"></script>
     <script src="utils/CommonsFactory.js"></script>
     <script src="utils/InputSetup.js?bmGamepad=1&bmGamepadActions=2"></script>
     <script src="enum/KeyColorEnum.js"></script>
-    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1&bmRuneSeals=1"></script>
+    <script src="puzzleagents/PathAgent.js?bmPathAgent=1"></script>
+    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1&bmRuneSeals=1&bmPassageMaze=1&bmAbyssAgent=4&bmAbyssCombat=5.1&bmMazeNoHub=1&bmPathAgent=1"></script>
     <script src="model/Game.js"></script>
     <script src="datastructures/MonteCarlo.js"></script>
     <script src="datastructures/MonteCarloNode.js"></script>
@@ -67,8 +68,11 @@
     <script src="puzzleagents/collectibleAgents/LeverAgent.js?bmLeverDistance=1"></script>
     <script src="puzzleagents/collectibleAgents/KeyAndDoorAgent.js"></script>
     <script src="puzzleagents/auxagents/AuxAgent.js"></script>
+    <script src="AbyssPathGenerator.js?bmAbyssPath=3.1"></script>
+    <script src="AbyssCombat.js?bmAbyssCombat=5"></script>
+    <script src="puzzleagents/auxagents/AbyssAgent.js?bmAbyssAgent=4&bmAbyssCombat=5.1"></script>
     <script src="puzzleagents/auxagents/SwitchAgent.js"></script>
-    <script src="puzzleagents/auxagents/MazeAgent.js"></script>
+    <script src="puzzleagents/auxagents/MazeAgent.js?bmPassageMaze=2.1"></script>
     <script src="puzzleagents/auxagents/SokobanAgent.js?bmGameOver=1"></script>
     <script src="puzzleagents/auxagents/IceRoomAgent.js"></script>
     <script src="puzzleagents/auxagents/SpikeAgent.js"></script>
@@ -79,8 +83,9 @@
     <script src="puzzleagents/commonagents/Hub.js"></script>
     <script src="RunManager.js?bmRun=1&bmSeed=1&bmLoading=1"></script>
     <script src="Tutorial.js?bmTutorial=1&bmRuneSeals=1"></script>
-<script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1&bmRuneSeals=1"></script>
+<script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1&bmRuneSeals=1&bmPassageMaze=2.1&bmAbyssAgent=4&bmAbyssCombat=5.1"></script>
 
+    <script src="Abyss.js?bmAbyssFall=2"></script>
 </head>
 
 <body style="background-color: black">
@@ -154,8 +159,7 @@
                 const right = !!input.comandos.direita.valor || input.movimentos.horizontal.valor === 1;
                 const up = !!input.comandos.cima.valor || input.movimentos.vertical.valor === -1;
                 const down = !!input.comandos.baixo.valor || input.movimentos.vertical.valor === 1;
-                const horizontal = Number(right) - Number(left);
-                const vertical = Number(down) - Number(up);
+                const [horizontal, vertical] = BMAbyss.filterInput(this, Number(right) - Number(left), Number(down) - Number(up)); // BM_ABYSS_FALL_V2
                 if (horizontal) {
                     this.vx = horizontal * this.standardSpd;
                     this.direcao = horizontal < 0 ? 1 : 2;

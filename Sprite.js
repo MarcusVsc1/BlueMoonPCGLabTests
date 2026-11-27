@@ -53,6 +53,7 @@ Sprite.prototype = new Sprite();
 Sprite.prototype.constructor = Sprite;
 
 Sprite.prototype.desenhar = function (ctx) {
+    if(this.props?.tipo==='pc' && BMAbyss.drawFalling(this,ctx)) return; // BM_ABYSS_FALL_V2
     this.cameraX = this.x - this.scene.cameraX
     this.cameraY = this.y - this.scene.cameraY
     ctx.save();

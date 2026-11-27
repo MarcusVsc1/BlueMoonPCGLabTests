@@ -11,8 +11,86 @@ class MazeAgent {
         room.tag.auxiliar=this.defaultTag;return true;
     }
     gerarAgenteAuxiliar(room,collectible,level){
+        if(room.bmPassageMaze)return this.renderPassage(room);
         if(!this.criarLabirinto(room))return false;
         const fn=this.levelMapper.get(level)||this.levelMapper.get(1);fn(room,collectible,level);return true;
+    }
+    // BM_PASSAGE_MAZE_V1 + BM_PASSAGE_MAZE_V2_1: valida percurso e exige uma arvore sem ciclos.
+    generatePassage(room) {
+        const base=room.cells[0], h=room.roomHeight, w=room.roomWidth;
+        if(room.terminalCells.length!==2 || !base) return null;
+        const terminals=room.terminalCells.map(t=>({x:t.y-base.y,y:t.x-base.x}));
+        const inside=t=>Number.isInteger(t.x)&&Number.isInteger(t.y)&&t.x>=0&&t.y>=0&&t.x<h&&t.y<w;
+        if(!terminals.every(inside)||MazeAgent.key(terminals[0])===MazeAgent.key(terminals[1]))return null;
+        if(!terminals.every(t=>t.x===0||t.y===0||t.x===h-1||t.y===w-1))return null;
+        const direct=Math.abs(terminals[0].x-terminals[1].x)+Math.abs(terminals[0].y-terminals[1].y);
+        // Nao ha como atender ambos os limites se o minimo geometrico ja os excede.
+        if(Math.max(10,Math.ceil(1.5*direct))>30)return null;
+        for(let i=0;i<8;i++){
+            const start=terminals[i%2],end=terminals[1-i%2];
+            const c=this.generateMaze(h,w,start);if(!c)continue;
+            if(!this.connectEntrance(c.matrix,end))continue;
+            if(!this.analyze(c.matrix,start))continue; // arvore Prim original
+            let metrics=this.bmPassageMetrics(c.matrix,terminals);
+            if(!metrics)continue;
+            // Labirinto perfeito: nao abrir paredes depois de Prim.
+            return {matrix:c.matrix,terminals,metrics:{...metrics,shortcuts:0,generationAttempts:i+1}};
+        }
+        return null;
+    }
+    bmPassageMetrics(m,terminals){
+        const h=m.length,w=m[0].length,[start,end]=terminals,key=MazeAgent.key;
+        const open=p=>m[p.x]?.[p.y]==='passagem';
+        const neighbors=p=>MazeAgent.neighbors(m,p).filter(open);
+        if(!open(start)||!open(end))return null;
+        const search=(source,allowed=()=>true)=>{
+            const queue=[],dist=new Map(),prev=new Map();
+            if(!allowed(source))return {queue,dist,prev};
+            queue.push(source);dist.set(key(source),0);
+            for(let i=0;i<queue.length;i++)for(const n of neighbors(queue[i])){
+                const k=key(n);if(!allowed(n)||dist.has(k))continue;
+                dist.set(k,dist.get(key(queue[i]))+1);prev.set(k,queue[i]);queue.push(n);
+            }
+            return {queue,dist,prev};
+        };
+        const a=search(start),walkable=m.reduce((sum,row)=>sum+row.filter(v=>v==='passagem').length,0);
+        if(a.queue.length!==walkable||walkable>=h*w)return null;
+        const passageDistance=a.dist.get(key(end)),manhattan=Math.abs(start.x-end.x)+Math.abs(start.y-end.y);
+        if(passageDistance==null||passageDistance<10||passageDistance>30||passageDistance<1.5*manhattan)return null;
+        const route=[];for(let p=end;p;p=a.prev.get(key(p)))route.push(p);route.reverse();
+        const rowSpan=Math.max(...route.map(p=>p.x))-Math.min(...route.map(p=>p.x));
+        const colSpan=Math.max(...route.map(p=>p.y))-Math.min(...route.map(p=>p.y));
+        const span=Math.max(rowSpan/(h-1),colSpan/(w-1));
+        if(span<0.5)return null;
+        // Entradas na mesma lateral: NAO pode existir travessia restrita a metade
+        // superficial da sala, mesmo que outro caminho (mais longo) entre no interior.
+        const shared=[];
+        if(start.x===0&&end.x===0)shared.push({depth:p=>p.x,limit:Math.ceil((h-1)/2)});
+        if(start.x===h-1&&end.x===h-1)shared.push({depth:p=>h-1-p.x,limit:Math.ceil((h-1)/2)});
+        if(start.y===0&&end.y===0)shared.push({depth:p=>p.y,limit:Math.ceil((w-1)/2)});
+        if(start.y===w-1&&end.y===w-1)shared.push({depth:p=>w-1-p.y,limit:Math.ceil((w-1)/2)});
+        for(const s of shared)if(search(start,p=>s.depth(p)<s.limit).dist.has(key(end)))return null;
+        const routeKeys=new Set(route.map(key));
+        let branches=0,turns=0,deadEnds=0,degreeSum=0;
+        for(const p of a.queue){const ns=neighbors(p);degreeSum+=ns.length;if(ns.length===1&&key(p)!==key(start)&&key(p)!==key(end))deadEnds++;}
+        // Em grafo conectado, E = V - 1 implica ausencia de ciclos.
+        if(degreeSum/2!==walkable-1)return null;
+        for(let i=0;i<route.length;i++){
+            if(neighbors(route[i]).some(n=>!routeKeys.has(key(n))))branches++;
+            if(i>1){const [p,q,r]=route.slice(i-2,i+1);if(q.x-p.x!==r.x-q.x||q.y-p.y!==r.y-q.y)turns++;}
+        }
+        // Profundidade maxima de um desvio em relacao ao percurso correto.
+        const q=route.slice(),offDist=new Map(route.map(p=>[key(p),0]));
+        for(let i=0;i<q.length;i++)for(const n of neighbors(q[i]))if(!offDist.has(key(n))){offDist.set(key(n),offDist.get(key(q[i]))+1);q.push(n);}
+        return {distance:Math.max(...a.dist.values()),branches,detourDepth:Math.max(...offDist.values()),turns,deadEnds,walkable,coverage:walkable/(h*w),passageDistance,manhattan,detourRatio:passageDistance/manhattan,span,rowSpan,colSpan,sameWall:shared.length>0,minimumInteriorDepth:shared.length?Math.min(...shared.map(s=>Math.max(...route.map(s.depth)))):null,cycles:degreeSum/2-walkable+1};
+    }
+    renderPassage(room) {
+        const c=room.bmPassageMaze;
+        if(!c)throw Error('Labirinto de passagem sem matriz validada: '+room.roomId);
+        room.mazeDifficulty={...c.metrics};
+        darkRoom(room.roomId);
+        this.mapToDungeon(room.cells[0],c.matrix.map(row=>row.map(v=>v==='passagem'?0:6)));
+        return true;
     }
     inicializarMatriz(m,n){return Array.from({length:m},()=>Array(n).fill('bloqueado'));}
     static dirs=[[-1,0],[1,0],[0,-1],[0,1]];

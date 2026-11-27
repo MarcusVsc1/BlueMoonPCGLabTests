@@ -128,6 +128,8 @@ class DungeonMapSystem {
         const s=this.state(scene);if(!s||scene.pc?.vidas<=0||scene.theEnd>0)return;
         const z=s.map.SIZE,p=this.cell(scene.pc,z),k=this.key(p.x,p.y),r=s.owner.get(k);
         if(r)s.rooms.add(r);else if(s.corridors.has(k))s.walked.add(k);
+        // BM_ABYSS_MAP_V4: only after entering this room. Terrain only; markers retain visibility rules.
+        if(r?.bmAbyss)for(const c of r.cells)s.terrain.set(this.key(c.x,c.y),this.tile(s.map,c.x,c.y));
         s.elapsed+=Math.max(0,Number.isFinite(dt)?dt:0);
         if(!force&&s.last===k&&s.elapsed<.10)return;
         s.elapsed=0;s.last=k;this.recover(scene,s);

@@ -60,6 +60,7 @@ assetsMng.loadImage("runeSeal", "assets/runeseal.png");
         assetsMng.loadAudio("explosion", "assets/explosion.mp3");
         assetsMng.loadAudio("shot", "assets/fire.ogg");
         assetsMng.loadAudio("damage", "assets/damage.ogg");
+        assetsMng.loadAudio("fall", "assets/fall.ogg"); // BM_ABYSS_FALL_V2
         assetsMng.loadAudio("gameover", "assets/gameover.ogg");
         assetsMng.loadAudio("quest", "assets/quest.ogg");
         assetsMng.loadAudio("heal", "assets/heal.ogg");

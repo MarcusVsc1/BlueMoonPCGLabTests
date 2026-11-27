@@ -312,6 +312,7 @@ Scene.prototype.bmSeparateEnemies = function(dt, moved) {
         CollisionSystem.axis(e,map,p.dx*f,'x');
         CollisionSystem.axis(e,map,p.dy*f,'y');
         if(arena&&CombatArena.fullInside(arena,e)!==p.inside){e.x=x;e.y=y;}
+        if(e.props?.bmAbyssEnemy&&!e.bmAbyssRoute.path.some(t=>t.x===Math.floor(e.x/z)&&t.y===Math.floor(e.y/z))){e.x=x;e.y=y;} // BM_ABYSS_COMBAT_V5
         CollisionSystem.sync(e,map);
     }
 };
@@ -349,7 +350,7 @@ Scene.prototype.mover = function (dt) {
         this.spritesXP[i].mover(dt);
     }
     if (this.pc != null) {
-        this.pc.mover(dt);
+        BMAbyss.movePlayer(this.pc, dt, BMGameOver.fatal); // BM_ABYSS_FALL_V2
     }
 
     if (this.bruxa != null) {
@@ -431,7 +432,7 @@ Scene.prototype.comportar = function () {
         }
     }
 
-    if (this.pc != null && this.pc.comportar && !this.pc.onTP) {
+    if (this.pc != null && this.pc.comportar && !this.pc.onTP && !BMAbyss.isFalling(this.pc)) {
         this.pc.comportar();
     }
 
@@ -448,6 +449,7 @@ Scene.prototype.limpar = function () {
 
 //checa colisao entre sprites
 Scene.prototype.checaColisao = function (dt = 1/60) {
+    if(this.pc?.vidas<=0 && BMAbyss.isFalling(this.pc)) return;
     // LYRA_GAMEOVER_GUARD: nao repetir a transicao nem limpar os objetos da tela.
     if (this.stageIndex === 2 && this.pc && this.pc.vidas <= 0) return;
 
@@ -511,7 +513,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
                         this.adicionar(this.spritesE[i].drop)
                     } else {
                         var chance = random.nextRandFloat()
-                        if (chance < 0.18 && !this.spritesE[i].props.summoned) {
+                        if (chance < 0.18 && !this.spritesE[i].props.summoned && !this.spritesE[i].props.bmAbyssEnemy) {
                             var item = gerenciador.criarPoder('heart', this.spritesE[i].x / 32, this.spritesE[i].y / 32)
                             item.timer = 60
                             var evento = function (item) {
@@ -1029,6 +1031,7 @@ Scene.prototype.desenharMensagensPersistentes = function () {
 }
 
 Scene.prototype.updateCameraPosition = function () {
+    if(BMAbyss.isFalling(this.pc)) return;
     // BM_CAMERA_PIXEL_V1: alinhar a camera visual ao pixel interno do Canvas, sem arredondar o jogador.
     // Ajuste a posição da câmera conforme a movimentação do elemento central
     const cameraCenterX = this.pc.x;
