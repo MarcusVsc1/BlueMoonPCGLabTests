@@ -32,47 +32,66 @@ class DungeonMapSystem {
         const s={map,graph,owner,corridors,rooms:new Set(),terrain:new Map(),walked:new Set(),stubs:new Set(),markers:new Map(),puzzles:new Map(),arenaStates:new Map(),open:false,elapsed:1,last:null,zoom:1,panX:0,panY:0,carrier:null,item:null,placed:false};
         map._bmDungeonMap=s;
         const start=rooms.find(r=>r.tag?.tipo==='inicio')||owner.get(this.key(Math.floor(scene.pc.x/map.SIZE),Math.floor(scene.pc.y/map.SIZE)));
-        const reach=this.reachable(map,scene.pc),d=graph.calculateDistancesFromStart(start),ordered=[...rooms].sort((a,b)=>(d.get(a)??Infinity)-(d.get(b)??Infinity)||a.roomId-b.roomId);
+        // BM_MAP_CARRIER_V3: mapa nao cria inimigos, nem expande a faixa de progresso.
+        const d=graph.calculateDistancesFromStart(start),ordered=[...rooms].sort((a,b)=>(d.get(a)??Infinity)-(d.get(b)??Infinity)||a.roomId-b.roomId);
         const bounds=this.placementBounds(rooms.length);
         const preferred=new Set(ordered.slice(bounds.min,bounds.max));
-        const later=new Set(ordered.slice(bounds.max));
-        const earlier=new Set(ordered.slice(0,bounds.min).filter(r=>r!==start));
-        const safeRoom=r=>r&&r!==start&&['CombatRoom','Hub'].includes(r.tag?.auxiliar)&&!r.tag?.collectible&&r.cells.every(c=>this.safe(this.tile(map,c.x,c.y)));
-        const candidates=[];const z=map.SIZE;
+        const eligibleRoom=r=>preferred.has(r)&&r!==start&&r.tag?.tipo!=='pathAgent';
+        const z=map.SIZE, candidates=[];
         const roomOf=e=>{const p=this.cell(e,z);return owner.get(this.key(p.x,p.y));};
-        const alive=e=>e?.props?.tipo==='npc'&&e.vidas>0&&!e.drop&&!e.props.summoned&&!e.props.boss;
-        for(const e of new Set([...(scene.spritesE||[]),...(scene.gamer.estagios[0].sprites||[])])){
-            const r=roomOf(e),p=this.cell(e,z);if(alive(e)&&safeRoom(r)&&reach.dist.has(this.key(p.x,p.y)))candidates.push({enemy:e,room:r});
+        const alive=e=>e?.props?.tipo==='npc'&&e.vidas>0&&!e.drop&&!e.props.summoned&&e.imagem!=='flame2';
+        const stageSprites=scene.gamer.estagios[0].sprites||[];
+        for(const e of new Set([...(scene.spritesE||[]),...stageSprites])){
+            const r=roomOf(e);
+            if(alive(e)&&eligibleRoom(r))candidates.push({enemy:e,room:r});
         }
         for(const a of map._bmCombatArenas||[]){
-            if(!safeRoom(a.room)||!a.specs?.length||!a.spawnCells.some(c=>reach.dist.has(this.key(c.x,c.y))))continue;
-            a.specs.forEach((spec,i)=>candidates.push({arena:a,index:i,room:a.room}));
+            if(!eligibleRoom(a.room)||!a.specs?.length)continue;
+            a.specs.forEach((spec,index)=>{
+                if(spec.type!=='ignisFatuus'&&!spec.drop)candidates.push({arena:a,index,room:a.room});
+            });
         }
         const select=list=>list[Math.min(list.length-1,Math.max(0,Math.floor(rand()*list.length)))];
-        const occupied=[...(scene.spritesE||[]),...(scene.spritesO||[]),...(scene.spritesPoder||[]),...(scene.spritesTP||[]),...(scene.spritesEV||[]),...(scene.spritesSpike||[]),...(scene.gamer.estagios[0].sprites||[])];
-        const blocked=new Set(occupied.map(o=>{const p=this.cell(o,z);return this.key(p.x,p.y);}));
-        const valid=r=>r.cells.filter(c=>reach.dist.has(this.key(c.x,c.y))&&this.tile(map,c.x,c.y)===0&&!blocked.has(this.key(c.x,c.y))&&Math.hypot((c.x+.5)*z-scene.pc.x,(c.y+.5)*z-scene.pc.y)>=2*z&&this.neighbors(c.x,c.y).every(([x,y])=>owner.get(this.key(x,y))===r));
-        const fallbackRoom=r=>r!==start&&!(map._bmCombatArenas||[]).some(a=>a.room===r)&&!r.combatArena&&!r.tag?.collectible&&
-            (safeRoom(r)||(!r.tag?.auxiliar&&r.cells.every(c=>this.safe(this.tile(map,c.x,c.y)))))&&
-            !(scene.spritesTP||[]).some(o=>roomOf(o)===r)&&!(scene.spritesSpike||[]).some(o=>roomOf(o)===r);
-        const guard=r=>{const positions=r?valid(r):[];if(!positions.length)return null;const p=select(positions),enemy=scene.gamer.criarInimigo('caveira',p.x,p.y);if(!enemy)return null;scene.adicionar(enemy);return {enemy,room:r,fallback:true};};
-        let chosen=null;
-        // Preferir a faixa; so depois relaxar maximo, depois minimo, nunca seguranca.
-        for(const band of [preferred,later,earlier]){
-            const found=candidates.filter(c=>band.has(c.room));
-            if(found.length){chosen=select(found);break;}
-            const eligible=ordered.filter(r=>band.has(r)&&fallbackRoom(r)&&valid(r).length);
-            if(eligible.length){chosen=guard(select(eligible));if(chosen)break;}
-        }
-        if(!chosen)chosen=guard(start);
+        const chosen=candidates.length?select(candidates):null;
         s.placementBounds=bounds;
-        s.placementBand=chosen?(preferred.has(chosen.room)?'preferred':later.has(chosen.room)?'later':earlier.has(chosen.room)?'earlier':'start'):'ground';
+        s.placementBand=chosen?'preferred':'ground';
         s.item=this.newItem(scene.pc.x,scene.pc.y);
-        if(chosen){s.carrier=chosen;if(chosen.enemy)chosen.enemy.drop=s.item;else chosen.arena._bmMapCarrier={index:chosen.index,item:s.item};}
-        else { // apenas em geometria excepcional: nao perder a disponibilidade do mapa.
-            const p=reach.cells.find(c=>this.tile(map,c.x,c.y)===0&&Math.hypot((c.x+.5)*z-scene.pc.x,(c.y+.5)*z-scene.pc.y)>=z)||this.cell(scene.pc,z);
-            s.item.x=(p.x+.5)*z;s.item.y=(p.y+.5)*z;scene.adicionar(s.item);s.placed=true;
+        if(chosen){
+            s.carrier=chosen;
+            if(chosen.enemy)chosen.enemy.drop=s.item;
+            else chosen.arena._bmMapCarrier={index:chosen.index,item:s.item};
+        } else {
+            // Fallback: somente piso livre na faixa, nunca em PathAgent.
+            // Acessibilidade imediata e preferencia, nao requisito (portas podem abrir).
+            const reach=this.reachable(map,scene.pc);
+            const occupied=[...(scene.spritesE||[]),...(scene.spritesO||[]),...(scene.spritesPoder||[]),...(scene.spritesTP||[]),...(scene.spritesEV||[]),...(scene.spritesSpike||[]),...stageSprites,scene.pc];
+            const blocked=new Set(occupied.map(o=>{const p=this.cell(o,z);return this.key(p.x,p.y);}));
+            const arenas=new Set((map._bmCombatArenas||[]).map(a=>a.room));
+            const floor=[];
+            for(const r of ordered.filter(eligibleRoom)){
+                // Preferir celulas normais; nunca buracos, lava, portas, espinhos ou objetos.
+                for(const c of r.cells){
+                    const k=this.key(c.x,c.y);
+                    if(owner.get(k)!==r||![0,2,4].includes(this.tile(map,c.x,c.y))||blocked.has(k))continue;
+                    floor.push({c,r,rank:(arenas.has(r)?2:0)+(reach.dist.has(k)?0:1)});
+                }
+            }
+            // Priorizar piso atualmente alcancavel, fora de arenas; depois, piso de salas fechadas.
+            const best=floor.length?Math.min(...floor.map(p=>p.rank)):Infinity;
+            const target=floor.length?select(floor.filter(p=>p.rank===best)):null;
+            if(target){
+                s.item.x=(target.c.x+.5)*z;s.item.y=(target.c.y+.5)*z;
+                // Posicionamento inicial deliberado: beforeAdd so corrige drops em runtime.
+                s.placed=true;scene.adicionar(s.item);
+                s.placementRoom=target.r.roomId;
+            }else{
+                // Nao violar a faixa nem inventar um inimigo em geometria excepcional.
+                s.item=null;s.placementBand='unavailable';
+                console.warn('[DungeonMap V3] sem piso livre na faixa',bounds);
+            }
         }
+        if(chosen)s.placementRoom=chosen.room.roomId;
+        console.debug('[DungeonMap V3] distribuicao',{bounds,eligible:candidates.length,placement:s.placementBand,roomId:s.placementRoom,carrier:chosen?(chosen.enemy?'enemy':'arena'):null});
         return s;
     }
     static armArena(a,made){const c=a._bmMapCarrier;if(!c)return;if(made[c.index]&&!made[c.index].drop){made[c.index].drop=c.item;const s=a.map._bmDungeonMap;if(s?.carrier)s.carrier.enemy=made[c.index];}}
