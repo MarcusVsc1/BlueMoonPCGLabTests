@@ -3,7 +3,7 @@ class MazeAgent {
     constructor(){
         this.defaultTag='MazeAgent';this.frontierCells=[];this.candidateCount=12;
         this.levelMapper=new Map();
-        this.levelMapper.set(1,(r,c)=>this.posicionarColecionavel(r,c));
+        this.levelMapper.set(1,(r,c)=>this.createEnemy(r,c,2)); // BM_PATH_AGENT_2: inimigo de nivel 1
         for(let i=2;i<=4;i++)this.levelMapper.set(i,(r,c,l)=>this.createEnemy(r,c,l));
     }
     gerarTagAuxiliar(graph,room){
@@ -11,7 +11,10 @@ class MazeAgent {
         room.tag.auxiliar=this.defaultTag;return true;
     }
     gerarAgenteAuxiliar(room,collectible,level){
-        if(room.bmPassageMaze)return this.renderPassage(room);
+        if(room.bmPassageMaze){
+            if(!PathAgent.isActive(room)||collectible!=null||!PathAgent.validPassage(room,room.bmPassageMaze))throw Error('PathAgent inválido: '+room.roomId);
+            return this.renderPassage(room);
+        }
         if(!this.criarLabirinto(room))return false;
         const fn=this.levelMapper.get(level)||this.levelMapper.get(1);fn(room,collectible,level);return true;
     }

@@ -45,14 +45,16 @@ class PuzzleAgentsManager {
 
         this.criarTags(sortedRooms);
         var orderedRooms = this.ordenarPorNivel(this.mapGraph)
-        // BM_PATH_AGENT_V1: diagnostic only, no RNG, no mutation of room tags.
-        this.bmPathAgentReport = PathAgent.report(this.mapGraph, orderedRooms, {
-            initialRoom:this.initialRoom,
-            exitRoom:orderedRooms.filter(r=>r.tag?.auxiliar==null).at(-1)
-        });
-        console.debug('[PathAgent V1] candidatos e bloqueios', this.bmPathAgentReport);
-        this.bmAllocatePassageMazes(orderedRooms);
+        // BM_PATH_AGENT_1B: reserve alternatives after progression tags, before population.
         this.bmAllocateAbyss(orderedRooms);
+        const bmPathOptions={initialRoom:this.initialRoom,
+            exitRoom:orderedRooms.filter(r=>r.tag?.auxiliar==null).at(-1),
+            map:gerenciador.estagios[0].mapa.cells};
+        this.bmPathSlots=PathAgent.reserve(this.mapGraph,orderedRooms,bmPathOptions);
+        // BM_PATH_AGENT_2: activate only validated passage layouts before normal population.
+        this.bmPathStats=PathAgent.allocate(this,orderedRooms,bmPathOptions,random);
+        this.bmPathAgentReport=PathAgent.report(this.mapGraph,orderedRooms,bmPathOptions);
+        console.debug('[PathAgent 2] labirintos', {reserved:this.bmPathSlots.length,...this.bmPathStats,rooms:this.bmPathAgentReport});
 
         let bmRoomIndex=0;
         for(var room of orderedRooms){
@@ -144,6 +146,7 @@ class PuzzleAgentsManager {
     criarTagAuxiliar(room, excluded = new Set()) {
         var availableAgents = this.verificarAgentesDisponiveis(room, 'auxiliar', this.auxAgents);
         for(const key of excluded)availableAgents.delete(key);
+        PathAgent.filterAuxiliary(this.mapGraph,room,availableAgents); // BM_PATH_AGENT_1B
         if(room.tag?.tipo==='hub'||room.tag?.subTipo==='Hub'||room.tag?.auxiliar==='Hub')availableAgents.delete('MazeAgent'); // BM_MAZE_NO_HUB_V1
         if(AbyssAgent.isRestHub(room))availableAgents.delete('AbyssAgent'); // BM_ABYSS_NO_HUB_V5_1
         if(this.mapGraph.getNeighbors(room).some(AbyssAgent.hazard)) {availableAgents.delete('MazeAgent');availableAgents.delete('AbyssAgent');}
@@ -162,85 +165,18 @@ class PuzzleAgentsManager {
         }
     }
 
-    // BM_PASSAGE_MAZE_V1: cada MazeAgent sorteado fornece no maximo um labirinto.
-    bmAllocatePassageMazes(orderedRooms) {
-        const graph=this.mapGraph, maze=this.auxAgents.get('MazeAgent').agent;
-        const rooms=[...new Set(orderedRooms)];
-        const donors=rooms.filter(r=>r.tag?.auxiliar==='MazeAgent'&&!r.bmPassageMaze);
-        const isMaze=r=>AbyssAgent.hazard(r);
-        const map=gerenciador.estagios[0].mapa.cells;
-        const plain=r=>r.cells.every(c=>map[c.x]?.[c.y]?.tipo===0);
-        // A ultima sala sem auxiliar e reservada ao teleporte de saida.
-        const exit=rooms.filter(r=>r.tag?.auxiliar==null).at(-1);
-        const eligible=(r,donor)=>{
-            if(r===exit||r===this.initialRoom||r===donor||r.tag?.collectible||r.restricoes?.length)return false;
-            // Nao retirar nenhum desafio ou item de progressao ja atribuido.
-            // Never convert a rest hub. Only a dedicated passage slot may be used.
-            if(r.tag?.tipo==='hub'||r.tag?.subTipo==='Hub'||r.tag?.auxiliar==='Hub')return false;
-            if(r.bmMazePassageSlot!==true||r.tag?.auxiliar!=='ignore')return false;
-            if(r.roomWidth<5||r.roomHeight<5||r.cells.length<36||r.cells.length!==r.roomWidth*r.roomHeight)return false;
-            if(graph.getNeighbors(r).length!==2||r.terminalCells.length!==2||!plain(r))return false;
-            if(graph.getNeighbors(r).some(n=>n!==donor&&isMaze(n)))return false;
-            const edges=graph.getCorridorsFromRoom(r);
-            if(edges.length!==2)return false;
-            // A geometria atual do gerador garante que cada corredor toca uma unica entrada.
-            const portals=edges.map(e=>e.fromRoom===r.roomId?e.cells[0]:e.cells[e.cells.length-1]);
-            return portals.every(p=>p&&r.terminalCells.filter(t=>Math.abs(t.x-p.x)+Math.abs(t.y-p.y)===1).length===1)
-                &&r.terminalCells.every(t=>portals.filter(p=>Math.abs(t.x-p.x)+Math.abs(t.y-p.y)===1).length===1);
-        };
-        // Orcamento e decaimento originais ja foram aplicados durante criarTags.
-        // Sem candidato, mantem o labirinto original e a recompensa.
-        for(const donor of donors){
-            if(random.nextRandFloat()>=0.40)continue;
-            if(!donor.tag.collectible)continue;
-            const candidates=rooms.filter(r=>eligible(r,donor));
-            while(candidates.length){
-                const target=candidates.splice(Math.floor(random.nextRandFloat()*candidates.length),1)[0];
-                const layout=maze.generatePassage(target);if(!layout)continue;
-                const oldTag=donor.tag;
-                donor.tag={...oldTag,auxiliar:null};
-                this.criarTagAuxiliar(donor,new Set(['MazeAgent','AbyssAgent']));
-                if(!donor.tag.auxiliar){donor.tag=oldTag;break;}
-                donor.bmMazeReallocated=true;
-                target.tag={tipo:'mazePassage',subTipo:'MazePassage',auxiliar:'MazeAgent'};
-                target.bmPassageMaze=layout;
-                break;
-            }
-        }
-    }
     // BM_ABYSS_AGENT_V4: a selected auxiliary ticket can move to an empty hub.
     bmAllocateAbyss(orderedRooms) {
-        const graph=this.mapGraph,abyss=this.auxAgents.get('AbyssAgent').agent;
-        const rooms=[...new Set(orderedRooms)],exit=rooms.filter(r=>r.tag?.auxiliar==null).at(-1);
-        const level=r=>AbyssAgent.level(this.calcularNivel(orderedRooms.indexOf(r),orderedRooms.length-2));
-        const donors=rooms.filter(r=>r.tag?.auxiliar==='AbyssAgent'&&r.bmAbyssPlan?.result.mode==='treasure');
-        const eligible=(r,donor)=>!AbyssAgent.isRestHub(r)&&r!==exit&&r!==this.initialRoom&&r!==donor&&!r.tag?.collectible&&
-            r.bmAbyssPassageSlot===true&&r.tag?.auxiliar==='ignore'&&!r.restricoes?.length&& // BM_ABYSS_COMBAT_V5
-            !graph.getNeighbors(r).some(n=>n!==donor&&AbyssAgent.hazard(n))&&!!abyss.geometry(graph,r,2);
-        for(const donor of donors){
-            if(AbyssAgent.lever(donor)||!donor.tag.collectible||graph.getNeighbors(donor).some(AbyssAgent.hazard)){
-                this.bmReplaceAbyss(donor);continue;
-            }
-            if(random.nextRandFloat()>=.40)continue;
-            const candidates=rooms.filter(r=>eligible(r,donor));
-            while(candidates.length){
-                const target=candidates.splice(Math.floor(random.nextRandFloat()*candidates.length),1)[0];
-                const resources={items:[]}; // Dedicated passage slots have no Hub resources.
-                const plan=abyss.plan(graph,target,'passage',level(target));if(!plan)continue;
-                const oldTag=donor.tag;
-                donor.tag={...oldTag,auxiliar:null};
-                this.criarTagAuxiliar(donor,new Set(['MazeAgent','AbyssAgent']));
-                if(!donor.tag.auxiliar){donor.tag=oldTag;break;}
-                delete donor.bmAbyssPlan;
-                donor.bmAbyssReallocated=true;
-                target.bmAbyssOriginalTag=target.tag;
-                target.tag={tipo:'abyssPassage',subTipo:'AbyssPassage',auxiliar:'AbyssAgent'};
-                target.bmAbyssPlan=plan;
-                if(resources.recipient){resources.recipient.bmAbyssResourceReserved=true;target.bmAbyssMovedResources=resources.items;}
-                break;
-            }
+        // Only treasure/corner mode. Keep original invalid-donor recovery.
+        const graph=this.mapGraph;
+        for(const room of new Set(orderedRooms)){
+            if(room.tag?.auxiliar!=='AbyssAgent')continue;
+            if(room.bmAbyssPlan?.result?.mode!=='treasure'||graph.getNeighbors(room).length!==1||
+                AbyssAgent.isRestHub(room)||AbyssAgent.lever(room)||!room.tag.collectible||
+                graph.getNeighbors(room).some(AbyssAgent.hazard))this.bmReplaceAbyss(room);
         }
     }
+
     bmReplaceAbyss(room) {
         delete room.bmAbyssPlan;
         if(room.bmAbyssOriginalTag){room.tag=room.bmAbyssOriginalTag;delete room.bmAbyssOriginalTag;delete room.bmAbyssMovedResources;return;}

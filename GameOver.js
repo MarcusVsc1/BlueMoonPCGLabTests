@@ -442,7 +442,7 @@ const BMGameOver = (() => {
     function drawSeed(c,t){const f=t.seedForm;
         c.fillStyle='rgba(6,12,23,.96)';c.fillRect(82,42,696,556);c.strokeStyle='#7086aa';c.strokeRect(82.5,42.5,695,555);
         const text=(s,x,y,n=18,color='#e2edff')=>{c.font=n+'px Arial';c.textAlign='center';c.textBaseline='middle';c.fillStyle=color;c.fillText(s,x,y,650);};
-        text('JOGAR COM SEED',430,83,30,'#d3e4ff');text('Geração v9 • mesma seed e quantidade de salas',430,120,15,'#a9bcd4');
+        text('JOGAR COM SEED',430,83,30,'#d3e4ff');text('Geração v11 • mesma seed e quantidade de salas',430,120,15,'#a9bcd4');
         for(let i=0;i<6;i++){
             const y=145+i*55,selected=f.row===i;c.fillStyle=selected?'#293d58':'#152236';c.fillRect(120,y,620,48);c.strokeStyle=selected?'#aac3ea':'#354760';c.strokeRect(120.5,y+.5,619,47);
             if(i===0){text(f.edit?'Editando seed':'Editar seed',205,y+24,16);for(let j=0;j<16;j++){const x=304+j*25;if(f.edit&&j===f.pos){c.fillStyle='#7393bd';c.fillRect(x-11,y+7,22,34);}text(f.digits[j],x,y+24,20,validSeed(f)?'#f0f6ff':'#f2a9a0');}}
