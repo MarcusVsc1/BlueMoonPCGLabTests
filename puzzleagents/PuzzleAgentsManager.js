@@ -43,6 +43,8 @@ class PuzzleAgentsManager {
         loop para popular os puzzles no grafo de mapa
         */
 
+        // BM_HOSTILE_PROJECTILE_LOTTERY_5D — ticket nativo antes do primeiro sorteio.
+        BMHostileProjectileAgent.register(this);
         this.criarTags(sortedRooms);
         var orderedRooms = this.ordenarPorNivel(this.mapGraph)
         // BM_PATH_AGENT_1B: reserve alternatives after progression tags, before population.
@@ -53,6 +55,8 @@ class PuzzleAgentsManager {
         this.bmPathSlots=PathAgent.reserve(this.mapGraph,orderedRooms,bmPathOptions);
         // BM_PATH_AGENT_2: activate only validated passage layouts before normal population.
         this.bmPathStats=PathAgent.allocate(this,orderedRooms,bmPathOptions,random);
+        // BM_HOSTILE_PROJECTILE_AGENT_5C2 — sem ticket no sorteio; reserva explicita apos o PathAgent nativo.
+        this.bmHostileProjectileAgent=BMHostileProjectileAgent.allocate(this,orderedRooms,bmPathOptions);
         this.bmPathAgentReport=PathAgent.report(this.mapGraph,orderedRooms,bmPathOptions);
         console.debug('[PathAgent 2] labirintos', {reserved:this.bmPathSlots.length,...this.bmPathStats,rooms:this.bmPathAgentReport});
 
@@ -61,6 +65,7 @@ class PuzzleAgentsManager {
             const bmPuzzle=room.tag?.auxiliar==='SokobanAgent'?' — Selos Rúnicos':'';
             yield {phase:3,label:'Preparando desafios'+bmPuzzle,done:bmRoomIndex,total:orderedRooms.length};
             bmRoomIndex++;
+            if(this.bmHostileProjectileAgent?.populate(room,this.calcularNivel(orderedRooms.indexOf(room),orderedRooms.length - 2)))continue;
             if(room.tag.auxiliar != 'ignore' && room.tag.auxiliar != null){
                 var agent = this.auxAgents.get(room.tag.auxiliar) ?? this.mainAgents.get(room.tag.auxiliar)
                 if(room.tag.auxiliar==='AbyssFallback')this.bmAbyssFallback(room);
@@ -146,6 +151,7 @@ class PuzzleAgentsManager {
     criarTagAuxiliar(room, excluded = new Set()) {
         var availableAgents = this.verificarAgentesDisponiveis(room, 'auxiliar', this.auxAgents);
         for(const key of excluded)availableAgents.delete(key);
+        if(this.auxAgents.get('HostileProjectileAgent')?.agent?.open===false)availableAgents.delete('HostileProjectileAgent');
         PathAgent.filterAuxiliary(this.mapGraph,room,availableAgents); // BM_PATH_AGENT_1B
         if(room.tag?.tipo==='hub'||room.tag?.subTipo==='Hub'||room.tag?.auxiliar==='Hub')availableAgents.delete('MazeAgent'); // BM_MAZE_NO_HUB_V1
         if(AbyssAgent.isRestHub(room))availableAgents.delete('AbyssAgent'); // BM_ABYSS_NO_HUB_V5_1
@@ -204,7 +210,7 @@ class PuzzleAgentsManager {
             if(alternative&&alternative.agent.gerarAgenteAuxiliar(room,room.tag.collectible,level)!==false)return true;
             return this.bmAbyssFallback(room);
         }
-        if(!room.bmMazeReallocated&&!room.bmAbyssReallocated)return result;
+        if(!room.bmMazeReallocated&&!room.bmAbyssReallocated&&!room.bmProjectileReallocated)return result;
         const rejected=new Set(['MazeAgent','AbyssAgent','SokobanAgent',previousType]);
         room.tag.auxiliar=null;
         this.criarTagAuxiliar(room,rejected);

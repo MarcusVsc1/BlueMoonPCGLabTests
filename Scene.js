@@ -513,7 +513,7 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
                         this.adicionar(this.spritesE[i].drop)
                     } else {
                         var chance = random.nextRandFloat()
-                        if (chance < 0.18 && !this.spritesE[i].props.summoned && !this.spritesE[i].props.bmAbyssEnemy) {
+                        if (chance < 0.18 && !this.spritesE[i].props.summoned && !this.spritesE[i].props.bmAbyssEnemy && !this.spritesE[i].props.bmProjectileGuard) {
                             var item = gerenciador.criarPoder('heart', this.spritesE[i].x / 32, this.spritesE[i].y / 32)
                             item.timer = 60
                             var evento = function (item) {
@@ -546,7 +546,10 @@ Scene.prototype.checaColisao = function (dt = 1/60) {
                 // BM_WITCH_IMPACT_V1: somente o disparo da Bruxa que realmente causa dano.
                 const projectile = this.spritesTE[i];
                 const witchImpact = projectile.props.bmDamageOrigin === 'witchFireball' && projectile.props.modelo === 'fireball';
-                if (witchImpact) {
+                /* BM_HOSTILE_PROJECTILE_IMPACT_1B */
+                if (projectile.props.bmDamageOrigin === 'hostileProjectileLab' && projectile.props.modelo === 'fireball') {
+                    BMHostileProjectileLab.playerImpact(this, projectile, i);
+                } else if (witchImpact) {
                     const explosion = new Animation({ x: this.pc.x, y: this.pc.y, imagem: 'explosion' });
                     this.adicionar(explosion);
                     this.assets.play('explosion');

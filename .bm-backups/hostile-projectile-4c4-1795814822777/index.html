@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Moon</title>
+    <style>
+        @font-face {
+            font-family: Medieval;
+            src: url("font/Por Siempre Gótica.ttf");
+        }
+        @font-face {
+            font-family: Medieval2;
+            src: url("font/OldeEnglish.ttf");
+        }
+        canvas {
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+        canvas:fullscreen { width: 100vw; height: 100vh; object-fit: contain; background: black; }
+    </style>
+    <script src="utils/CollisionSystem.js?bmSokobanFloor=1&bmHoles=1&bmWitchSwordHurtbox=2&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4&bmAbyssFall=2"></script>
+    <script src="utils/CollisionDebug.js"></script>
+    <script src="Sprite.js?bmCameraPixelSprite=2&bmWitchAI=1&bmWitchSkin=1&bmAbyssFall=2"></script>
+    <script src="WitchAI.js?bmWitchAI=3.2"></script>
+    <script src="utils/ShieldEnemy.js"></script>
+    <script src="Params.js"></script>
+    <script src="model/SokobanSolver.js"></script>
+    <script src="model/SokobanDifficulty.js"></script>
+    <!-- BLUEMOON_PERSISTENT_INVENTORY_V1 -->
+    <script src="model/Inventory.js"></script>
+    <script src="Controls.js?bmControls=2&bmRuneSeals=1"></script>
+    <script src="utils/InventoryHUD.js?bmControls=2"></script>
+    <!-- BM_DUNGEON_MAP_V1 -->
+    <script src="utils/DungeonMap.js?bmMapGamepad=2&bmControls=2&bmTutorial=1&bmKnownHoles=1&bmAbyssAgent=4&bmMapCarrier=3"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1&bmRuneComplete=4&bmAbyssFall=2&bmAbyssCombat=5.1&bmHostileImpact=1B"></script>
+    <script src="Settings.js?bmSettings=1"></script>
+    <script src="AssetsManager.js?bmGameOver=3&bmMenuAudio=2&bmSettings=1"></script>
+    <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1&bmVictory=1&bmRun=1&bmTutorial=1&bmLoading=1"></script>
+    <script src="SeedGenerator.js"></script>
+    <script src="SeedGen.js?bmGameOver=1"></script>
+    <script src="Grid.js?bmAutotileConnect=2&bmTextureCache=1&bmHoles=1&bmRuneComplete=4&bmAbyss=1"></script>
+    <script src="Animation.js"></script>
+    <script src="DungeonGenerator.js"></script>
+    <script src="InputController.js?bmGamepad=1&bmControls=2"></script>
+    <script src="datastructures/Graph.js"></script>
+    <script src="datastructures/Edge.js"></script>
+    <script src="model/Room.js"></script>
+    <script src="utils/DrawingUtils.js?bmDarkRoom=1&bmRuneSeals=1&bmRuneSlide=2&bmRuneFX=3&bmRuneComplete=4"></script>
+    <script src="utils/AssetsInitializer.js?bmWitchSkin=1&bmRuneSeals=1&bmRuneFX=3&bmAbyssFall=2"></script>
+    <script src="utils/EnemyFactory.js"></script>
+    <script src="utils/UtilityMethods.js"></script>
+    <script src="utils/CommonsFactory.js"></script>
+    <script src="utils/InputSetup.js?bmGamepad=1&bmGamepadActions=2"></script>
+    <script src="enum/KeyColorEnum.js"></script>
+    <script src="puzzleagents/PathAgent.js?bmPathAgent=2"></script>
+    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1&bmRuneSeals=1&bmPassageMaze=1&bmAbyssAgent=4&bmAbyssCombat=5.1&bmMazeNoHub=1&bmPathAgent=2"></script>
+    <script src="model/Game.js"></script>
+    <script src="datastructures/MonteCarlo.js"></script>
+    <script src="datastructures/MonteCarloNode.js"></script>
+    <script src="model/SokobanState.js"></script>
+    <script src="model/Play.js"></script>
+    <script src="puzzleagents/collectibleAgents/LavaRoomAgent.js"></script>
+    <script src="puzzleagents/collectibleAgents/LeverAgent.js?bmLeverDistance=1"></script>
+    <script src="puzzleagents/collectibleAgents/KeyAndDoorAgent.js"></script>
+    <script src="puzzleagents/auxagents/AuxAgent.js"></script>
+    <script src="AbyssPathGenerator.js?bmAbyssPath=3.1"></script>
+    <script src="AbyssCombat.js?bmAbyssCombat=5"></script>
+    <script src="puzzleagents/auxagents/AbyssAgent.js?bmAbyssAgent=4&bmAbyssCombat=5.1"></script>
+    <script src="puzzleagents/auxagents/SwitchAgent.js"></script>
+    <script src="puzzleagents/auxagents/MazeAgent.js?bmPassageMaze=2.1&bmPathAgent=2"></script>
+    <script src="puzzleagents/auxagents/SokobanAgent.js?bmGameOver=1"></script>
+    <script src="puzzleagents/auxagents/IceRoomAgent.js"></script>
+    <script src="puzzleagents/auxagents/SpikeAgent.js"></script>
+    <script src="puzzleagents/auxagents/FireballTrapAgent.js"></script>
+    <script src="utils/CombatArena.js"></script>
+    <script src="puzzleagents/commonagents/CombatArenaAgent.js?bmArena=13"></script>
+    <script src="puzzleagents/commonagents/CombatRoom.js?bmArena=13"></script>
+    <script src="puzzleagents/commonagents/Hub.js"></script>
+    <script src="RunManager.js?bmRun=1&bmSeed=1&bmLoading=1"></script>
+    <script src="Tutorial.js?bmTutorial=1&bmRuneSeals=1"></script>
+<script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1&bmRuneSeals=1&bmPassageMaze=2.1&bmAbyssAgent=4&bmAbyssCombat=5.1&bmPathAgent=2"></script>
+
+    <script src="Abyss.js?bmAbyssFall=2"></script>
+    <script src="utils/HostileProjectileLab.js?bmHostileProjectileLab=4C3"></script>
+<script src="utils/ProjectileTraversalValidator.js?bmProjectile4C3=1"></script>
+<script src="utils/SequentialRunValidator.js?bmProjectile4B=1"></script>
+<script src="utils/ProjectileObjective.js?bmProjectile4C3=1"></script>
+<script src="utils/ProjectileLayoutGenerator.js?bmProjectile4C3=1"></script>
+</head>
+
+<body style="background-color: black">
+    <canvas></canvas>
+    <script>
+
+        var canvas = document.querySelector("canvas");
+        canvas.width = 860;
+        canvas.height = 640;
+        var ctx = canvas.getContext("2d");
+        var teclas = {
+            esquerda: 0,
+            cima: 0,
+            direita: 0,
+            baixo: 0,
+            espada: 0,
+            fireball: 0,
+            resetSokoban: 0
+        }
+
+        ctx.imageSmoothingEnabled = true;
+
+        var pc = new Sprite({ x: 206, y: 176, w: 12, h: 12, imgX: 0, imgY: 0, vidas: 7, maxVidas: 7, imagem: "hero", comportar: porTeclasDirecionais(teclas), props: { tipo: "pc" } });
+
+        var gerenciador = new GameManager(pc);
+
+
+        var cena1 = new Scene({ ctx: ctx, w: canvas.width, h: canvas.height, assets: assetsMng, gamer: gerenciador });
+        cena1.adicionar(pc);
+        inicializarComParametroDeSala()
+
+        function inicializarComParametroDeSala(){
+            var inicializador = -1
+            
+            rooms = parseInt(rooms, 10)
+            switch(rooms) {
+                case 6: 
+                    rooms = 0
+                    break;
+                case 12:
+                    rooms = 1
+                    break;
+                case 16:
+                    rooms = 2
+                    break;
+                case 20:
+                    rooms = 3
+                    break;
+                // BLUEMOON_30_40_ROOMS_V1
+                case 30:
+                    rooms = 4;
+                    break;
+                case 40:
+                    rooms = 5;
+                    break;             
+            }
+            if(rooms >= 0 && rooms <= 5) {
+                gerenciador.inicializarDungeonAleatoria(rooms)()
+                cena1.stageIndex = 0;
+            }
+
+        }
+
+        function porTeclasDirecionais(teclas) {
+            return function () {
+                if (this.charStop <= 0) {
+                    // BM_GAMEPAD_V1: sinal vertical unificado no InputController.
+
+                    // BM_GAMEPAD_V1: direcoes sem conflito; mantem a desaceleracao original.
+                const left = !!input.comandos.esquerda.valor || input.movimentos.horizontal.valor === -1;
+                const right = !!input.comandos.direita.valor || input.movimentos.horizontal.valor === 1;
+                const up = !!input.comandos.cima.valor || input.movimentos.vertical.valor === -1;
+                const down = !!input.comandos.baixo.valor || input.movimentos.vertical.valor === 1;
+                const [horizontal, vertical] = BMAbyss.filterInput(this, Number(right) - Number(left), Number(down) - Number(up)); // BM_ABYSS_FALL_V2
+                if (horizontal) {
+                    this.vx = horizontal * this.standardSpd;
+                    this.direcao = horizontal < 0 ? 1 : 2;
+                } else {
+                    this.vx = this.desaceleracao != 1 ? this.vx * this.desaceleracao : 0;
+                }
+                if (vertical) {
+                    this.vy = vertical * this.standardSpd;
+                    this.direcao = vertical < 0 ? 3 : 0;
+                } else {
+                    this.vy = this.desaceleracao != 1 ? this.vy * this.desaceleracao : 0;
+                }
+                const diagonalInputX = horizontal !== 0;
+                const diagonalInputY = vertical !== 0;
+                    if (diagonalInputX && diagonalInputY) {
+                        const length = Math.hypot(this.vx, this.vy);
+                        if (length > this.standardSpd && this.standardSpd > 0) {
+                            const factor = this.standardSpd / length;
+                            this.vx *= factor;
+                            this.vy *= factor;
+                        }
+                    }
+                    if (input.comandos['espada'].valor == 1 && this.swCD <= 0 && this.globalCD <= 0) {
+                        var tiro = new Sprite({
+                            x: this.x, y: this.y,
+                            imagem: "object", direcao: this.direcao,
+                            vm: 0, w: 12, h: 12, imgX: 3, imgY: 1, imune: 0,
+                            props: { tipo: "tiro", modelo: "espada" }, desenhar: desenhaEspada, mover: moverEspada, pc: this
+                        });
+                        this.charStop = 0.2;
+                        this.scene.adicionar(tiro);
+                        this.swCD = 0.5;
+                        this.globalCD = 0.2;
+                        assetsMng.play("sword");
+                    }
+                    if (input.comandos['resetSokoban'].valor == 1) {
+                        verificarResetSokoban()
+                    }
+                    if (input.comandos['fireball'].valor == 1 && this.spCD <= 0 && this.globalCD <= 0) {
+                        if (this.mana > 0) {
+                            var tiro = new Sprite({
+                                x: this.x, y: this.y,
+                                imagem: "flame", direcao: this.direcao,
+                                vm: 220, w: 12, h: 12, imgX: 0, imgY: 1, imune: 0,
+                                props: { tipo: "tiro", modelo: "fireball" }, desenhar: desenhaTiro, mover: moverTiro,
+                            });
+                            alinharOrigemFireball(tiro, this);
+                            this.scene.adicionar(tiro);
+                            assetsMng.play("shot");
+                            this.mana--;
+                            this.spCD = 2;
+                        }
+
+                        this.globalCD = 0.2;
+                        this.charStop = 0.3;
+                    }
+
+                }
+            }
+        }
+
+        function verificarResetSokoban() {
+            for (const sokoban of cena1.sokobans) {
+                if (isPlayerInsideRoom(sokoban.room) && CollisionSystem.resetPuzzle(sokoban, cena1)) {
+                    cena1.dialogo = "Selos restaurados!";
+                    assetsMng.play("runereset");
+                }
+            }
+        }
+
+        function isPlayerInsideRoom(room) {
+            const { x, y } = pc; // Coordenadas do jogador
+            const { cells } = room; // Array de células da sala
+
+            // Verificar se as coordenadas do jogador estão dentro das coordenadas da sala
+            return (x >= cells[0].x * 32 && x < (cells[0].x + room.roomWidth) * 32 && y >= cells[0].y * 32 && y < (cells[0].y + room.roomHeight) * 32)
+
+        }
+
+        // A origem fisica do tiro coincide com o centro visual do personagem.
+        function alinharOrigemFireball(tiro, origem) {
+            const offset = origem.renderOffset || { x: -origem.w - 3.1, y: -origem.h - 12 };
+            const dx = offset.x + 15;
+            const dy = offset.y + 15;
+            const map = origem.scene && origem.scene.map;
+            if (map && Number.isFinite(dx) && Number.isFinite(dy)) {
+                // Nao atravessar paredes para reposicionar a origem do disparo.
+                CollisionSystem.axis(tiro, map, dx, 'x');
+                CollisionSystem.axis(tiro, map, dy, 'y');
+            }
+            return tiro;
+        }
+        function atirarFireball() {
+            if (this.globalCD <= 0) {
+                this.scene.adicionar(alinharOrigemFireball(criarFireball(0, "tiroE", this.direcao, this.x, this.y), this))
+                this.globalCD = 1.5;
+            }
+        }
+
+        function criarFireball(numero, atira, direct, pX, pY, shotVolume = 1) {
+            var tiro = new Sprite({
+                x: pX, y: pY,
+                imagem: "flame", direcao: direct,
+                vm: 140, w: 12, h: 12, imgX: 1, imgY: 1, imune: 0,
+                props: { tipo: atira, modelo: "fireball", objeto: numero }, desenhar: desenhaTiro, mover: moverTiro,
+            });
+            if (shotVolume > 0) assetsMng.play("shot", shotVolume);
+            return tiro;
+        }
+
+        function persegue(alvo) {
+            return function () {
+                this.vx = this.vm * Math.sign(alvo.x - this.x);
+                this.vy = this.vm * Math.sign(alvo.y - this.y);
+
+                if (this.y < alvo.y + alvo.h / 2) { this.direcao = 0 }
+                else {
+                    if (this.y > alvo.y - alvo.h / 2) { this.direcao = 3 }
+                }
+                this.provocou = true
+            }
+        }
+
+        function ativarEspinho() {
+            // BM_SPIKE_CLOCK_V1: mantem o atraso inicial e a fase global dos espinhos.
+            const scene = this.scene;
+            const tick = scene._bmSpikeTick ?? 0;
+            const before = scene._bmSpikeTickBefore ?? 0;
+            if (tick >= this.startCd) {
+                const first = Math.min(tick, Math.max(before + 1, Math.ceil(this.startCd)));
+                this.startCd = 0;
+                this.contador = 0;
+                this.toggled = !this.toggled;
+                this.comportar = comportarEspinho2;
+                // Em FPS baixo, pode haver mais de um tick virtual nesta atualizacao.
+                if (scene.bmSpikeTransitions(this.repeatCd, first) % 2) this.toggled = !this.toggled;
+            }
+        }
+
+        function comportarEspinho2() {
+            // repeatCd = 0 significa espinho permanentemente ativo (salas de gelo).
+            if (this.scene.bmSpikeTransitions(this.repeatCd) % 2) {
+                this.toggled = !this.toggled;
+            }
+        }
+
+        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
+        function moverTiro(step = dt) {
+            this.frame += 8 * step;
+            const dir = CollisionSystem.direction(this.direcao);
+            if (!dir) return;
+            this.vx = dir.x * this.vm;
+            this.vy = dir.y * this.vm;
+            CollisionSystem.moveProjectile(this, step);
+        }
+        function moverEspada(step = dt) {
+            CollisionSystem.sword(this, step);
+        }
+
+        function moverObjeto() {
+            this.spCD = this.spCD - dt;
+            this.swCD = this.swCD - dt;
+            this.globalCD = this.globalCD - dt;
+        }
+
+        function moverRocha(step = dt) {
+            this.frame += 8 * step;
+            this.vm += 48 * step; // 0.8 por frame a 60 Hz
+            const dir = CollisionSystem.direction(this.direcao);
+            if (!dir) return;
+            this.vx = dir.x * this.vm;
+            this.vy = dir.y * this.vm;
+            CollisionSystem.moveProjectile(this, step);
+        }
+        function atirarRochas() {
+            if (this.globalCD <= 0) {
+                this.charStop = 0.2;
+                var tiro = new Sprite({
+                    x: this.x, y: this.y,
+                    imagem: "object", direcao: this.direcao,
+                    vm: 15, w: 12, h: 12, imgX: 0, imgY: 0, imune: 0,
+                    props: { tipo: "tiroE", modelo: "rocha" }, desenhar: desenhaTiro, mover: moverRocha,
+                });
+                this.scene.adicionar(tiro);
+                assetsMng.play("earth");
+                this.globalCD = 4;
+            }
+        }
+
+        function apagarFogo(){
+            // BM_TIMING_60_V1: 0.08 de opacidade por tick a 60 Hz.
+            this.opacity = Math.max(0, this.opacity - 4.8 * (this.scene?._bmTimingStep ?? 0));
+            if (this.opacity <= 1e-9) {
+                this.opacity = 0;
+                const scene = this.scene || cena1;
+                if (!scene.toRemove.includes(this)) scene.toRemove.push(this);
+            }
+        }
+
+        function multiplicarFogo() {
+            if (this.globalCD < 0 && this.toggled) {
+                cena1.toRemove.push(this)
+            }
+
+            if (this.globalCD < 0 && !this.toggled) {
+                const cell = { x: this.posX, y: this.posY }
+                const map = this.scene.estagio.mapa.cells
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                const neighbors = [];
+                const type = 0
+
+                const numLinhas = map.length;
+                const numColunas = map[0].length;
+
+                for (const [dx, dy] of directions) {
+                    const newX = cell.x + dx;
+                    const newY = cell.y + dy;
+                    if (newX >= 0 && newX < numColunas && newY >= 0 && newY < numLinhas &&
+                        map[newX][newY].tipo === type && !this.firePlaces.some(fire => fire.x == newX && fire.y == newY)) {
+                        var newFire = { x: newX, y: newY }
+                        neighbors.push(newFire);
+                        this.firePlaces.push(newFire);
+                    }
+                }
+                neighbors.forEach(fire => cena1.adicionar(gerenciador.criarFireball(fire.x, fire.y, this.level, this.firePlaces)))
+                this.globalCD = 0.3 - (this.level - 1) * 0.05
+                this.toggled = true
+            }
+
+        }
+
+        //cria uma caveira, comportamento do necromante
+        function necromancia() {
+            // BM_NECROMANCER_ROOM_V1: defesa adicional para chamadas diretas.
+            if (!this.scene?.bmNecromancerSameRoom(this)) return;
+            if (this.globalCD <= 0) {
+                this.globalCD = 4.2;
+                this.scene.assets.play("darkness");
+                cena1.adicionar(new Sprite({
+                    x: this.x, y: this.y, w: 12, h: 12, vm: 29 + Math.random() * 11, imgX: 1, imgY: 1,
+                    imagem: "monster", comportar: persegue(pc), props: { tipo: "npc", summoned: true }
+                }))
+            }
+        }
+
+        function moverBruxa() {
+            if (this.imune > 0) {
+                this.imune = this.imune - 1 * dt;
+            }
+
+            this.mc = (this.x / this.scene.map.SIZE);
+            if (this.mc >= 10.4 || this.mc <= 1.6) {
+                this.vx = this.vx * -1
+            }
+            this.x = this.x + this.vx * this.vm * dt;
+            this.spCD = this.spCD - dt;
+            this.globalCD = this.globalCD - dt;
+            this.frame += 8 * dt;
+
+            if (this.vidas == 20) {
+                this.scene.dialogo = "\nQual o problema dessa garota?!\""
+            }
+            if (this.vidas == 5) {
+                this.scene.dialogo = "\nEla conseguiu quebrar minha barreira!..._" +
+                    "Preciso me recompor!\""
+                this.mover = pc.mover;
+                this.comportar = persegue(cena1.spritesTP[0]);
+            }
+        }
+
+        //comportamento da fase 2 da bruxa
+        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
+        function bruxaria() { // BM_WITCH_AI_V1
+            BMWitch.update(this, {Sprite, moverCircular, desenhaTiro, alinharOrigemFireball, persegue});
+        }
+        
+
+        function moverCircular() {
+            this.a = this.a + this.va * dt;
+            this.frame += 8 * dt;
+            this.vx = this.vm * Math.cos(this.a);
+            this.vy = this.vm * Math.sin(this.a);
+            this.vm += 72 * dt;
+            if (CollisionSystem.projectile(this)) CollisionSystem.moveProjectile(this, dt);
+            else CollisionSystem.move(this, dt);
+
+            this.spCD = this.spCD - dt;
+            this.swCD = this.swCD - dt;
+            this.globalCD = this.globalCD - dt;
+
+        }
+
+        function persegue2(alvo) {
+            return function () {
+                this.vx = this.vm * Math.sign(alvo.x - this.x) - Math.sqrt(this.vm) * 2;
+                this.vy = this.vm * Math.sign(alvo.y - this.y) - Math.sqrt(this.vm) * 2;
+                this.vm += 30 * (this.scene?._bmTimingStep ?? 0); // 0.5 por tick a 60 Hz
+
+                if (Math.floor(this.frame) > 20) {
+                    this.scene.adicionar(new Animation({ x: this.x, y: this.y, imagem: "explosion" }));
+                    this.scene.assets.play("explosion");
+                    this.scene.toRemove.push(this);
+                }
+
+                if (this.y < alvo.y + alvo.h / 2) { this.direcao = 0 }
+                else {
+                    if (this.y > alvo.y - alvo.h / 2) { this.direcao = 3 }
+                }
+            }
+        }
+
+        //direcao => 0: baixo 1: esquerda, 2: direita, 3: cima
+        function moverCaixa(caixa, pc) {
+            return CollisionSystem.pushBox(caixa, pc);
+        }
+        function comportarSokoban(sokoban, step = 1/60) {
+            for (const box of sokoban.boxes) {
+                box.props.placed = !box._bmRuneSlide && sokoban.goals.some(goal => box.posX === goal.posX && box.posY === goal.posY); // BM_RUNE_SLIDE_V2
+            }
+            const all = sokoban.boxes.length >= 2 && sokoban.boxes.length === sokoban.goals.length && sokoban.boxes.every(box => box.props.placed);
+            // BM_RUNE_FX_V3: encaixe somente apos deslizar; ultimo bloco usa som de conclusao.
+            for (const box of sokoban.boxes) {
+                if (!box._bmRunePending || box._bmRuneSlide) continue;
+                delete box._bmRunePending;
+                if (box.props.placed && !all) assetsMng.play("runeon");
+            }
+            if (!all) { sokoban.countDown = .5; return; }
+            // BM_RUNE_COMPLETE_V4: ultimo encaixe inicia a sequencia; nenhum tempo e consumido neste tick.
+            if (!sokoban._bmRuneComplete) { BMRuneComplete.begin(cena1, sokoban); return; }
+            if (!BMRuneComplete.advance(cena1, sokoban, step)) return;
+            
+            const idx = cena1.sokobans.indexOf(sokoban);
+            if (idx < 0) return;
+            cena1.adicionar(sokoban.collectible);
+            cena1.sokobans.splice(idx, 1);
+            
+            
+        }
+
+        var keyPressed = {};
+        InventoryHUD.bindControls(cena1, window);
+        DungeonMapSystem.bind(cena1, canvas, window);
+        addEventListener('keydown', function(e) {
+            keyPressed[e.key + e.location] = true;
+            // BM_NOCLIP_V2: alternar uma vez por pressionamento, sem atalhos de navegador.
+            if (e.code === 'KeyN' && !e.repeat && !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.isComposing && !e.target?.isContentEditable && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') && pc.vidas > 0 && !cena1.paused) {
+                e.preventDefault();
+                pc.atravessa = pc.atravessa === 1 ? 0 : 1;
+            }
+        }, false);
+        addEventListener('keyup', function(e) {
+            delete keyPressed[e.key + e.location];
+            // Noclip permanece ativo ate o proximo N.
+        }, false);
+        addEventListener('blur', function() { keyPressed = {}; });
+
+        // BM_GAMEPAD_ACTIONS_V2: uma acao por pressionamento, inclusive com mapa aberto.
+        // BM_MAP_GAMEPAD_V1: mapa usa perfil fisico; inventario conserva bordas de subida.
+        const bmGamepadActionsHeld = { itemAnterior: false, itemProximo: false };
+        function bmUpdateGamepadActions(scene, controller, elapsed) {
+            const rising={};
+            for(const name of Object.keys(bmGamepadActionsHeld)) {
+                const pressed=!!controller.comandos[name]?.valor;
+                rising[name]=pressed&&!bmGamepadActionsHeld[name];
+                bmGamepadActionsHeld[name]=pressed;
+            }
+            if(BMMapGamepad.update(scene,controller,elapsed))return;
+            if(scene.pc?.vidas>0&&scene.theEnd<=0&&(scene.stageIndex===0||scene.stageIndex===3)&&!scene.paused) {
+                const direction=Number(rising.itemProximo)-Number(rising.itemAnterior);
+                if(direction)scene.inventoryHUD.select(direction);
+            }
+        }
+        
+        function passo(t) {
+            // Evita saltos enormes em abas suspensas. O sweep protege mesmo com dt elevado.
+            dt = anterior ? Math.min(Math.max(0, (t - anterior) / 1000), 1/30) : 0;
+            if (assetsMng.progresso() === 100) {
+                BMGameOver.tick(cena1, dt); /* BM_GAMEOVER_V1 */
+            }
+            anterior = t;
+            input.update();
+            if (!BMGameOver.pauseActive()) bmUpdateGamepadActions(cena1, input, dt); /* BM_PAUSE_V1 */ 
+            ctx.fillStyle = "black";
+            ctx.font = "10px Arial";
+            requestAnimationFrame(passo);
+        }
+
+        BMGameOver.bootTitle(cena1); // BM_TITLE_V1
+        var dt, anterior = 0;
+        requestAnimationFrame(passo);
+
+        /*
+            funções de debug
+        */
+
+        function markRoomById(idx) {
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].cells)
+        }
+
+        function darkRoom(idx) {
+            cena1.darkRooms.push(cena1.gamer.dungeonGenerator.graph.nodes[idx])
+        }
+
+        function markTerminalCellsByRoomId(idx) {
+            console.log(cena1.gamer.dungeonGenerator.graph.nodes[idx].terminalCells)
+            cena1.extras.push(...cena1.gamer.dungeonGenerator.graph.nodes[idx].terminalCells)
+        }
+
+        function markCorridorByFromRoom(idx) {
+            edges = cena1.gamer.dungeonGenerator.graph.adjacencyList.filter(function (obj) { return obj.fromRoom == idx })
+            for (edge of edges) {
+                console.log(edge.cells)
+                cena1.extras.push(...edge.cells)
+            }
+        }
+
+        function markAllCorridors() {
+            cena1.gamer.dungeonGenerator.graph.adjacencyList.forEach(corridor => cena1.extras.push(...corridor.cells))
+        }
+
+        function markAllTerminalCells() {
+            cena1.gamer.dungeonGenerator.graph.nodes.forEach(node => cena1.extras.push(...node.terminalCells))
+        }
+
+        function removeRoomMarkById(idx) {
+            let cells = cena1.gamer.dungeonGenerator.graph.nodes[idx].cells;
+            cena1.extras.forEach(extra => {
+                cells.forEach(pos => {
+                    if (extra.x == pos.x && extra.y == pos.y) {
+                        cena1.extras.splice(extra);
+                    }
+                })
+            });
+        }
+
+        function clearMarkedCells() {
+            cena1.extras = []
+        }
+
+        function playTheme(themeIdx) {
+            gerenciador.tema.src = "assets/tema" + themeIdx+".mp3";
+            gerenciador.tema.loop = true;
+            BMSettings.attach(gerenciador.tema);
+            BMGameOver.playAudio(gerenciador.tema, 'tema'); /* BM_GAMEOVER_AUDIO_V3 */
+
+        }
+
+        function calcularPosicaoMedia(cells) {
+            let somaX = 0;
+            let somaY = 0;
+
+            for (const cell of cells) {
+                somaX += cell.x;
+                somaY += cell.y;
+            }
+
+            const mediaX = somaX / cells.length;
+            const mediaY = somaY / cells.length;
+
+            return { x: mediaX, y: mediaY };
+        }
+    </script>
+</body>
+
+</html>

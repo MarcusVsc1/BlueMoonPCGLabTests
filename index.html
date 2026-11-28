@@ -37,7 +37,7 @@
     <script src="utils/InventoryHUD.js?bmControls=2"></script>
     <!-- BM_DUNGEON_MAP_V1 -->
     <script src="utils/DungeonMap.js?bmMapGamepad=2&bmControls=2&bmTutorial=1&bmKnownHoles=1&bmAbyssAgent=4&bmMapCarrier=3"></script>
-    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1&bmRuneComplete=4&bmAbyssFall=2&bmAbyssCombat=5.1"></script>
+    <script src="Scene.js?bmEnemyAggro=2&bmGameOver=1&bmCameraPixel=1&bmDeathCause=6&bmVictory=1&bmSettings=1&bmWitchImpact=1&bmWitchAI=2&bmEnemySpacing=2&bmNecromancerRoom=1&bmWitchGhostSpacing=1&bmRuneComplete=4&bmAbyssFall=2&bmAbyssCombat=5.1&bmHostileImpact=1B"></script>
     <script src="Settings.js?bmSettings=1"></script>
     <script src="AssetsManager.js?bmGameOver=3&bmMenuAudio=2&bmSettings=1"></script>
     <script src="GameManager.js?bmArena=13&bmGameOver=3&bmFireWave=1&bmVictory=1&bmRun=1&bmTutorial=1&bmLoading=1"></script>
@@ -58,7 +58,7 @@
     <script src="utils/InputSetup.js?bmGamepad=1&bmGamepadActions=2"></script>
     <script src="enum/KeyColorEnum.js"></script>
     <script src="puzzleagents/PathAgent.js?bmPathAgent=2"></script>
-    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1&bmRuneSeals=1&bmPassageMaze=1&bmAbyssAgent=4&bmAbyssCombat=5.1&bmMazeNoHub=1&bmPathAgent=2"></script>
+    <script src="puzzleagents/PuzzleAgentsManager.js?bmLoading=1&bmRuneSeals=1&bmPassageMaze=1&bmAbyssAgent=4&bmAbyssCombat=5.1&bmMazeNoHub=1&bmPathAgent=2&bmProjectile5C2=1&bmProjectile5D=1"></script>
     <script src="model/Game.js"></script>
     <script src="datastructures/MonteCarlo.js"></script>
     <script src="datastructures/MonteCarloNode.js"></script>
@@ -86,6 +86,16 @@
 <script src="GameOver.js?bmGameOver=6&bmVictory=1&bmPause=2.1&bmRun=1&bmTitle=2&bmSettings=1&bmControls=2&bmSeed=1&bmTutorial=1&bmLoading=1&bmWitchImpact=1&bmLeverDistance=1&bmRuneSeals=1&bmPassageMaze=2.1&bmAbyssAgent=4&bmAbyssCombat=5.1&bmPathAgent=2"></script>
 
     <script src="Abyss.js?bmAbyssFall=2"></script>
+    <script src="utils/HostileProjectileLab.js?bmProjectile5C2=1"></script>
+<script src="utils/ProjectileTraversalValidator.js?bmProjectile5C2=1"></script>
+<script src="utils/SequentialRunValidator.js?bmProjectile5C2=1"></script>
+<script src="utils/ProjectileObjective.js?bmProjectile5C2=1"></script>
+<script src="utils/ProjectileLayoutGenerator.js?bmProjectile5C2=1"></script>
+    <!-- BM_HOSTILE_PROJECTILE_AGENT_5C2 -->
+    <script src="utils/ProjectileRoomAdapter.js?bmProjectile5C2=1"></script>
+    <script src="utils/ProjectileDungeonRuntime.js?bmProjectile5C2=1&bmProjectile5C21=1"></script>
+    <script src="utils/HostileProjectileAgent.js?bmProjectile5C2=1&bmProjectile5D=1"></script>
+    <script src="utils/ProjectileTestCases.js?bmProjectile5C2=1"></script>
 </head>
 
 <body style="background-color: black">
@@ -259,14 +269,14 @@
             }
         }
 
-        function criarFireball(numero, atira, direct, pX, pY) {
+        function criarFireball(numero, atira, direct, pX, pY, shotVolume = 1) {
             var tiro = new Sprite({
                 x: pX, y: pY,
                 imagem: "flame", direcao: direct,
                 vm: 140, w: 12, h: 12, imgX: 1, imgY: 1, imune: 0,
                 props: { tipo: atira, modelo: "fireball", objeto: numero }, desenhar: desenhaTiro, mover: moverTiro,
             });
-            assetsMng.play("shot");
+            if (shotVolume > 0) assetsMng.play("shot", shotVolume);
             return tiro;
         }
 
